@@ -1,0 +1,19 @@
+{
+  "folders": [
+    {
+      "name": "consultancy",
+      "label": "Consultancy",
+      "maps": ["071_CEP_CIIP", "072_Community_Resilience", "073_CIP_Invest_Committee", "074_IOM", "075_Ilmhona_UNICEF"]
+    },
+    {
+      "name": "pfd",
+      "label": "PFD",
+      "maps": ["WaterShed_South"]
+    },
+    {
+      "name": "zarzamin",
+      "label": "Zarzamin",
+      "maps": ["01_WSN", "03_NSIFT_ROSHTKALA"]
+    }
+  ]
+}

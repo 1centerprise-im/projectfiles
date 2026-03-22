@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mind Map Editor</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&family=Nunito+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <div class="editor-wrap">
+
+    <!-- ===== TOP TOOLBAR ===== -->
+    <div class="toolbar">
+      <!-- Map title (editable) -->
+      <input type="text" class="toolbar-title" id="mapTitle" placeholder="Map Title">
+      <div class="sep"></div>
+      <!-- Navigation -->
+      <button class="tb-btn" id="btnMyMaps">My Maps</button>
+      <div class="sep"></div>
+      <!-- Actions -->
+      <button class="tb-btn primary" id="btnAddNode">+ Add Node</button>
+      <button class="tb-btn" id="btnAutoLayout">Auto Layout</button>
+      <div class="sep"></div>
+      <!-- Color swatches (8 colors) -->
+      <div class="color-swatches">
+        <div class="color-swatch" data-ci="0" style="background:#ffffff" title="White"></div>
+        <div class="color-swatch" data-ci="1" style="background:#ddeeff" title="Blue"></div>
+        <div class="color-swatch" data-ci="2" style="background:#dff5e3" title="Green"></div>
+        <div class="color-swatch" data-ci="3" style="background:#fff8d4" title="Yellow"></div>
+        <div class="color-swatch" data-ci="4" style="background:#fde8d0" title="Orange"></div>
+        <div class="color-swatch" data-ci="5" style="background:#fde0de" title="Red"></div>
+        <div class="color-swatch" data-ci="6" style="background:#ede0ff" title="Purple"></div>
+        <div class="color-swatch" data-ci="7" style="background:#2a2520" title="Dark"></div>
+      </div>
+      <div class="sep"></div>
+      <!-- Save -->
+      <button class="tb-btn primary" id="btnSave">Save</button>
+      <!-- Credits -->
+      <span class="toolbar-credits">
+        by <a href="https://ilkhom-makhkambaev.mystrikingly.com/" target="_blank">Ilkhom Makhkambaev</a>
+      </span>
+    </div>
+
+    <!-- ===== FORMAT PANEL (shown when node/edge is selected) ===== -->
+    <div class="format-panel" id="formatPanel">
+      <!-- Node format controls -->
+      <div id="nodeFormatControls" style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+        <span class="fp-label">Font:</span>
+        <select class="fp-select" id="fpFont">
+          <option value="Nunito">Nunito</option>
+          <option value="Nunito Sans">Nunito Sans</option>
+          <option value="Arial">Arial</option>
+          <option value="Georgia">Georgia</option>
+          <option value="Courier New">Courier New</option>
+        </select>
+        <span class="fp-label">Size:</span>
+        <input type="number" class="fp-input" id="fpSize" min="8" max="48" value="13">
+        <span class="fp-label">Color:</span>
+        <input type="color" class="fp-input" id="fpTextColor" value="#2a2520">
+        <button class="fp-toggle" id="fpBold" title="Bold"><b>B</b></button>
+        <button class="fp-toggle" id="fpItalic" title="Italic"><i>I</i></button>
+        <div class="sep" style="height:20px"></div>
+        <button class="fp-toggle" id="fpAlignL" title="Align Left">&#8676;</button>
+        <button class="fp-toggle" id="fpAlignC" title="Align Center">&#8596;</button>
+        <button class="fp-toggle" id="fpAlignR" title="Align Right">&#8677;</button>
+        <div class="sep" style="height:20px"></div>
+        <span class="fp-label">Shape:</span>
+        <button class="fp-shape-btn" id="fpShape_rounded" title="Rounded">&#9723;</button>
+        <button class="fp-shape-btn" id="fpShape_square" title="Square">&#9632;</button>
+        <button class="fp-shape-btn" id="fpShape_circle" title="Circle">&#9679;</button>
+        <button class="fp-shape-btn" id="fpShape_diamond" title="Diamond">&#9670;</button>
+        <div class="sep" style="height:20px"></div>
+        <span class="fp-label">Border:</span>
+        <input type="color" class="fp-input" id="fpBorderColor" value="#c8c0b8">
+        <input type="range" class="fp-range" id="fpBorderWidth" min="0" max="8" value="2">
+      </div>
+      <!-- Edge format controls -->
+      <div id="edgeFormatControls" style="display:none; align-items:center; gap:8px; flex-wrap:wrap;">
+        <span class="fp-label">Edge Label:</span>
+        <input type="text" class="fp-select" id="fpEdgeLabel" placeholder="Label text" style="min-width:140px">
+        <span class="fp-label">Thickness:</span>
+        <input type="range" class="fp-range" id="fpEdgeThick" min="1" max="10" step="0.5" value="2">
+        <span class="fp-label">Color:</span>
+        <input type="color" class="fp-input" id="fpEdgeColor" value="#b8b0a6">
+      </div>
+    </div>
+
+    <!-- ===== CANVAS AREA ===== -->
+    <div class="canvas-container">
+      <!-- SVG layer for edges (behind nodes) -->
+      <svg id="edge-svg" xmlns="http://www.w3.org/2000/svg"></svg>
+      <!-- Canvas surface with dot grid (nodes go here) -->
+      <div id="canvas"></div>
+    </div>
+
+    <!-- Zoom badge -->
+    <div class="zoom-badge" id="zoomBadge">100%</div>
+
+    <!-- Right-click context menu -->
+    <div class="context-menu" id="ctxMenu"></div>
+  </div>
+
+  <!-- Load JS modules in dependency order -->
+  <script src="js/storage.js"></script>
+  <script src="js/nodes.js"></script>
+  <script src="js/edges.js"></script>
+  <script src="js/autolayout.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/editor.js"></script>
+</body>
+</html>
