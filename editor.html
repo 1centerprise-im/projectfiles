@@ -4,7 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Mind Map Editor</title>
-  <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&family=Nunito+Sans:wght@400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/styles.css">
@@ -12,19 +11,15 @@
 <body>
   <div class="editor-wrap">
 
-    <!-- ===== TOP TOOLBAR ===== -->
+    <!-- TOOLBAR -->
     <div class="toolbar">
-      <!-- Map title (editable) -->
       <input type="text" class="toolbar-title" id="mapTitle" placeholder="Map Title">
       <div class="sep"></div>
-      <!-- Navigation -->
       <button class="tb-btn" id="btnMyMaps">My Maps</button>
       <div class="sep"></div>
-      <!-- Actions -->
       <button class="tb-btn primary" id="btnAddNode">+ Add Node</button>
       <button class="tb-btn" id="btnAutoLayout">Auto Layout</button>
       <div class="sep"></div>
-      <!-- Color swatches (8 colors) -->
       <div class="color-swatches">
         <div class="color-swatch" data-ci="0" style="background:#ffffff" title="White"></div>
         <div class="color-swatch" data-ci="1" style="background:#ddeeff" title="Blue"></div>
@@ -36,17 +31,14 @@
         <div class="color-swatch" data-ci="7" style="background:#2a2520" title="Dark"></div>
       </div>
       <div class="sep"></div>
-      <!-- Save -->
       <button class="tb-btn primary" id="btnSave">Save</button>
-      <!-- Credits -->
       <span class="toolbar-credits">
         by <a href="https://ilkhom-makhkambaev.mystrikingly.com/" target="_blank">Ilkhom Makhkambaev</a>
       </span>
     </div>
 
-    <!-- ===== FORMAT PANEL (shown when node/edge is selected) ===== -->
+    <!-- FORMAT PANEL -->
     <div class="format-panel" id="formatPanel">
-      <!-- Node format controls -->
       <div id="nodeFormatControls" style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
         <span class="fp-label">Font:</span>
         <select class="fp-select" id="fpFont">
@@ -63,9 +55,9 @@
         <button class="fp-toggle" id="fpBold" title="Bold"><b>B</b></button>
         <button class="fp-toggle" id="fpItalic" title="Italic"><i>I</i></button>
         <div class="sep" style="height:20px"></div>
-        <button class="fp-toggle" id="fpAlignL" title="Align Left">&#8676;</button>
-        <button class="fp-toggle" id="fpAlignC" title="Align Center">&#8596;</button>
-        <button class="fp-toggle" id="fpAlignR" title="Align Right">&#8677;</button>
+        <button class="fp-toggle" id="fpAlignL" title="Left">&#8676;</button>
+        <button class="fp-toggle" id="fpAlignC" title="Center">&#8596;</button>
+        <button class="fp-toggle" id="fpAlignR" title="Right">&#8677;</button>
         <div class="sep" style="height:20px"></div>
         <span class="fp-label">Shape:</span>
         <button class="fp-shape-btn" id="fpShape_rounded" title="Rounded">&#9723;</button>
@@ -77,10 +69,9 @@
         <input type="color" class="fp-input" id="fpBorderColor" value="#c8c0b8">
         <input type="range" class="fp-range" id="fpBorderWidth" min="0" max="8" value="2">
       </div>
-      <!-- Edge format controls -->
       <div id="edgeFormatControls" style="display:none; align-items:center; gap:8px; flex-wrap:wrap;">
         <span class="fp-label">Edge Label:</span>
-        <input type="text" class="fp-select" id="fpEdgeLabel" placeholder="Label text" style="min-width:140px">
+        <input type="text" class="fp-select" id="fpEdgeLabel" placeholder="Label" style="min-width:140px">
         <span class="fp-label">Thickness:</span>
         <input type="range" class="fp-range" id="fpEdgeThick" min="1" max="10" step="0.5" value="2">
         <span class="fp-label">Color:</span>
@@ -88,22 +79,23 @@
       </div>
     </div>
 
-    <!-- ===== CANVAS AREA ===== -->
-    <div class="canvas-container">
-      <!-- SVG layer for edges (behind nodes) -->
-      <svg id="edge-svg" xmlns="http://www.w3.org/2000/svg"></svg>
-      <!-- Canvas surface with dot grid (nodes go here) -->
-      <div id="canvas"></div>
+    <!-- CANVAS AREA -->
+    <!-- canvasContainer clips and handles pan/zoom -->
+    <div id="canvasContainer">
+      <!-- #canvas holds BOTH the SVG edge layer AND the node divs.
+           They share the same coordinate space. The single CSS transform
+           on #canvas moves everything together. -->
+      <div id="canvas">
+        <svg id="edge-svg" xmlns="http://www.w3.org/2000/svg"></svg>
+        <!-- Node divs are appended here by editor.js -->
+      </div>
     </div>
 
-    <!-- Zoom badge -->
     <div class="zoom-badge" id="zoomBadge">100%</div>
-
-    <!-- Right-click context menu -->
     <div class="context-menu" id="ctxMenu"></div>
   </div>
 
-  <!-- Load JS modules in dependency order -->
+  <!-- JS modules in dependency order -->
   <script src="js/storage.js"></script>
   <script src="js/nodes.js"></script>
   <script src="js/edges.js"></script>
