@@ -1,8 +1,10 @@
 /* ============================================================
    MIND MAP MANAGER - ALL STYLES
-   Shared between index.html (home) and editor.html
+   - Dark theme: index.html (landing) and projects.html
+   - Light theme: editor.html (unchanged)
    ============================================================ */
 
+/* ===== LIGHT THEME VARIABLES (editor) ===== */
 :root {
   --bg:      #f7f5f2;
   --toolbar: #ffffff;
@@ -16,6 +18,21 @@
   --radius:  10px;
 }
 
+/* ===== DARK THEME VARIABLES ===== */
+.dark-landing, .dark-projects {
+  --dk-bg:       #0a0f1a;
+  --dk-card:     #111827;
+  --dk-gold:     #c9a84c;
+  --dk-text:     #ffffff;
+  --dk-muted:    #6b7280;
+  --dk-border:   #1f2937;
+  --dk-active:   #22c55e;
+  --dk-review:   #eab308;
+  --dk-complete: #3b82f6;
+  --dk-process:  #f97316;
+}
+
+/* ===== BASE RESET ===== */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html { font-size: 15px; }
 body { font-family: 'Nunito Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
@@ -23,31 +40,316 @@ a { color: var(--accent); text-decoration: none; }
 a:hover { text-decoration: underline; }
 button { font-family: 'Nunito Sans', sans-serif; cursor: pointer; border: none; background: none; font-size: 0.9rem; }
 
-/* ===== HOME SCREEN ===== */
-.home-header { background: var(--toolbar); border-bottom: 1px solid var(--border); padding: 28px 40px 20px; box-shadow: var(--shadow); }
-.home-header h1 { font-family: 'Nunito', sans-serif; font-size: 1.8rem; margin-bottom: 4px; }
-.home-header p { color: var(--muted); font-size: 0.95rem; }
-.home-container { max-width: 1100px; margin: 32px auto; padding: 0 24px; }
-.folders-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 24px; margin-bottom: 40px; }
-.folder-card { background: var(--toolbar); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; transition: box-shadow 0.2s; }
-.folder-card:hover { box-shadow: 0 4px 16px rgba(42,37,32,0.12); }
-.folder-header { display: flex; align-items: center; justify-content: space-between; padding: 18px 20px; cursor: pointer; user-select: none; }
-.folder-header:hover { background: rgba(59,110,165,0.04); }
-.folder-title { font-family: 'Nunito', sans-serif; font-size: 1.15rem; font-weight: 700; }
-.folder-count { color: var(--muted); font-size: 0.85rem; }
-.folder-chevron { font-size: 1.2rem; color: var(--muted); transition: transform 0.2s; }
-.folder-card.open .folder-chevron { transform: rotate(90deg); }
-.folder-maps { display: none; border-top: 1px solid var(--border); padding: 8px 0; }
-.folder-card.open .folder-maps { display: block; }
-.map-item { display: flex; align-items: center; justify-content: space-between; padding: 10px 20px; cursor: pointer; transition: background 0.15s; }
-.map-item:hover { background: rgba(59,110,165,0.06); }
-.map-name { font-size: 0.95rem; font-weight: 600; }
-.map-icon { width: 18px; height: 18px; color: var(--accent); }
-.new-map-btn { display: flex; align-items: center; gap: 6px; padding: 10px 20px; color: var(--accent); font-weight: 600; width: 100%; transition: background 0.15s; }
-.new-map-btn:hover { background: rgba(59,110,165,0.06); }
-.home-footer { text-align: center; padding: 24px; color: var(--muted); font-size: 0.85rem; border-top: 1px solid var(--border); margin-top: 40px; }
 
-/* ===== EDITOR LAYOUT ===== */
+/* ==========================================================
+   DARK LANDING PAGE (index.html)
+   ========================================================== */
+.dark-landing {
+  background: var(--dk-bg);
+  color: var(--dk-text);
+  font-family: 'Nunito Sans', sans-serif;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+  background-size: 60px 60px;
+}
+
+.landing-wrapper {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.landing-center {
+  text-align: center;
+  padding: 40px 24px;
+}
+
+.landing-logo {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 28px;
+  box-shadow: 0 0 30px rgba(201,168,76,0.2), 0 0 60px rgba(201,168,76,0.08);
+}
+
+.landing-label {
+  font-size: 0.75rem;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--dk-gold);
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+
+.landing-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 2.8rem;
+  font-weight: 600;
+  line-height: 1.2;
+  margin-bottom: 12px;
+  color: var(--dk-text);
+}
+
+.landing-title-accent {
+  color: var(--dk-gold);
+}
+
+.landing-subtitle {
+  font-size: 1rem;
+  color: var(--dk-muted);
+  margin-bottom: 32px;
+}
+
+.landing-divider {
+  width: 60px;
+  height: 1px;
+  background: var(--dk-border);
+  margin: 0 auto 36px;
+}
+
+.landing-btn {
+  display: inline-block;
+  padding: 14px 40px;
+  border: 1px solid var(--dk-gold);
+  color: var(--dk-gold);
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-decoration: none;
+  transition: background 0.3s, color 0.3s;
+}
+
+.landing-btn:hover {
+  background: var(--dk-gold);
+  color: var(--dk-bg);
+  text-decoration: none;
+}
+
+.landing-footer {
+  position: absolute;
+  bottom: 24px;
+  font-size: 0.75rem;
+  color: var(--dk-muted);
+  letter-spacing: 0.05em;
+}
+
+
+/* ==========================================================
+   DARK PROJECTS PAGE (projects.html)
+   ========================================================== */
+.dark-projects {
+  background: var(--dk-bg);
+  color: var(--dk-text);
+  font-family: 'Nunito Sans', sans-serif;
+}
+
+.projects-wrapper {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 48px 24px 32px;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.projects-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 32px;
+}
+
+.projects-label {
+  font-size: 0.7rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--dk-gold);
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.projects-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 2rem;
+  font-weight: 600;
+  color: var(--dk-text);
+}
+
+.projects-back {
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  color: var(--dk-muted);
+  text-decoration: none;
+  padding-top: 8px;
+  transition: color 0.2s;
+}
+.projects-back:hover {
+  color: var(--dk-gold);
+  text-decoration: none;
+}
+
+/* --- Filters --- */
+.projects-filters {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+
+.projects-search {
+  flex: 1;
+  min-width: 200px;
+  padding: 10px 16px;
+  background: var(--dk-card);
+  border: 1px solid var(--dk-border);
+  border-radius: 6px;
+  color: var(--dk-text);
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 0.9rem;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.projects-search::placeholder { color: var(--dk-muted); }
+.projects-search:focus { border-color: var(--dk-gold); }
+
+.projects-select {
+  padding: 10px 16px;
+  background: var(--dk-card);
+  border: 1px solid var(--dk-border);
+  border-radius: 6px;
+  color: var(--dk-text);
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 0.85rem;
+  outline: none;
+  cursor: pointer;
+  transition: border-color 0.2s;
+}
+.projects-select:focus { border-color: var(--dk-gold); }
+
+/* --- Table --- */
+.projects-table-wrap {
+  flex: 1;
+  overflow-x: auto;
+}
+
+.projects-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.projects-table thead th {
+  font-size: 0.7rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--dk-muted);
+  font-weight: 600;
+  text-align: left;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--dk-border);
+}
+
+.projects-table .col-num { width: 50px; }
+.projects-table .col-action { width: 70px; text-align: right; }
+
+.project-row td {
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--dk-border);
+  vertical-align: middle;
+}
+
+.project-row:hover {
+  background: rgba(255,255,255,0.03);
+}
+
+.project-row .col-num {
+  color: var(--dk-muted);
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.project-name-text {
+  font-weight: 700;
+  color: var(--dk-text);
+}
+
+.project-row .col-org {
+  color: var(--dk-muted);
+  font-size: 0.9rem;
+}
+
+.muted-text {
+  color: var(--dk-muted);
+  font-style: italic;
+  font-size: 0.85rem;
+}
+
+/* Status badges */
+.status-badge {
+  display: inline-block;
+  padding: 3px 12px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+}
+
+.status-active {
+  color: var(--dk-active);
+  border: 1px solid var(--dk-active);
+}
+
+.status-review {
+  color: var(--dk-review);
+  border: 1px solid var(--dk-review);
+}
+
+.status-completed {
+  color: var(--dk-complete);
+  border: 1px solid var(--dk-complete);
+}
+
+.status-on-process {
+  color: var(--dk-process);
+  border: 1px solid var(--dk-process);
+}
+
+/* Open link */
+.open-link {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--dk-gold);
+  text-decoration: none;
+  transition: opacity 0.2s;
+}
+.open-link:hover {
+  opacity: 0.7;
+  text-decoration: none;
+}
+
+/* Empty row */
+.empty-row td {
+  opacity: 0.5;
+}
+
+/* Footer */
+.projects-footer {
+  padding: 20px 0;
+  font-size: 0.8rem;
+  color: var(--dk-muted);
+  border-top: 1px solid var(--dk-border);
+  margin-top: 16px;
+}
+
+
+/* ==========================================================
+   EDITOR LAYOUT (unchanged - light theme)
+   ========================================================== */
 .editor-wrap { display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
 
 /* --- Toolbar --- */
@@ -84,7 +386,6 @@ button { font-family: 'Nunito Sans', sans-serif; cursor: pointer; border: none; 
 .zoom-badge { position: fixed; bottom: 16px; right: 16px; background: var(--toolbar); border: 1px solid var(--border); border-radius: 6px; padding: 4px 10px; font-size: 0.8rem; color: var(--muted); z-index: 200; box-shadow: var(--shadow); }
 
 /* ===== CANVAS ===== */
-/* The container clips the canvas and handles overflow */
 #canvasContainer {
   flex: 1;
   position: relative;
@@ -94,27 +395,22 @@ button { font-family: 'Nunito Sans', sans-serif; cursor: pointer; border: none; 
 }
 #canvasContainer.panning { cursor: grabbing; }
 
-/* The canvas div holds BOTH the SVG (edges) and node divs.
-   Everything inside shares the same coordinate space and transform. */
 #canvas {
   position: absolute;
   top: 0; left: 0;
   width: 5000px; height: 4000px;
   transform-origin: 0 0;
-  /* Dot grid background */
   background-image: radial-gradient(circle, #d4cfc8 1px, transparent 1px);
   background-size: 24px 24px;
 }
 
-/* SVG layer for edges: positioned INSIDE #canvas, behind nodes */
 #edge-svg {
   position: absolute;
   top: 0; left: 0;
   width: 5000px; height: 4000px;
   z-index: 1;
-  pointer-events: none;  /* let clicks pass through to nodes */
+  pointer-events: none;
 }
-/* But edges themselves need to be clickable */
 #edge-svg .edge-hit { pointer-events: stroke; }
 #edge-svg .edge-path { stroke-linecap: round; }
 #edge-svg .edge-path.selected { stroke: var(--red) !important; }
@@ -123,7 +419,7 @@ button { font-family: 'Nunito Sans', sans-serif; cursor: pointer; border: none; 
 /* ===== NODE STYLES ===== */
 .mm-node {
   position: absolute;
-  z-index: 2;  /* above the SVG edge layer */
+  z-index: 2;
   min-width: 80px; min-height: 36px;
   padding: 8px 14px;
   border-radius: 8px;
@@ -148,7 +444,7 @@ button { font-family: 'Nunito Sans', sans-serif; cursor: pointer; border: none; 
 .node-text { flex: 1; pointer-events: none; overflow: hidden; }
 .node-edit-textarea { position: absolute; top: 4px; left: 4px; right: 4px; bottom: 4px; border: none; background: transparent; font: inherit; color: inherit; resize: none; outline: none; padding: 4px; line-height: 1.4; }
 
-/* Node action buttons (visible when selected) */
+/* Node action buttons */
 .node-actions { display: none; }
 .mm-node.selected .node-actions, .mm-node.multi-selected .node-actions { display: block; }
 .node-delete { position: absolute; top: -12px; right: -12px; width: 22px; height: 22px; border-radius: 50%; background: var(--red); color: #fff; font-size: 12px; display: flex; align-items: center; justify-content: center; box-shadow: var(--shadow); z-index: 10; }
@@ -169,3 +465,14 @@ button { font-family: 'Nunito Sans', sans-serif; cursor: pointer; border: none; 
 .ctx-item { padding: 8px 16px; font-size: 0.85rem; cursor: pointer; transition: background 0.1s; }
 .ctx-item:hover { background: rgba(59,110,165,0.08); }
 .ctx-sep { height: 1px; background: var(--border); margin: 4px 0; }
+
+
+/* ==========================================================
+   RESPONSIVE
+   ========================================================== */
+@media (max-width: 640px) {
+  .landing-title { font-size: 1.8rem; }
+  .projects-header { flex-direction: column; gap: 12px; }
+  .projects-filters { flex-direction: column; }
+  .projects-table .col-org { display: none; }
+}

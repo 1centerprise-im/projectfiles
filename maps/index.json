@@ -3,17 +3,23 @@
     {
       "name": "consultancy",
       "label": "Consultancy",
-      "maps": ["071_CEP_CIIP", "072_Community_Resilience", "073_CIP_Invest_Committee", "074_IOM", "075_Ilmhona_UNICEF"]
+      "maps": [
+        { "id": "071_CEP_CIIP", "name": "CEP CIIP", "number": "071", "organization": "Carbon/Environment", "status": "active" },
+        { "id": "072_Community_Resilience", "name": "Community Resilience", "number": "072", "organization": "Community Development", "status": "active" },
+        { "id": "073_CIP_Invest_Committee", "name": "CIP Investment Committee", "number": "073", "organization": "Finance / Investment", "status": "review" },
+        { "id": "074_IOM", "name": "IOM", "number": "074", "organization": "IOM", "status": "active" },
+        { "id": "075_Ilmhona_UNICEF", "name": "Ilmhona UNICEF", "number": "075", "organization": "UNICEF", "status": "active" }
+      ]
     },
     {
       "name": "pfd",
       "label": "PFD",
-      "maps": ["WaterShed_South"]
+      "maps": []
     },
     {
       "name": "zarzamin",
       "label": "Zarzamin",
-      "maps": ["01_WSN", "03_NSIFT_ROSHTKALA"]
+      "maps": []
     }
   ]
 }
