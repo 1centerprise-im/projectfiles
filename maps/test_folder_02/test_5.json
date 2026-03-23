@@ -1,0 +1,30 @@
+{
+  "title": "test 5",
+  "nodes": [
+    {
+      "id": "n1",
+      "x": 400,
+      "y": 300,
+      "w": 0,
+      "h": 0,
+      "text": "test 5",
+      "ci": 0,
+      "link": "",
+      "collapsed": false,
+      "isNote": false,
+      "fontSize": 16,
+      "fontFamily": "Nunito",
+      "textColor": "#2a2520",
+      "bold": true,
+      "italic": false,
+      "textAlign": "center",
+      "shape": "rounded",
+      "borderColor": "",
+      "borderWidth": 0
+    }
+  ],
+  "edges": [],
+  "nid": 2,
+  "edgeThickness": 1.5,
+  "edgeColor": "#c8c0b8"
+}
