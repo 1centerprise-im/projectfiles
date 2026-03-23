@@ -1,8 +1,78 @@
 {
   "title": "073 CIP Invest Committee",
-  "nodes": [],
-  "edges": [],
-  "nid": 7,
+  "nodes": [
+    {
+      "id": "n7",
+      "x": 445.9000244140625,
+      "y": 253.5,
+      "w": 0,
+      "h": 0,
+      "text": "New Node",
+      "ci": 0,
+      "link": "",
+      "collapsed": false,
+      "isNote": false,
+      "fontSize": 13,
+      "fontFamily": "Nunito",
+      "textColor": "",
+      "bold": false,
+      "italic": false,
+      "textAlign": "left",
+      "shape": "rounded",
+      "borderColor": "",
+      "borderWidth": 0
+    },
+    {
+      "id": "n8",
+      "x": 700.9000244140625,
+      "y": 253.5,
+      "w": 0,
+      "h": 0,
+      "text": "New Node",
+      "ci": 4,
+      "link": "",
+      "collapsed": false,
+      "isNote": false,
+      "fontSize": 13,
+      "fontFamily": "Nunito",
+      "textColor": "",
+      "bold": false,
+      "italic": false,
+      "textAlign": "left",
+      "shape": "rounded",
+      "borderColor": "",
+      "borderWidth": 0
+    },
+    {
+      "id": "n12",
+      "x": 1016.9000244140625,
+      "y": 253.5,
+      "w": 0,
+      "h": 0,
+      "text": "New Node",
+      "ci": 4,
+      "link": "",
+      "collapsed": false,
+      "isNote": false,
+      "fontSize": 13,
+      "fontFamily": "Nunito",
+      "textColor": "",
+      "bold": false,
+      "italic": false,
+      "textAlign": "left",
+      "shape": "rounded",
+      "borderColor": "",
+      "borderWidth": 0
+    }
+  ],
+  "edges": [
+    {
+      "id": "e9",
+      "from": "n7",
+      "to": "n8"
+    }
+  ],
+  "nid": 14,
   "edgeThickness": 2,
   "edgeColor": "#b8b0a6"
 }
