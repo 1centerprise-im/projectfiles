@@ -67,8 +67,8 @@ function renderNodeElement(node) {
   textSpan.textContent = node.text || '';
   el.appendChild(textSpan);
 
-  /* Google Drive link icon */
-  if (node.link) {
+  /* Google Drive link icon - only if node has a real URL */
+  if (node.link && node.link.trim() !== '') {
     el.appendChild(makeLinkIcon(node.link));
   }
 
@@ -143,7 +143,7 @@ function updateNodeElement(el, node) {
   /* Update link icon */
   var oldIcon = el.querySelector('.node-link-icon');
   if (oldIcon) oldIcon.remove();
-  if (node.link) {
+  if (node.link && node.link.trim() !== '') {
     el.insertBefore(makeLinkIcon(node.link), el.querySelector('.node-actions'));
   }
 }
