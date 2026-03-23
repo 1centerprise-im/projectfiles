@@ -24,13 +24,12 @@ var COLORS = [
 function isDarkColor(ci) { return ci >= 2; }
 
 /* --- Create a DOM element for a node --- */
-/* Card style: top color bar for light nodes, full fill for dark nodes */
+/* Soft modern style: colored bubble fill, no top bar, no heavy borders */
 function renderNodeElement(node) {
   var el = document.createElement('div');
   el.className = 'mm-node';
   el.dataset.id = node.id;
 
-  /* Shape class */
   if (node.shape === 'square')  el.classList.add('shape-square');
   if (node.shape === 'circle')  el.classList.add('shape-circle');
   if (node.shape === 'diamond') el.classList.add('shape-diamond');
@@ -40,25 +39,16 @@ function renderNodeElement(node) {
   var color = COLORS[ci] || COLORS[0];
   var dark = isDarkColor(ci);
 
-  if (dark) {
-    /* Dark nodes: full color fill, no top bar */
-    el.classList.add('node-dark');
-    el.style.background = color.bg;
-    el.style.borderColor = color.bd;
-    el.style.color = '#ffffff';
-  } else {
-    /* Light nodes: white body with colored top bar */
-    el.style.background = '#ffffff';
-    el.style.borderColor = node.borderColor || '#e5e7eb';
-    el.style.color = node.textColor || '#2a2520';
-    el.dataset.barColor = color.bd;
-  }
-  el.style.borderWidth = '1px';
+  /* All nodes fill with their color */
+  el.style.background = color.bg;
+  el.style.borderColor = color.bd;
+  el.style.color = dark ? '#ffffff' : (node.textColor || '#2a2520');
+  if (dark) el.classList.add('node-dark');
 
   /* Font */
   el.style.fontSize = (node.fontSize || 13) + 'px';
   el.style.fontFamily = node.fontFamily || 'Nunito';
-  el.style.fontWeight = node.bold ? '700' : '400';
+  el.style.fontWeight = node.bold ? '700' : '600';
   el.style.fontStyle = node.italic ? 'italic' : 'normal';
   el.style.textAlign = node.textAlign || 'left';
   if (node.textAlign === 'center') el.style.justifyContent = 'center';
@@ -69,14 +59,6 @@ function renderNodeElement(node) {
   el.style.top = node.y + 'px';
   if (node.w > 0) el.style.width = node.w + 'px';
   if (node.h > 0) el.style.height = node.h + 'px';
-
-  /* Color top bar (for light nodes only) */
-  if (!dark) {
-    var bar = document.createElement('div');
-    bar.className = 'node-color-bar';
-    bar.style.background = color.bd;
-    el.appendChild(bar);
-  }
 
   /* Text */
   var textSpan = document.createElement('span');
@@ -128,20 +110,12 @@ function updateNodeElement(el, node) {
   var dark = isDarkColor(ci);
 
   el.classList.toggle('node-dark', dark);
-  if (dark) {
-    el.style.background = color.bg;
-    el.style.borderColor = color.bd;
-    el.style.color = '#ffffff';
-  } else {
-    el.style.background = '#ffffff';
-    el.style.borderColor = node.borderColor || '#e5e7eb';
-    el.style.color = node.textColor || '#2a2520';
-    el.dataset.barColor = color.bd;
-  }
-  el.style.borderWidth = '1px';
+  el.style.background = color.bg;
+  el.style.borderColor = color.bd;
+  el.style.color = dark ? '#ffffff' : (node.textColor || '#2a2520');
   el.style.fontSize = (node.fontSize || 13) + 'px';
   el.style.fontFamily = node.fontFamily || 'Nunito';
-  el.style.fontWeight = node.bold ? '700' : '400';
+  el.style.fontWeight = node.bold ? '700' : '600';
   el.style.fontStyle = node.italic ? 'italic' : 'normal';
   el.style.textAlign = node.textAlign || 'left';
   el.style.justifyContent =
@@ -155,15 +129,9 @@ function updateNodeElement(el, node) {
   if (node.shape === 'square')  el.classList.add('shape-square');
   if (node.shape === 'circle')  el.classList.add('shape-circle');
   if (node.shape === 'diamond') el.classList.add('shape-diamond');
-  /* Update color bar */
+  /* Remove old color bar if present */
   var bar = el.querySelector('.node-color-bar');
-  if (dark && bar) bar.remove();
-  if (!dark && !bar) {
-    bar = document.createElement('div');
-    bar.className = 'node-color-bar';
-    el.insertBefore(bar, el.firstChild);
-  }
-  if (!dark && bar) bar.style.background = color.bd;
+  if (bar) bar.remove();
   /* Update text */
   var ts = el.querySelector('.node-text');
   if (ts) ts.textContent = node.text || '';

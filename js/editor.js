@@ -317,7 +317,11 @@ async function doSave() {
     await saveToGitHub(folder, mapName, mapData);
     showToast('Saved to GitHub');
   } catch (err) {
-    if (err.message === 'NO_TOKEN') { showTokenModal(function() { doSave(); }); return; }
+    if (err.message === 'NO_TOKEN' || err.message === 'INVALID_TOKEN') {
+      showToast('Invalid token - please re-enter', true);
+      showTokenModal(function() { doSave(); });
+      return;
+    }
     showToast('Save failed: ' + err.message, true);
   }
 }

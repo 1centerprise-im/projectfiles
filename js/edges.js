@@ -34,8 +34,8 @@ function renderAllEdges(svg, edges, nodes, nodeEls, defaultThick, defaultColor) 
     var to = getNodeCenter(toNode, toEl);
 
     /* Determine line thickness and color (per-edge overrides global) */
-    var thick = edge.thickness || defaultThick || 2;
-    var color = edge.color || defaultColor || '#b8b0a6';
+    var thick = edge.thickness || defaultThick || 1.5;
+    var color = edge.color || defaultColor || '#c8c0b8';
 
     /* Draw the visible bezier curve path */
     var path = makeBezierPath(from, to, thick, color, edge.id);

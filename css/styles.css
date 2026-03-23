@@ -414,46 +414,34 @@ button { font-family: 'Nunito Sans', sans-serif; cursor: pointer; border: none; 
 #edge-svg .edge-path.selected { stroke: var(--red) !important; }
 #edge-svg .edge-label { font-family: 'Nunito Sans', sans-serif; font-size: 11px; fill: var(--text); pointer-events: none; }
 
-/* ===== NODE STYLES (Card design) ===== */
+/* ===== NODE STYLES (Soft modern bubbles) ===== */
 .mm-node {
   position: absolute;
   z-index: 2;
   min-width: 80px; min-height: 36px;
-  padding: 8px 12px;
-  border-radius: 8px;
+  padding: 10px 14px;
+  border-radius: 12px;
   background: #fff;
-  border: 0.5px solid #e8e8e8;
+  border: 0.5px solid rgba(0,0,0,0.08);
   cursor: grab;
   user-select: none;
   font-family: 'Nunito', sans-serif;
-  font-size: 13px; line-height: 1.4;
+  font-size: 13px; line-height: 1.4; font-weight: 600;
   display: flex; align-items: center; justify-content: flex-start;
   word-wrap: break-word;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
   transition: box-shadow 0.15s;
   overflow: visible;
 }
-/* Color top bar for light nodes */
-.node-color-bar {
-  position: absolute;
-  top: 0; left: 0; right: 0;
-  height: 5px;
-  border-radius: 8px 8px 0 0;
-  pointer-events: none;
-}
-.mm-node:has(.node-color-bar) { padding-top: 12px; }
-.mm-node:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+.mm-node:hover { box-shadow: 0 3px 12px rgba(0,0,0,0.1); }
 .mm-node.selected { box-shadow: 0 0 0 2px var(--accent), 0 2px 8px rgba(59,110,165,0.15); }
 .mm-node.multi-selected { box-shadow: 0 0 0 2px var(--green), 0 2px 8px rgba(39,168,95,0.15); }
-.mm-node.node-dark { border-color: transparent; }
+.mm-node.node-dark { border-color: rgba(255,255,255,0.1); }
 .mm-node.note { border-style: dashed; opacity: 0.85; font-style: italic; font-size: 12px; }
 .mm-node.shape-square { border-radius: 0; }
-.mm-node.shape-square .node-color-bar { border-radius: 0; }
 .mm-node.shape-circle { border-radius: 50%; justify-content: center; text-align: center; }
-.mm-node.shape-circle .node-color-bar { display: none; }
 .mm-node.shape-diamond { transform: rotate(45deg); border-radius: 4px; }
 .mm-node.shape-diamond .node-text { transform: rotate(-45deg); }
-.mm-node.shape-diamond .node-color-bar { display: none; }
 .node-text { flex: 1; pointer-events: none; overflow: hidden; }
 .node-edit-textarea { position: absolute; top: 8px; left: 4px; right: 4px; bottom: 4px; border: none; background: transparent; font: inherit; color: inherit; resize: none; outline: none; padding: 4px; line-height: 1.4; }
 

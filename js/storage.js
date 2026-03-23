@@ -75,47 +75,53 @@ function setGitHubToken(token) {
   localStorage.setItem('gh_pat', token);
 }
 
-/* Save map JSON to GitHub via PUT contents API */
+/* Save map JSON to GitHub via PUT contents API.
+   CRITICAL: Always GET fresh SHA immediately before PUT. Never cache SHA. */
 async function saveToGitHub(folder, mapName, mapData) {
   var token = getGitHubToken();
   if (!token) throw new Error('NO_TOKEN');
 
   var path = 'maps/' + folder + '/' + mapName + '.json';
-  var url = 'https://api.github.com/repos/' + GH_OWNER + '/' + GH_REPO + '/contents/' + path;
-  var content = btoa(unescape(encodeURIComponent(JSON.stringify(mapData, null, 2))));
+  var apiUrl = 'https://api.github.com/repos/' + GH_OWNER + '/' + GH_REPO + '/contents/' + path;
+  var authHeaders = { 'Authorization': 'token ' + token, 'Accept': 'application/vnd.github.v3+json' };
 
-  /* Always fetch fresh SHA right before PUT to avoid mismatch */
+  /* Step 1: GET the current file to get its fresh SHA */
   var sha = '';
-  try {
-    var getResp = await fetch(url + '?t=' + Date.now(), {
-      headers: { 'Authorization': 'token ' + token, 'Accept': 'application/vnd.github.v3+json', 'If-None-Match': '' },
-      cache: 'no-store'
-    });
-    if (getResp.ok) {
-      var existing = await getResp.json();
-      sha = existing.sha;
-    }
-  } catch (e) { /* file may not exist yet */ }
+  var getResp = await fetch(apiUrl, { headers: authHeaders, cache: 'no-store' });
+  if (getResp.status === 401 || getResp.status === 403) {
+    localStorage.removeItem('gh_pat');
+    throw new Error('INVALID_TOKEN');
+  }
+  if (getResp.ok) {
+    var fileData = await getResp.json();
+    sha = fileData.sha;
+  }
+  /* If 404, file doesn't exist yet - sha stays empty (new file) */
 
-  var body = {
-    message: 'Update ' + mapName + ' mind map',
+  /* Step 2: Encode content as base64 */
+  var jsonStr = JSON.stringify(mapData, null, 2);
+  var content = btoa(unescape(encodeURIComponent(jsonStr)));
+
+  /* Step 3: PUT with fresh SHA */
+  var putBody = {
+    message: 'Update ' + mapName + ' via Mind Map Editor',
     content: content
   };
-  if (sha) body.sha = sha;
+  if (sha) putBody.sha = sha;
 
-  var putResp = await fetch(url, {
+  var putResp = await fetch(apiUrl, {
     method: 'PUT',
-    headers: {
-      'Authorization': 'token ' + token,
-      'Accept': 'application/vnd.github.v3+json',
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(body)
+    headers: Object.assign({ 'Content-Type': 'application/json' }, authHeaders),
+    body: JSON.stringify(putBody)
   });
 
+  if (putResp.status === 401 || putResp.status === 403) {
+    localStorage.removeItem('gh_pat');
+    throw new Error('INVALID_TOKEN');
+  }
   if (!putResp.ok) {
-    var err = await putResp.json().catch(function() { return {}; });
-    throw new Error(err.message || 'HTTP ' + putResp.status);
+    var errData = await putResp.json().catch(function() { return {}; });
+    throw new Error(errData.message || 'HTTP ' + putResp.status);
   }
   return true;
 }
