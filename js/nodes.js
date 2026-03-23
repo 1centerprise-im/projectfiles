@@ -10,18 +10,18 @@
 
 /* --- Color palette: ci property in JSON maps to this array --- */
 var COLORS = [
-  { bg: '#ffffff', bd: '#c8c0b8', name: 'White'   },  // ci: 0
-  { bg: '#ddeeff', bd: '#3b6ea5', name: 'Blue'    },  // ci: 1
-  { bg: '#dff5e3', bd: '#27a85f', name: 'Green'   },  // ci: 2
-  { bg: '#fff8d4', bd: '#c8960a', name: 'Yellow'  },  // ci: 3
-  { bg: '#fde0de', bd: '#c0392b', name: 'Red'     },  // ci: 4
-  { bg: '#1a1a2e', bd: '#0f3460', name: 'Navy'    },  // ci: 5 (white text)
-  { bg: '#4a0e0e', bd: '#8b0000', name: 'DarkRed' },  // ci: 6 (white text)
+  { bg: '#fff8d4', bd: '#c8960a', name: 'Yellow'  },  // ci: 0
+  { bg: '#fde0de', bd: '#c0392b', name: 'Red'     },  // ci: 1
+  { bg: '#1a6b5a', bd: '#0f4f40', name: 'Teal'    },  // ci: 2 (white text)
+  { bg: '#5c3d2e', bd: '#3e2518', name: 'Brown'   },  // ci: 3 (white text)
+  { bg: '#1b5e20', bd: '#0a3d12', name: 'DkGreen' },  // ci: 4 (white text)
+  { bg: '#4a0e0e', bd: '#8b0000', name: 'Maroon'  },  // ci: 5 (white text)
+  { bg: '#1a1a2e', bd: '#0f3460', name: 'Navy'    },  // ci: 6 (white text)
   { bg: '#2a2520', bd: '#2a2520', name: 'Dark'    }   // ci: 7 (white text)
 ];
 
 /* --- Determine if a color index is "dark" (needs white text, full fill) --- */
-function isDarkColor(ci) { return ci >= 5; }
+function isDarkColor(ci) { return ci >= 2; }
 
 /* --- Create a DOM element for a node --- */
 /* Card style: top color bar for light nodes, full fill for dark nodes */

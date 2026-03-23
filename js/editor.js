@@ -264,7 +264,46 @@ function addChild(parent, isNote) {
   mapData.edges.push(createEdgeData(eid, parent.id, id));
   fullRender(); pushUndo(); autoSave();
 }
-function toggleCollapse(node) { node.collapsed = !node.collapsed; fullRender(); autoSave(); }
+function toggleCollapse(node) {
+  node.collapsed = !node.collapsed;
+  if (!node.collapsed) pushNeighborsAway(node);
+  fullRender(); pushUndo(); autoSave();
+}
+
+/* Push-layout: when expanding, move overlapping nodes away */
+function pushNeighborsAway(expandedNode) {
+  var descendants = getDescendants(expandedNode.id, mapData.edges);
+  if (!descendants.length) return;
+  /* Calculate bounding box of the expanded subtree */
+  var minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+  descendants.forEach(function(id) {
+    var n = mapData.nodes.find(function(nd) { return nd.id === id; });
+    if (!n) return;
+    var w = n.w > 0 ? n.w : 140, h = n.h > 0 ? n.h : 40;
+    if (n.x < minX) minX = n.x;
+    if (n.y < minY) minY = n.y;
+    if (n.x + w > maxX) maxX = n.x + w;
+    if (n.y + h > maxY) maxY = n.y + h;
+  });
+  var PAD = 30;
+  var subtreeSet = new Set(descendants);
+  subtreeSet.add(expandedNode.id);
+  /* Push non-subtree nodes that overlap */
+  mapData.nodes.forEach(function(n) {
+    if (subtreeSet.has(n.id)) return;
+    var nw = n.w > 0 ? n.w : 140, nh = n.h > 0 ? n.h : 40;
+    var overlapsX = n.x + nw > minX - PAD && n.x < maxX + PAD;
+    var overlapsY = n.y + nh > minY - PAD && n.y < maxY + PAD;
+    if (overlapsX && overlapsY) {
+      /* Push down if node is below the expanded node, else push right */
+      if (n.y > expandedNode.y) {
+        n.y = maxY + PAD;
+      } else if (n.x > expandedNode.x) {
+        n.x = maxX + PAD;
+      }
+    }
+  });
+}
 function doAutoLayout() { pushUndo(); autoLayout(mapData.nodes, mapData.edges); fullRender(); fitView(); autoSave(); }
 async function doSave() {
   if (!folder || !mapName) { showToast('No map loaded', true); return; }

@@ -53,35 +53,33 @@ function renderAllEdges(svg, edges, nodes, nodeEls, defaultThick, defaultColor) 
   });
 }
 
-/* --- Build a cubic bezier SVG path between two points --- */
-/* Control points are offset horizontally for a smooth S-curve */
+/* --- Build a right-angle (orthogonal) SVG path between two points --- */
 function makeBezierPath(from, to, thickness, color, edgeId) {
   var path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-  path.setAttribute('d', bezierD(from, to));
+  path.setAttribute('d', orthoD(from, to));
   path.setAttribute('stroke', color);
   path.setAttribute('stroke-width', thickness);
   path.setAttribute('fill', 'none');
-  path.setAttribute('stroke-linecap', 'round');
+  path.setAttribute('stroke-linejoin', 'round');
   path.setAttribute('class', 'edge-path');
   path.dataset.edgeId = edgeId;
   return path;
 }
 
-/* --- Build the "d" attribute string for a cubic bezier --- */
-function bezierD(from, to) {
-  var dx = Math.abs(to.x - from.x);
-  /* Control point offset: at least 40px, proportional to distance */
-  var off = Math.max(40, dx * 0.4);
+/* --- Build the "d" attribute for an orthogonal (right-angle) path --- */
+/* Goes horizontal to midpoint X, then vertical, then horizontal to target */
+function orthoD(from, to) {
+  var midX = (from.x + to.x) / 2;
   return 'M ' + from.x + ' ' + from.y +
-    ' C ' + (from.x + off) + ' ' + from.y +
-    ', ' + (to.x - off) + ' ' + to.y +
-    ', ' + to.x + ' ' + to.y;
+    ' L ' + midX + ' ' + from.y +
+    ' L ' + midX + ' ' + to.y +
+    ' L ' + to.x + ' ' + to.y;
 }
 
 /* --- Invisible wider path for click detection on edges --- */
 function makeHitArea(from, to, edgeId) {
   var hit = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-  hit.setAttribute('d', bezierD(from, to));
+  hit.setAttribute('d', orthoD(from, to));
   hit.setAttribute('stroke', 'transparent');
   hit.setAttribute('stroke-width', '14');
   hit.setAttribute('fill', 'none');

@@ -410,7 +410,7 @@ button { font-family: 'Nunito Sans', sans-serif; cursor: pointer; border: none; 
   pointer-events: none;
 }
 #edge-svg .edge-hit { pointer-events: stroke; }
-#edge-svg .edge-path { stroke-linecap: round; }
+#edge-svg .edge-path { stroke-linecap: square; stroke-linejoin: round; }
 #edge-svg .edge-path.selected { stroke: var(--red) !important; }
 #edge-svg .edge-label { font-family: 'Nunito Sans', sans-serif; font-size: 11px; fill: var(--text); pointer-events: none; }
 
@@ -419,17 +419,17 @@ button { font-family: 'Nunito Sans', sans-serif; cursor: pointer; border: none; 
   position: absolute;
   z-index: 2;
   min-width: 80px; min-height: 36px;
-  padding: 12px 14px 8px;
+  padding: 8px 12px;
   border-radius: 8px;
   background: #fff;
-  border: 1px solid #e5e7eb;
+  border: 0.5px solid #e8e8e8;
   cursor: grab;
   user-select: none;
   font-family: 'Nunito', sans-serif;
   font-size: 13px; line-height: 1.4;
   display: flex; align-items: center; justify-content: flex-start;
   word-wrap: break-word;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
   transition: box-shadow 0.15s;
   overflow: visible;
 }
@@ -437,13 +437,14 @@ button { font-family: 'Nunito Sans', sans-serif; cursor: pointer; border: none; 
 .node-color-bar {
   position: absolute;
   top: 0; left: 0; right: 0;
-  height: 6px;
+  height: 5px;
   border-radius: 8px 8px 0 0;
   pointer-events: none;
 }
-.mm-node:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.12); }
-.mm-node.selected { box-shadow: 0 0 0 2px var(--accent), 0 4px 16px rgba(59,110,165,0.2); }
-.mm-node.multi-selected { box-shadow: 0 0 0 2px var(--green), 0 4px 16px rgba(39,168,95,0.2); }
+.mm-node:has(.node-color-bar) { padding-top: 12px; }
+.mm-node:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+.mm-node.selected { box-shadow: 0 0 0 2px var(--accent), 0 2px 8px rgba(59,110,165,0.15); }
+.mm-node.multi-selected { box-shadow: 0 0 0 2px var(--green), 0 2px 8px rgba(39,168,95,0.15); }
 .mm-node.node-dark { border-color: transparent; }
 .mm-node.note { border-style: dashed; opacity: 0.85; font-style: italic; font-size: 12px; }
 .mm-node.shape-square { border-radius: 0; }

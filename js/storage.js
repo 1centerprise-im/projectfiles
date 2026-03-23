@@ -84,17 +84,18 @@ async function saveToGitHub(folder, mapName, mapData) {
   var url = 'https://api.github.com/repos/' + GH_OWNER + '/' + GH_REPO + '/contents/' + path;
   var content = btoa(unescape(encodeURIComponent(JSON.stringify(mapData, null, 2))));
 
-  /* Get current file SHA (needed for updates) */
+  /* Always fetch fresh SHA right before PUT to avoid mismatch */
   var sha = '';
   try {
-    var getResp = await fetch(url, {
-      headers: { 'Authorization': 'token ' + token, 'Accept': 'application/vnd.github.v3+json' }
+    var getResp = await fetch(url + '?t=' + Date.now(), {
+      headers: { 'Authorization': 'token ' + token, 'Accept': 'application/vnd.github.v3+json', 'If-None-Match': '' },
+      cache: 'no-store'
     });
     if (getResp.ok) {
       var existing = await getResp.json();
       sha = existing.sha;
     }
-  } catch (e) { /* file may not exist yet, that's ok */ }
+  } catch (e) { /* file may not exist yet */ }
 
   var body = {
     message: 'Update ' + mapName + ' mind map',
@@ -130,13 +131,11 @@ async function saveIndexToGitHub(indexData) {
 
   var sha = '';
   try {
-    var getResp = await fetch(url, {
-      headers: { 'Authorization': 'token ' + token, 'Accept': 'application/vnd.github.v3+json' }
+    var getResp = await fetch(url + '?t=' + Date.now(), {
+      headers: { 'Authorization': 'token ' + token, 'Accept': 'application/vnd.github.v3+json', 'If-None-Match': '' },
+      cache: 'no-store'
     });
-    if (getResp.ok) {
-      var existing = await getResp.json();
-      sha = existing.sha;
-    }
+    if (getResp.ok) { sha = (await getResp.json()).sha; }
   } catch (e) {}
 
   var body = { message: 'Update project index', content: content };

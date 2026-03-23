@@ -206,7 +206,6 @@ function setupToolbar() {
     window.location.href = 'projects.html';
   });
   document.getElementById('btnAddNode').addEventListener('click', addNodeAtCenter);
-  document.getElementById('btnAutoLayout').addEventListener('click', doAutoLayout);
   document.getElementById('btnSave').addEventListener('click', doSave);
   document.querySelectorAll('.color-swatch').forEach(function(sw) {
     sw.addEventListener('click', function() { recolorSelected(parseInt(sw.dataset.ci)); });
