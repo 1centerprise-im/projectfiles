@@ -10,70 +10,86 @@
 
 /* --- Color palette: ci property in JSON maps to this array --- */
 var COLORS = [
-  { bg: '#ffffff', bd: '#c8c0b8', name: 'White'  },  // ci: 0
-  { bg: '#ddeeff', bd: '#3b6ea5', name: 'Blue'   },  // ci: 1
-  { bg: '#dff5e3', bd: '#27a85f', name: 'Green'  },  // ci: 2
-  { bg: '#fff8d4', bd: '#c8960a', name: 'Yellow' },  // ci: 3
-  { bg: '#fde8d0', bd: '#e07b3a', name: 'Orange' },  // ci: 4
-  { bg: '#fde0de', bd: '#c0392b', name: 'Red'    },  // ci: 5
-  { bg: '#ede0ff', bd: '#7b52ab', name: 'Purple' },  // ci: 6
-  { bg: '#2a2520', bd: '#2a2520', name: 'Dark'   },  // ci: 7 (white text)
-  { bg: '#1a2744', bd: '#1a2744', name: 'Navy'   },  // ci: 8 (white text)
-  { bg: '#7a1a1a', bd: '#7a1a1a', name: 'DarkRed'}   // ci: 9 (white text)
+  { bg: '#ffffff', bd: '#c8c0b8', name: 'White'   },  // ci: 0
+  { bg: '#ddeeff', bd: '#3b6ea5', name: 'Blue'    },  // ci: 1
+  { bg: '#dff5e3', bd: '#27a85f', name: 'Green'   },  // ci: 2
+  { bg: '#fff8d4', bd: '#c8960a', name: 'Yellow'  },  // ci: 3
+  { bg: '#fde0de', bd: '#c0392b', name: 'Red'     },  // ci: 4
+  { bg: '#1a1a2e', bd: '#0f3460', name: 'Navy'    },  // ci: 5 (white text)
+  { bg: '#4a0e0e', bd: '#8b0000', name: 'DarkRed' },  // ci: 6 (white text)
+  { bg: '#2a2520', bd: '#2a2520', name: 'Dark'    }   // ci: 7 (white text)
 ];
 
+/* --- Determine if a color index is "dark" (needs white text, full fill) --- */
+function isDarkColor(ci) { return ci >= 5; }
+
 /* --- Create a DOM element for a node --- */
-/* Reads all properties from the node data object and builds a styled div */
+/* Card style: top color bar for light nodes, full fill for dark nodes */
 function renderNodeElement(node) {
   var el = document.createElement('div');
   el.className = 'mm-node';
   el.dataset.id = node.id;
 
-  /* Shape class: default is "rounded" (border-radius via CSS) */
+  /* Shape class */
   if (node.shape === 'square')  el.classList.add('shape-square');
   if (node.shape === 'circle')  el.classList.add('shape-circle');
   if (node.shape === 'diamond') el.classList.add('shape-diamond');
-  /* Note nodes get dashed border + italic style */
   if (node.isNote) el.classList.add('note');
 
-  /* Apply color from the COLORS palette using ci index */
   var ci = (typeof node.ci === 'number') ? node.ci : 0;
   var color = COLORS[ci] || COLORS[0];
-  el.style.background = color.bg;
-  el.style.borderColor = node.borderColor || color.bd;
-  el.style.borderWidth = (node.borderWidth || 2) + 'px';
-  /* ci=7 (Dark) needs white text; otherwise use node's textColor or default */
-  el.style.color = (ci >= 7) ? '#ffffff' : (node.textColor || '#2a2520');
+  var dark = isDarkColor(ci);
 
-  /* Font properties */
+  if (dark) {
+    /* Dark nodes: full color fill, no top bar */
+    el.classList.add('node-dark');
+    el.style.background = color.bg;
+    el.style.borderColor = color.bd;
+    el.style.color = '#ffffff';
+  } else {
+    /* Light nodes: white body with colored top bar */
+    el.style.background = '#ffffff';
+    el.style.borderColor = node.borderColor || '#e5e7eb';
+    el.style.color = node.textColor || '#2a2520';
+    el.dataset.barColor = color.bd;
+  }
+  el.style.borderWidth = '1px';
+
+  /* Font */
   el.style.fontSize = (node.fontSize || 13) + 'px';
   el.style.fontFamily = node.fontFamily || 'Nunito';
   el.style.fontWeight = node.bold ? '700' : '400';
   el.style.fontStyle = node.italic ? 'italic' : 'normal';
   el.style.textAlign = node.textAlign || 'left';
-  /* Flexbox alignment to match text-align */
   if (node.textAlign === 'center') el.style.justifyContent = 'center';
   else if (node.textAlign === 'right') el.style.justifyContent = 'flex-end';
 
-  /* Position: absolute within the canvas div */
+  /* Position */
   el.style.left = node.x + 'px';
   el.style.top = node.y + 'px';
-  /* Only set explicit size if w/h > 0; otherwise let CSS min-width handle it */
   if (node.w > 0) el.style.width = node.w + 'px';
   if (node.h > 0) el.style.height = node.h + 'px';
 
-  /* Text label */
+  /* Color top bar (for light nodes only) */
+  if (!dark) {
+    var bar = document.createElement('div');
+    bar.className = 'node-color-bar';
+    bar.style.background = color.bd;
+    el.appendChild(bar);
+  }
+
+  /* Text */
   var textSpan = document.createElement('span');
   textSpan.className = 'node-text';
   textSpan.textContent = node.text || '';
   el.appendChild(textSpan);
 
-  /* Google Drive link icon (only if node.link has a URL) */
+  /* Google Drive link icon */
   if (node.link) {
-    el.appendChild(makeLinkIcon(node.link, color.bd));
+    el.appendChild(makeLinkIcon(node.link, dark ? '#ffffff' : color.bd));
   }
 
-  /* Action buttons (visible when node is selected) */
+  /* Action buttons */
   var actions = document.createElement('div');
   actions.className = 'node-actions';
   actions.innerHTML =
@@ -109,10 +125,20 @@ function makeLinkIcon(url, borderColor) {
 function updateNodeElement(el, node) {
   var ci = (typeof node.ci === 'number') ? node.ci : 0;
   var color = COLORS[ci] || COLORS[0];
-  el.style.background = color.bg;
-  el.style.borderColor = node.borderColor || color.bd;
-  el.style.borderWidth = (node.borderWidth || 2) + 'px';
-  el.style.color = (ci >= 7) ? '#ffffff' : (node.textColor || '#2a2520');
+  var dark = isDarkColor(ci);
+
+  el.classList.toggle('node-dark', dark);
+  if (dark) {
+    el.style.background = color.bg;
+    el.style.borderColor = color.bd;
+    el.style.color = '#ffffff';
+  } else {
+    el.style.background = '#ffffff';
+    el.style.borderColor = node.borderColor || '#e5e7eb';
+    el.style.color = node.textColor || '#2a2520';
+    el.dataset.barColor = color.bd;
+  }
+  el.style.borderWidth = '1px';
   el.style.fontSize = (node.fontSize || 13) + 'px';
   el.style.fontFamily = node.fontFamily || 'Nunito';
   el.style.fontWeight = node.bold ? '700' : '400';
@@ -125,11 +151,19 @@ function updateNodeElement(el, node) {
   el.style.top = node.y + 'px';
   el.style.width = node.w > 0 ? node.w + 'px' : '';
   el.style.height = node.h > 0 ? node.h + 'px' : '';
-  /* Update shape classes */
   el.classList.remove('shape-square', 'shape-circle', 'shape-diamond');
   if (node.shape === 'square')  el.classList.add('shape-square');
   if (node.shape === 'circle')  el.classList.add('shape-circle');
   if (node.shape === 'diamond') el.classList.add('shape-diamond');
+  /* Update color bar */
+  var bar = el.querySelector('.node-color-bar');
+  if (dark && bar) bar.remove();
+  if (!dark && !bar) {
+    bar = document.createElement('div');
+    bar.className = 'node-color-bar';
+    el.insertBefore(bar, el.firstChild);
+  }
+  if (!dark && bar) bar.style.background = color.bd;
   /* Update text */
   var ts = el.querySelector('.node-text');
   if (ts) ts.textContent = node.text || '';
@@ -137,7 +171,7 @@ function updateNodeElement(el, node) {
   var oldIcon = el.querySelector('.node-link-icon');
   if (oldIcon) oldIcon.remove();
   if (node.link) {
-    el.insertBefore(makeLinkIcon(node.link, color.bd), el.querySelector('.node-actions'));
+    el.insertBefore(makeLinkIcon(node.link, dark ? '#ffffff' : color.bd), el.querySelector('.node-actions'));
   }
 }
 

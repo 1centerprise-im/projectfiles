@@ -265,8 +265,62 @@ function addChild(parent, isNote) {
   fullRender(); pushUndo(); autoSave();
 }
 function toggleCollapse(node) { node.collapsed = !node.collapsed; fullRender(); autoSave(); }
-function doAutoLayout() { pushUndo(); autoLayout(mapData.nodes, mapData.edges); fullRender(); autoSave(); }
-function doSave() { downloadMap(mapData, mapName || 'mindmap'); }
+function doAutoLayout() { pushUndo(); autoLayout(mapData.nodes, mapData.edges); fullRender(); fitView(); autoSave(); }
+async function doSave() {
+  if (!folder || !mapName) { showToast('No map loaded', true); return; }
+  var token = getGitHubToken();
+  if (!token) {
+    showTokenModal(function() { doSave(); });
+    return;
+  }
+  try {
+    showToast('Saving...', false);
+    await saveToGitHub(folder, mapName, mapData);
+    showToast('Saved to GitHub');
+  } catch (err) {
+    if (err.message === 'NO_TOKEN') { showTokenModal(function() { doSave(); }); return; }
+    showToast('Save failed: ' + err.message, true);
+  }
+}
+
+function showToast(msg, isError) {
+  var old = document.getElementById('toast');
+  if (old) old.remove();
+  var t = document.createElement('div');
+  t.id = 'toast';
+  t.className = 'toast' + (isError ? ' toast-error' : '');
+  t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(function() { t.classList.add('visible'); }, 10);
+  if (msg !== 'Saving...') setTimeout(function() { t.classList.remove('visible'); setTimeout(function() { t.remove(); }, 300); }, 3000);
+}
+
+function showTokenModal(onDone) {
+  var old = document.getElementById('tokenModal');
+  if (old) old.remove();
+  var m = document.createElement('div');
+  m.id = 'tokenModal';
+  m.className = 'token-modal-overlay';
+  m.innerHTML =
+    '<div class="token-modal">' +
+    '<h3>GitHub Access Token</h3>' +
+    '<p>Enter your Personal Access Token to save directly to GitHub.</p>' +
+    '<input type="password" id="tokenInput" placeholder="ghp_..." class="token-input">' +
+    '<div class="token-actions">' +
+    '<button class="tb-btn" id="tokenCancel">Cancel</button>' +
+    '<button class="tb-btn primary" id="tokenSave">Save Token</button>' +
+    '</div></div>';
+  document.body.appendChild(m);
+  document.getElementById('tokenCancel').onclick = function() { m.remove(); };
+  document.getElementById('tokenSave').onclick = function() {
+    var val = document.getElementById('tokenInput').value.trim();
+    if (val) { setGitHubToken(val); m.remove(); if (onDone) onDone(); }
+  };
+  document.getElementById('tokenInput').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') document.getElementById('tokenSave').click();
+  });
+  setTimeout(function() { document.getElementById('tokenInput').focus(); }, 50);
+}
 function autoSave() { if (folder && mapName) saveToLocal(folder, mapName, mapData); }
 
 /* --- Fit view: zoom and pan to show all nodes centered --- */

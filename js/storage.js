@@ -63,6 +63,102 @@ function downloadMap(mapData, filename) {
   URL.revokeObjectURL(url);
 }
 
+/* --- GitHub API: save JSON file to repo --- */
+var GH_OWNER = '1centerprise-im';
+var GH_REPO = 'projectfiles';
+
+function getGitHubToken() {
+  return localStorage.getItem('gh_pat') || '';
+}
+
+function setGitHubToken(token) {
+  localStorage.setItem('gh_pat', token);
+}
+
+/* Save map JSON to GitHub via PUT contents API */
+async function saveToGitHub(folder, mapName, mapData) {
+  var token = getGitHubToken();
+  if (!token) throw new Error('NO_TOKEN');
+
+  var path = 'maps/' + folder + '/' + mapName + '.json';
+  var url = 'https://api.github.com/repos/' + GH_OWNER + '/' + GH_REPO + '/contents/' + path;
+  var content = btoa(unescape(encodeURIComponent(JSON.stringify(mapData, null, 2))));
+
+  /* Get current file SHA (needed for updates) */
+  var sha = '';
+  try {
+    var getResp = await fetch(url, {
+      headers: { 'Authorization': 'token ' + token, 'Accept': 'application/vnd.github.v3+json' }
+    });
+    if (getResp.ok) {
+      var existing = await getResp.json();
+      sha = existing.sha;
+    }
+  } catch (e) { /* file may not exist yet, that's ok */ }
+
+  var body = {
+    message: 'Update ' + mapName + ' mind map',
+    content: content
+  };
+  if (sha) body.sha = sha;
+
+  var putResp = await fetch(url, {
+    method: 'PUT',
+    headers: {
+      'Authorization': 'token ' + token,
+      'Accept': 'application/vnd.github.v3+json',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(body)
+  });
+
+  if (!putResp.ok) {
+    var err = await putResp.json().catch(function() { return {}; });
+    throw new Error(err.message || 'HTTP ' + putResp.status);
+  }
+  return true;
+}
+
+/* Save index.json to GitHub */
+async function saveIndexToGitHub(indexData) {
+  var token = getGitHubToken();
+  if (!token) throw new Error('NO_TOKEN');
+
+  var path = 'maps/index.json';
+  var url = 'https://api.github.com/repos/' + GH_OWNER + '/' + GH_REPO + '/contents/' + path;
+  var content = btoa(unescape(encodeURIComponent(JSON.stringify(indexData, null, 2) + '\n')));
+
+  var sha = '';
+  try {
+    var getResp = await fetch(url, {
+      headers: { 'Authorization': 'token ' + token, 'Accept': 'application/vnd.github.v3+json' }
+    });
+    if (getResp.ok) {
+      var existing = await getResp.json();
+      sha = existing.sha;
+    }
+  } catch (e) {}
+
+  var body = { message: 'Update project index', content: content };
+  if (sha) body.sha = sha;
+
+  var putResp = await fetch(url, {
+    method: 'PUT',
+    headers: {
+      'Authorization': 'token ' + token,
+      'Accept': 'application/vnd.github.v3+json',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(body)
+  });
+
+  if (!putResp.ok) {
+    var err = await putResp.json().catch(function() { return {}; });
+    throw new Error(err.message || 'HTTP ' + putResp.status);
+  }
+  return true;
+}
+
 /* --- localStorage helpers for auto-backup --- */
 
 /* Key format: mindmap_backup_{folder}_{mapName} */
