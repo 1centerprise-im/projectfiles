@@ -1,8 +1,51 @@
 {
   "title": "073 CIP Invest Committee",
-  "nodes": [],
+  "nodes": [
+    {
+      "id": "n7",
+      "x": 567.9000244140625,
+      "y": 278.5,
+      "w": 0,
+      "h": 0,
+      "text": "New Node",
+      "ci": 0,
+      "link": "",
+      "collapsed": false,
+      "isNote": false,
+      "fontSize": 13,
+      "fontFamily": "Nunito",
+      "textColor": "",
+      "bold": false,
+      "italic": false,
+      "textAlign": "left",
+      "shape": "rounded",
+      "borderColor": "",
+      "borderWidth": 0
+    },
+    {
+      "id": "n8",
+      "x": 749.9000244140625,
+      "y": 235.5,
+      "w": 0,
+      "h": 0,
+      "text": "New Node",
+      "ci": 0,
+      "link": "",
+      "collapsed": false,
+      "isNote": false,
+      "fontSize": 13,
+      "fontFamily": "Nunito",
+      "textColor": "",
+      "bold": false,
+      "italic": false,
+      "textAlign": "left",
+      "shape": "rounded",
+      "borderColor": "",
+      "borderWidth": 0
+    }
+  ],
   "edges": [],
-  "nid": 7,
+  "nid": 9,
   "edgeThickness": 2,
   "edgeColor": "#b8b0a6"
 }
