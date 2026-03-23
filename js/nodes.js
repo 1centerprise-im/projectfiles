@@ -92,7 +92,7 @@ function makeLinkIcon(url) {
   var icon = document.createElement('div');
   icon.className = 'node-link-icon';
   icon.title = 'Open in Google Drive';
-  icon.innerHTML = '<svg viewBox="0 0 87.3 78" xmlns="http://www.w3.org/2000/svg">' +
+  icon.innerHTML = '<svg viewBox="0 0 87.3 78" width="20" height="20" xmlns="http://www.w3.org/2000/svg">' +
     '<path d="M6.6 66.85L14.2 78h58.9l7.6-11.15z" fill="#0066da"/>' +
     '<path d="M29.15 0L0 50.55l14.2 11.15L58.3 0z" fill="#00ac47"/>' +
     '<path d="M58.3 0L29.15 50.55h58.15L80.7 0z" fill="#ea4335"/>' +

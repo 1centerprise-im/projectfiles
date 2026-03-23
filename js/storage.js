@@ -1,190 +1,176 @@
 /* ============================================================
-   STORAGE.JS - Load/save mind map JSON files
-   - fetchMap(): loads JSON from maps/ folder via HTTP fetch
-   - downloadMap(): triggers browser download of JSON
-   - localStorage helpers: backup/restore between sessions
+   STORAGE.JS - Clean GitHub API storage system
+   All GitHub operations go through githubGet/githubPut.
+   CRITICAL: Always fetch fresh SHA before every PUT.
    ============================================================ */
 
-/* --- Default blank map (used when creating new maps) --- */
-function createEmptyMap(title) {
-  return {
-    title: title || 'Untitled Map',
-    nodes: [{
-      id: 'n1', x: 400, y: 300, w: 0, h: 0,
-      text: title || 'Central Topic', ci: 1, link: '',
-      collapsed: false, isNote: false, fontSize: 16,
-      fontFamily: 'Nunito', textColor: '#2a2520',
-      bold: true, italic: false, textAlign: 'center',
-      shape: 'rounded', borderColor: '', borderWidth: 0
-    }],
-    edges: [],
-    nid: 2,
-    edgeThickness: 2,
-    edgeColor: '#b8b0a6'
-  };
+/* --- Config --- */
+var GH_OWNER = '1centerprise-im';
+var GH_REPO = 'projectfiles';
+var GH_API = 'https://api.github.com/repos/' + GH_OWNER + '/' + GH_REPO + '/contents/';
+
+/* --- Get or prompt for GitHub token --- */
+function getToken() {
+  var token = localStorage.getItem('gh_token');
+  if (!token) {
+    token = prompt('Enter your GitHub Personal Access Token:');
+    if (token) localStorage.setItem('gh_token', token.trim());
+  }
+  return token || '';
 }
 
-/* --- Fetch a map JSON file from the server --- */
-/* Path: maps/{folder}/{mapName}.json */
-/* Returns parsed JS object on success, null on failure */
-async function fetchMap(folder, mapName) {
-  const url = 'maps/' + folder + '/' + mapName + '.json';
+/* --- GitHub GET: fetch file metadata + content from API --- */
+/* Returns { sha, content, ... } or null on 404 */
+async function githubGet(path) {
+  var token = getToken();
+  if (!token) throw new Error('NO_TOKEN');
+  var resp = await fetch(GH_API + path, {
+    headers: { 'Authorization': 'token ' + token, 'Accept': 'application/vnd.github.v3+json' },
+    cache: 'no-store'
+  });
+  /* Bad token: clear and alert */
+  if (resp.status === 401 || resp.status === 403) {
+    localStorage.removeItem('gh_token');
+    alert('Invalid token - please reload and try again');
+    throw new Error('INVALID_TOKEN');
+  }
+  /* File not found = new file */
+  if (resp.status === 404) return null;
+  if (!resp.ok) throw new Error('GitHub GET failed: HTTP ' + resp.status);
+  return await resp.json();
+}
+
+/* --- GitHub PUT: create or update a file --- */
+/* Always fetches fresh SHA first. Handles new files (no sha). */
+async function githubPut(path, content, message) {
+  var token = getToken();
+  if (!token) throw new Error('NO_TOKEN');
+
+  /* Step 1: GET fresh SHA */
+  var existing = await githubGet(path);
+  var sha = existing ? existing.sha : null;
+
+  /* Step 2: Encode content as base64 */
+  var b64 = btoa(unescape(encodeURIComponent(content)));
+
+  /* Step 3: PUT with fresh SHA */
+  var body = { message: message, content: b64 };
+  if (sha) body.sha = sha;
+
+  var resp = await fetch(GH_API + path, {
+    method: 'PUT',
+    headers: {
+      'Authorization': 'token ' + token,
+      'Accept': 'application/vnd.github.v3+json',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(body)
+  });
+
+  if (resp.status === 401 || resp.status === 403) {
+    localStorage.removeItem('gh_token');
+    alert('Invalid token - please reload and try again');
+    throw new Error('INVALID_TOKEN');
+  }
+  if (!resp.ok) {
+    var err = await resp.json().catch(function() { return {}; });
+    throw new Error(err.message || 'HTTP ' + resp.status);
+  }
+  return await resp.json();
+}
+
+/* --- Decode base64 content from GitHub API response --- */
+function decodeGHContent(b64) {
+  return decodeURIComponent(escape(atob(b64.replace(/\n/g, ''))));
+}
+
+/* --- Load map JSON from public server (not API) --- */
+async function loadMap(folder, mapName) {
+  var url = 'maps/' + folder + '/' + mapName + '.json';
   try {
-    const resp = await fetch(url);
+    var resp = await fetch(url);
     if (!resp.ok) throw new Error('HTTP ' + resp.status);
-    const data = await resp.json();
-    /* Ensure required top-level fields exist with defaults */
+    var data = await resp.json();
     if (!data.nodes) data.nodes = [];
     if (!data.edges) data.edges = [];
     if (!data.nid) data.nid = data.nodes.length + 1;
     if (!data.edgeThickness) data.edgeThickness = 2;
-    if (!data.edgeColor) data.edgeColor = '#b8b0a6';
-    console.log('[storage] Loaded', url, ':', data.nodes.length, 'nodes,', data.edges.length, 'edges');
+    if (!data.edgeColor) data.edgeColor = '#c8c0b8';
+    console.log('[storage] Loaded ' + folder + '/' + mapName + ': ' + data.nodes.length + ' nodes, ' + data.edges.length + ' edges');
     return data;
   } catch (err) {
-    console.error('[storage] Failed to load', url, err);
+    console.error('[storage] Failed to load ' + url, err);
     return null;
   }
 }
 
-/* --- Download map as a .json file (browser save dialog) --- */
-function downloadMap(mapData, filename) {
-  /* Stringify with pretty formatting */
+/* --- Save map to GitHub --- */
+async function saveMap(folder, mapName, mapData) {
   var json = JSON.stringify(mapData, null, 2);
-  var blob = new Blob([json], { type: 'application/json' });
-  var url = URL.createObjectURL(blob);
-  /* Create invisible link and click it to trigger download */
-  var a = document.createElement('a');
-  a.href = url;
-  a.download = filename.endsWith('.json') ? filename : filename + '.json';
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
+  await githubPut('maps/' + folder + '/' + mapName + '.json', json, 'Update ' + mapName + ' via Mind Map Editor');
+  return true;
 }
 
-/* --- GitHub API: save JSON file to repo --- */
-var GH_OWNER = '1centerprise-im';
-var GH_REPO = 'projectfiles';
-
-function getGitHubToken() {
-  return localStorage.getItem('gh_pat') || '';
+/* --- Save index.json to GitHub --- */
+async function saveIndex(indexData) {
+  var json = JSON.stringify(indexData, null, 2);
+  await githubPut('maps/index.json', json, 'Update index via Mind Map Editor');
+  return true;
 }
 
-function setGitHubToken(token) {
-  localStorage.setItem('gh_pat', token);
-}
-
-/* Save map JSON to GitHub via PUT contents API.
-   CRITICAL: Always GET fresh SHA immediately before PUT. Never cache SHA. */
-async function saveToGitHub(folder, mapName, mapData) {
-  var token = getGitHubToken();
-  if (!token) throw new Error('NO_TOKEN');
-
-  var path = 'maps/' + folder + '/' + mapName + '.json';
-  var apiUrl = 'https://api.github.com/repos/' + GH_OWNER + '/' + GH_REPO + '/contents/' + path;
-  var authHeaders = { 'Authorization': 'token ' + token, 'Accept': 'application/vnd.github.v3+json' };
-
-  /* Step 1: GET the current file to get its fresh SHA */
-  var sha = '';
-  var getResp = await fetch(apiUrl, { headers: authHeaders, cache: 'no-store' });
-  if (getResp.status === 401 || getResp.status === 403) {
-    localStorage.removeItem('gh_pat');
-    throw new Error('INVALID_TOKEN');
-  }
-  if (getResp.ok) {
-    var fileData = await getResp.json();
-    sha = fileData.sha;
-  }
-  /* If 404, file doesn't exist yet - sha stays empty (new file) */
-
-  /* Step 2: Encode content as base64 */
-  var jsonStr = JSON.stringify(mapData, null, 2);
-  var content = btoa(unescape(encodeURIComponent(jsonStr)));
-
-  /* Step 3: PUT with fresh SHA */
-  var putBody = {
-    message: 'Update ' + mapName + ' via Mind Map Editor',
-    content: content
+/* --- Create a new map: saves map file + updates index.json --- */
+async function createNewMapOnGitHub(folderName, mapName, displayName, folderLabel) {
+  /* Step 1: Create empty map file */
+  var emptyMap = {
+    title: displayName,
+    nodes: [{ id: 'n1', x: 400, y: 300, w: 0, h: 0, text: displayName, ci: 0, link: '',
+      collapsed: false, isNote: false, fontSize: 16, fontFamily: 'Nunito',
+      textColor: '#2a2520', bold: true, italic: false, textAlign: 'center',
+      shape: 'rounded', borderColor: '', borderWidth: 0 }],
+    edges: [], nid: 2, edgeThickness: 1.5, edgeColor: '#c8c0b8'
   };
-  if (sha) putBody.sha = sha;
+  await githubPut('maps/' + folderName + '/' + mapName + '.json', JSON.stringify(emptyMap, null, 2), 'Create map ' + mapName);
 
-  var putResp = await fetch(apiUrl, {
-    method: 'PUT',
-    headers: Object.assign({ 'Content-Type': 'application/json' }, authHeaders),
-    body: JSON.stringify(putBody)
-  });
+  /* Step 2: Fetch fresh index.json from GitHub, modify, save back */
+  var idxFile = await githubGet('maps/index.json');
+  var idxData;
+  if (idxFile) {
+    idxData = JSON.parse(decodeGHContent(idxFile.content));
+  } else {
+    idxData = { folders: [] };
+  }
 
-  if (putResp.status === 401 || putResp.status === 403) {
-    localStorage.removeItem('gh_pat');
-    throw new Error('INVALID_TOKEN');
+  /* Find or create folder */
+  var folder = idxData.folders.find(function(f) { return f.name === folderName; });
+  if (!folder) {
+    folder = { name: folderName, label: folderLabel || folderName, maps: [] };
+    idxData.folders.push(folder);
   }
-  if (!putResp.ok) {
-    var errData = await putResp.json().catch(function() { return {}; });
-    throw new Error(errData.message || 'HTTP ' + putResp.status);
-  }
+
+  /* Add map entry */
+  folder.maps.push({ id: mapName, name: displayName, number: '', status: 'active' });
+
+  /* Save updated index */
+  await saveIndex(idxData);
   return true;
 }
 
-/* Save index.json to GitHub - always GET fresh SHA before PUT */
-async function saveIndexToGitHub(indexData) {
-  var token = getGitHubToken();
-  if (!token) throw new Error('NO_TOKEN');
-
-  var path = 'maps/index.json';
-  var apiUrl = 'https://api.github.com/repos/' + GH_OWNER + '/' + GH_REPO + '/contents/' + path;
-  var authHeaders = { 'Authorization': 'token ' + token, 'Accept': 'application/vnd.github.v3+json' };
-
-  /* Step 1: GET fresh SHA */
-  var sha = '';
-  var getResp = await fetch(apiUrl, { headers: authHeaders, cache: 'no-store' });
-  if (getResp.status === 401 || getResp.status === 403) {
-    localStorage.removeItem('gh_pat');
-    throw new Error('INVALID_TOKEN');
-  }
-  if (getResp.ok) { sha = (await getResp.json()).sha; }
-
-  /* Step 2: PUT with fresh SHA */
-  var content = btoa(unescape(encodeURIComponent(JSON.stringify(indexData, null, 2) + '\n')));
-  var body = { message: 'Update project index', content: content };
-  if (sha) body.sha = sha;
-
-  var putResp = await fetch(apiUrl, {
-    method: 'PUT',
-    headers: Object.assign({ 'Content-Type': 'application/json' }, authHeaders),
-    body: JSON.stringify(body)
-  });
-
-  if (putResp.status === 401 || putResp.status === 403) {
-    localStorage.removeItem('gh_pat');
-    throw new Error('INVALID_TOKEN');
-  }
-  if (!putResp.ok) {
-    var err = await putResp.json().catch(function() { return {}; });
-    throw new Error(err.message || 'HTTP ' + putResp.status);
-  }
-  return true;
+/* --- Default blank map (for editor when no file exists) --- */
+function createEmptyMap(title) {
+  return {
+    title: title || 'Untitled Map',
+    nodes: [{ id: 'n1', x: 400, y: 300, w: 0, h: 0, text: title || 'Central Topic',
+      ci: 0, link: '', collapsed: false, isNote: false, fontSize: 16,
+      fontFamily: 'Nunito', textColor: '#2a2520', bold: true, italic: false,
+      textAlign: 'center', shape: 'rounded', borderColor: '', borderWidth: 0 }],
+    edges: [], nid: 2, edgeThickness: 2, edgeColor: '#c8c0b8'
+  };
 }
 
-/* --- localStorage helpers for auto-backup --- */
-
-/* Key format: mindmap_backup_{folder}_{mapName} */
-function _storageKey(folder, mapName) {
-  return 'mindmap_backup_' + folder + '_' + mapName;
-}
-
-/* Save map data to localStorage */
+/* --- localStorage auto-backup --- */
 function saveToLocal(folder, mapName, mapData) {
   try {
-    localStorage.setItem(_storageKey(folder, mapName),
+    localStorage.setItem('mindmap_backup_' + folder + '_' + mapName,
       JSON.stringify({ data: mapData, savedAt: Date.now() }));
-  } catch (e) { console.warn('[storage] localStorage save failed', e); }
-}
-
-/* Load backup from localStorage. Returns {data, savedAt} or null */
-function loadFromLocal(folder, mapName) {
-  try {
-    var raw = localStorage.getItem(_storageKey(folder, mapName));
-    return raw ? JSON.parse(raw) : null;
-  } catch (e) { return null; }
+  } catch (e) { /* ignore */ }
 }

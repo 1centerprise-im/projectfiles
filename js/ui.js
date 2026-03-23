@@ -223,17 +223,12 @@ function showUnsavedModal() {
   document.getElementById('unsavedSave').onclick = async function() {
     try {
       showToast('Saving...', false);
-      await saveToGitHub(folder, mapName, mapData);
+      await saveMap(folder, mapName, mapData);
       hasUnsavedChanges = false;
       showToast('Saved to GitHub');
       window.location.href = 'projects.html';
     } catch (err) {
-      if (err.message === 'NO_TOKEN' || err.message === 'INVALID_TOKEN') {
-        m.remove();
-        showTokenModal(function() { document.getElementById('unsavedSave').click(); });
-      } else {
-        showToast('Save failed: ' + err.message, true);
-      }
+      showToast('Save failed: ' + err.message, true);
     }
   };
 }

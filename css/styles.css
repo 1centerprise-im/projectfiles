@@ -454,9 +454,10 @@ button { font-family: 'Nunito Sans', sans-serif; cursor: pointer; border: none; 
 .node-connect { position: absolute; top: 50%; right: -10px; transform: translateY(-50%); width: 16px; height: 16px; border-radius: 50%; background: #e07b3a; border: 2px solid #fff; cursor: crosshair; z-index: 10; box-shadow: var(--shadow); }
 .node-resize { position: absolute; bottom: -4px; right: -4px; width: 14px; height: 14px; cursor: nwse-resize; z-index: 10; opacity: 0.5; }
 .node-resize::after { content: ''; position: absolute; bottom: 2px; right: 2px; width: 8px; height: 8px; border-right: 2px solid var(--muted); border-bottom: 2px solid var(--muted); }
-.node-link-icon { position: absolute; top: 50%; right: 6px; transform: translateY(-50%); width: 24px; height: 24px; cursor: pointer; opacity: 0.7; z-index: 5; }
+.node-link-icon { position: absolute; top: 50%; right: 8px; transform: translateY(-50%); width: 20px; height: 20px; cursor: pointer; opacity: 0.8; z-index: 5; }
+.node-link-icon svg { width: 20px; height: 20px; display: block; }
 .node-link-icon:hover { opacity: 1; }
-.mm-node:has(.node-link-icon) { padding-right: 34px; }
+.mm-node:has(.node-link-icon) { padding-right: 32px; }
 
 /* Rubber band selection */
 .rubber-band { position: absolute; border: 1.5px dashed var(--accent); background: rgba(59,110,165,0.08); pointer-events: none; z-index: 50; }
