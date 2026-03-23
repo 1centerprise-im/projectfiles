@@ -3,8 +3,8 @@
   "nodes": [
     {
       "id": "n7",
-      "x": 567.9000244140625,
-      "y": 278.5,
+      "x": 407.9000244140625,
+      "y": 214.5,
       "w": 0,
       "h": 0,
       "text": "New Node",
@@ -24,29 +24,8 @@
     },
     {
       "id": "n8",
-      "x": 725.9000244140625,
-      "y": 210.5,
-      "w": 0,
-      "h": 0,
-      "text": "New Node",
-      "ci": 0,
-      "link": "",
-      "collapsed": false,
-      "isNote": false,
-      "fontSize": 13,
-      "fontFamily": "Nunito",
-      "textColor": "",
-      "bold": false,
-      "italic": false,
-      "textAlign": "left",
-      "shape": "rounded",
-      "borderColor": "",
-      "borderWidth": 0
-    },
-    {
-      "id": "n9",
-      "x": 481.9000244140625,
-      "y": 132.20001220703125,
+      "x": 636.9000244140625,
+      "y": 165.20001220703125,
       "w": 0,
       "h": 0,
       "text": "New Node",
@@ -66,7 +45,7 @@
     }
   ],
   "edges": [],
-  "nid": 10,
+  "nid": 9,
   "edgeThickness": 2,
   "edgeColor": "#b8b0a6"
 }
