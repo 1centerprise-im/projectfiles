@@ -2,27 +2,6 @@
   "title": "test 01",
   "nodes": [
     {
-      "id": "n1",
-      "x": 330,
-      "y": 248,
-      "w": 0,
-      "h": 0,
-      "text": "test 01",
-      "ci": 0,
-      "link": "",
-      "collapsed": false,
-      "isNote": false,
-      "fontSize": 16,
-      "fontFamily": "Nunito",
-      "textColor": "#2a2520",
-      "bold": true,
-      "italic": false,
-      "textAlign": "center",
-      "shape": "rounded",
-      "borderColor": "",
-      "borderWidth": 0
-    },
-    {
       "id": "n2",
       "x": 507.5,
       "y": 249.70001220703125,
@@ -126,6 +105,48 @@
       "shape": "rounded",
       "borderColor": "",
       "borderWidth": 0
+    },
+    {
+      "id": "n11",
+      "x": 131,
+      "y": 175.35000610351562,
+      "w": 0,
+      "h": 0,
+      "text": "New Node",
+      "ci": 0,
+      "link": "",
+      "collapsed": false,
+      "isNote": false,
+      "fontSize": 13,
+      "fontFamily": "Nunito",
+      "textColor": "",
+      "bold": false,
+      "italic": false,
+      "textAlign": "left",
+      "shape": "rounded",
+      "borderColor": "",
+      "borderWidth": 0
+    },
+    {
+      "id": "n12",
+      "x": 477,
+      "y": 248,
+      "w": 0,
+      "h": 0,
+      "text": "New Node",
+      "ci": 0,
+      "link": "",
+      "collapsed": false,
+      "isNote": false,
+      "fontSize": 13,
+      "fontFamily": "Nunito",
+      "textColor": "",
+      "bold": false,
+      "italic": false,
+      "textAlign": "left",
+      "shape": "rounded",
+      "borderColor": "",
+      "borderWidth": 0
     }
   ],
   "edges": [
@@ -150,7 +171,7 @@
       "to": "n9"
     }
   ],
-  "nid": 11,
+  "nid": 15,
   "edgeThickness": 1.5,
   "edgeColor": "#c8c0b8"
 }
