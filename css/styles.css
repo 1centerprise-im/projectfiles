@@ -364,7 +364,10 @@ button { font-family: 'Nunito Sans', sans-serif; cursor: pointer; border: none; 
 .color-swatches { display: flex; gap: 4px; align-items: center; }
 .color-swatch { width: 22px; height: 22px; border-radius: 50%; border: 2px solid var(--border); cursor: pointer; transition: transform 0.15s; }
 .color-swatch:hover { transform: scale(1.15); }
-.toolbar-credits { margin-left: auto; color: var(--muted); font-size: 0.75rem; white-space: nowrap; }
+.toolbar-logo-link { display: flex; align-items: center; flex-shrink: 0; }
+.toolbar-logo { width: 28px; height: 28px; border-radius: 50%; object-fit: cover; }
+.toolbar-credits { margin-left: auto; color: var(--muted); font-size: 10px; font-style: italic; white-space: nowrap; }
+.toolbar-credits a { color: var(--accent); }
 
 /* --- Format Panel --- */
 .format-panel { display: none; align-items: center; gap: 8px; background: var(--toolbar); border-bottom: 1px solid var(--border); padding: 5px 14px; z-index: 99; flex-shrink: 0; flex-wrap: wrap; min-height: 38px; }
@@ -453,8 +456,9 @@ button { font-family: 'Nunito Sans', sans-serif; cursor: pointer; border: none; 
 .node-connect { position: absolute; top: 50%; right: -10px; transform: translateY(-50%); width: 16px; height: 16px; border-radius: 50%; background: #e07b3a; border: 2px solid #fff; cursor: crosshair; z-index: 10; box-shadow: var(--shadow); }
 .node-resize { position: absolute; bottom: -4px; right: -4px; width: 14px; height: 14px; cursor: nwse-resize; z-index: 10; opacity: 0.5; }
 .node-resize::after { content: ''; position: absolute; bottom: 2px; right: 2px; width: 8px; height: 8px; border-right: 2px solid var(--muted); border-bottom: 2px solid var(--muted); }
-.node-link-icon { position: absolute; top: 50%; right: 6px; transform: translateY(-50%); width: 18px; height: 18px; cursor: pointer; opacity: 0.7; z-index: 5; }
+.node-link-icon { position: absolute; top: 50%; right: 6px; transform: translateY(-50%); width: 24px; height: 24px; cursor: pointer; opacity: 0.7; z-index: 5; }
 .node-link-icon:hover { opacity: 1; }
+.mm-node:has(.node-link-icon) { padding-right: 34px; }
 
 /* Rubber band selection */
 .rubber-band { position: absolute; border: 1.5px dashed var(--accent); background: rgba(59,110,165,0.08); pointer-events: none; z-index: 50; }

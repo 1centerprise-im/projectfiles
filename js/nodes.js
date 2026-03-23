@@ -17,7 +17,9 @@ var COLORS = [
   { bg: '#fde8d0', bd: '#e07b3a', name: 'Orange' },  // ci: 4
   { bg: '#fde0de', bd: '#c0392b', name: 'Red'    },  // ci: 5
   { bg: '#ede0ff', bd: '#7b52ab', name: 'Purple' },  // ci: 6
-  { bg: '#2a2520', bd: '#2a2520', name: 'Dark'   }   // ci: 7 (white text)
+  { bg: '#2a2520', bd: '#2a2520', name: 'Dark'   },  // ci: 7 (white text)
+  { bg: '#1a2744', bd: '#1a2744', name: 'Navy'   },  // ci: 8 (white text)
+  { bg: '#7a1a1a', bd: '#7a1a1a', name: 'DarkRed'}   // ci: 9 (white text)
 ];
 
 /* --- Create a DOM element for a node --- */
@@ -41,7 +43,7 @@ function renderNodeElement(node) {
   el.style.borderColor = node.borderColor || color.bd;
   el.style.borderWidth = (node.borderWidth || 2) + 'px';
   /* ci=7 (Dark) needs white text; otherwise use node's textColor or default */
-  el.style.color = (ci === 7) ? '#ffffff' : (node.textColor || '#2a2520');
+  el.style.color = (ci >= 7) ? '#ffffff' : (node.textColor || '#2a2520');
 
   /* Font properties */
   el.style.fontSize = (node.fontSize || 13) + 'px';
@@ -90,7 +92,7 @@ function renderNodeElement(node) {
 function makeLinkIcon(url, borderColor) {
   var icon = document.createElement('div');
   icon.className = 'node-link-icon';
-  icon.title = 'Open link';
+  icon.title = 'Open in Google Drive';
   /* Simple colored triangle */
   icon.innerHTML = '<svg viewBox="0 0 24 24" fill="' + borderColor + '">' +
     '<path d="M12 2L2 19h20L12 2zm0 4l7 12H5l7-12z" opacity="0.7"/>' +
@@ -110,7 +112,7 @@ function updateNodeElement(el, node) {
   el.style.background = color.bg;
   el.style.borderColor = node.borderColor || color.bd;
   el.style.borderWidth = (node.borderWidth || 2) + 'px';
-  el.style.color = (ci === 7) ? '#ffffff' : (node.textColor || '#2a2520');
+  el.style.color = (ci >= 7) ? '#ffffff' : (node.textColor || '#2a2520');
   el.style.fontSize = (node.fontSize || 13) + 'px';
   el.style.fontFamily = node.fontFamily || 'Nunito';
   el.style.fontWeight = node.bold ? '700' : '400';
