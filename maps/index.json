@@ -51,7 +51,15 @@
     {
       "name": "pfd",
       "label": "PFD",
-      "maps": []
+      "maps": [
+        {
+          "id": "Test_08",
+          "name": "Test 08",
+          "number": "",
+          "organization": "",
+          "status": "active"
+        }
+      ]
     },
     {
       "name": "zarzamin",
