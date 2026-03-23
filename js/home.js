@@ -172,12 +172,13 @@ async function changeStatus(folderName, projectId, newStatus) {
 
   renderTable();
 
-  /* Save to GitHub */
+  /* Save to GitHub immediately */
   var token = localStorage.getItem('gh_pat') || '';
   if (!token) {
     showHomeTokenModal(function() { saveIndexViaAPI(); });
     return;
   }
+  showHomeToast('Saving...');
   await saveIndexViaAPI();
 }
 
