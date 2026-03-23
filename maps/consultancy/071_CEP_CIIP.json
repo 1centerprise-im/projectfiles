@@ -45,8 +45,8 @@
     },
     {
       "id": "n3",
-      "x": 2024.6304038045892,
-      "y": 218.53071939172168,
+      "x": 2141.0754773201334,
+      "y": 109.21493609141476,
       "w": 0,
       "h": 0,
       "text": "02_Readiness 2nd Company",
@@ -66,12 +66,12 @@
     },
     {
       "id": "n6",
-      "x": 930,
-      "y": 380,
+      "x": 973.9336486928605,
+      "y": 401.96682434643026,
       "w": 257.578446454899,
       "h": 57.15689290979802,
       "text": "01_PROJECT_FOUNDATION",
-      "ci": 3,
+      "ci": 1,
       "link": "https://drive.google.com/drive/folders/1r8q-MYKJIkzADgGrloJ73XRf_gvDRSWI?usp=drive_link",
       "collapsed": false,
       "isNote": false,
@@ -87,12 +87,12 @@
     },
     {
       "id": "n7",
-      "x": 530,
-      "y": 530,
+      "x": 487.8416408203731,
+      "y": 409.30103503822124,
       "w": 0,
       "h": 0,
       "text": "02_ADMINISTRATION_MGT",
-      "ci": 3,
+      "ci": 1,
       "link": "https://drive.google.com/drive/folders/1Ta8UYO4qbxYEgIjr9vXCskYwzVuBlRER?usp=drive_link",
       "collapsed": false,
       "isNote": false,
@@ -102,7 +102,7 @@
       "bold": true,
       "italic": false,
       "textAlign": "center",
-      "shape": "circle",
+      "shape": "square",
       "borderColor": "",
       "borderWidth": 0
     },
@@ -129,8 +129,8 @@
     },
     {
       "id": "n12",
-      "x": 1355.575159584113,
-      "y": 674.9259043099729,
+      "x": 1464.89094288442,
+      "y": 658.2908938077522,
       "w": 0,
       "h": 0,
       "text": "01_Agreement_Contract",
@@ -197,7 +197,7 @@
       "w": 0,
       "h": 0,
       "text": "00_TOR",
-      "ci": 0,
+      "ci": 2,
       "link": "https://drive.google.com/drive/folders/1sEoU2vrNxlDCalv9UMFtsWMko-vABvYa?usp=drive_link",
       "collapsed": false,
       "isNote": false,
@@ -209,7 +209,7 @@
       "textAlign": "left",
       "shape": "rounded",
       "borderColor": "#002fff",
-      "borderWidth": 0
+      "borderWidth": 4
     },
     {
       "id": "n20",
@@ -375,7 +375,7 @@
       "bold": true,
       "italic": false,
       "textAlign": "center",
-      "shape": "rounded",
+      "shape": "square",
       "borderColor": "",
       "borderWidth": 0
     },
@@ -396,7 +396,7 @@
       "bold": true,
       "italic": false,
       "textAlign": "center",
-      "shape": "rounded",
+      "shape": "circle",
       "borderColor": "",
       "borderWidth": 0
     },
@@ -423,8 +423,8 @@
     },
     {
       "id": "n40",
-      "x": 2130,
-      "y": 530,
+      "x": 2220.3043427263406,
+      "y": 926.8638219815491,
       "w": 0,
       "h": 0,
       "text": "00_TOR",
@@ -444,8 +444,8 @@
     },
     {
       "id": "n41",
-      "x": 2330,
-      "y": 530,
+      "x": 2398.9164720806284,
+      "y": 758.137286887597,
       "w": 0,
       "h": 0,
       "text": "01_Agreement_Contract",
@@ -465,8 +465,8 @@
     },
     {
       "id": "n42",
-      "x": 2530,
-      "y": 530,
+      "x": 2748.6315666006135,
+      "y": 710.6086854526811,
       "w": 0,
       "h": 0,
       "text": "02_Project_Documents",
@@ -486,8 +486,8 @@
     },
     {
       "id": "n43",
-      "x": 2730,
-      "y": 530,
+      "x": 2922.4908358114103,
+      "y": 427.8135069149305,
       "w": 0,
       "h": 0,
       "text": "03_Materials",
@@ -571,7 +571,7 @@
     {
       "id": "n61",
       "x": 1023.9033881771517,
-      "y": 566.0897555327573,
+      "y": 1200,
       "w": 0,
       "h": 0,
       "text": "New Node",
@@ -592,7 +592,7 @@
     {
       "id": "n62",
       "x": 1023.9033881771517,
-      "y": 566.0897555327573,
+      "y": 1200,
       "w": 0,
       "h": 0,
       "text": "New Node",
@@ -613,11 +613,74 @@
     {
       "id": "n63",
       "x": 1023.9033881771517,
-      "y": 566.0897555327573,
+      "y": 1200,
       "w": 0,
       "h": 0,
       "text": "New Node",
       "ci": 0,
+      "link": "",
+      "collapsed": false,
+      "isNote": false,
+      "fontSize": 13,
+      "fontFamily": "Nunito",
+      "textColor": "",
+      "bold": false,
+      "italic": false,
+      "textAlign": "left",
+      "shape": "rounded",
+      "borderColor": "",
+      "borderWidth": 0
+    },
+    {
+      "id": "n64",
+      "x": 1343.1895721678645,
+      "y": 830.3198991018205,
+      "w": 0,
+      "h": 0,
+      "text": "New Node",
+      "ci": 4,
+      "link": "",
+      "collapsed": false,
+      "isNote": false,
+      "fontSize": 13,
+      "fontFamily": "Nunito",
+      "textColor": "",
+      "bold": false,
+      "italic": false,
+      "textAlign": "left",
+      "shape": "rounded",
+      "borderColor": "",
+      "borderWidth": 0
+    },
+    {
+      "id": "n66",
+      "x": 1474.951420865184,
+      "y": 835.1110171691489,
+      "w": 0,
+      "h": 0,
+      "text": "New Node",
+      "ci": 3,
+      "link": "",
+      "collapsed": false,
+      "isNote": false,
+      "fontSize": 13,
+      "fontFamily": "Nunito",
+      "textColor": "",
+      "bold": false,
+      "italic": false,
+      "textAlign": "left",
+      "shape": "rounded",
+      "borderColor": "",
+      "borderWidth": 0
+    },
+    {
+      "id": "n68",
+      "x": 1323.573107628048,
+      "y": 955.657355712214,
+      "w": 0,
+      "h": 0,
+      "text": "New Node",
+      "ci": 3,
       "link": "",
       "collapsed": false,
       "isNote": false,
@@ -651,7 +714,9 @@
     {
       "id": "e10",
       "from": "n6",
-      "to": "n7"
+      "to": "n7",
+      "thickness": 6,
+      "color": "#ff0080"
     },
     {
       "id": "e11",
@@ -759,9 +824,24 @@
       "id": "e57",
       "from": "n34",
       "to": "n35"
+    },
+    {
+      "id": "e65",
+      "from": "n6",
+      "to": "n64"
+    },
+    {
+      "id": "e67",
+      "from": "n64",
+      "to": "n66"
+    },
+    {
+      "id": "e69",
+      "from": "n6",
+      "to": "n68"
     }
   ],
-  "nid": 64,
+  "nid": 70,
   "edgeThickness": 2,
   "edgeColor": "#b8b0a6"
 }
