@@ -10,18 +10,18 @@
 
 /* --- Color palette: ci property in JSON maps to this array --- */
 var COLORS = [
-  { bg: '#fff8d4', bd: '#c8960a', name: 'Yellow'  },  // ci: 0
-  { bg: '#fde0de', bd: '#c0392b', name: 'Red'     },  // ci: 1
-  { bg: '#1a6b5a', bd: '#0f4f40', name: 'Teal'    },  // ci: 2 (white text)
-  { bg: '#5c3d2e', bd: '#3e2518', name: 'Brown'   },  // ci: 3 (white text)
-  { bg: '#1b5e20', bd: '#0a3d12', name: 'DkGreen' },  // ci: 4 (white text)
-  { bg: '#4a0e0e', bd: '#8b0000', name: 'Maroon'  },  // ci: 5 (white text)
-  { bg: '#1a1a2e', bd: '#0f3460', name: 'Navy'    },  // ci: 6 (white text)
-  { bg: '#2a2520', bd: '#2a2520', name: 'Dark'    }   // ci: 7 (white text)
+  { bg: '#f5f0e8', bd: '#d4cbbe', name: 'Cream' },  // ci: 0
+  { bg: '#fff0c4', bd: '#c8960a', name: 'Gold'  },  // ci: 1
+  { bg: '#f0997b', bd: '#993c1d', name: 'Coral' },  // ci: 2
+  { bg: '#85b7eb', bd: '#185fa5', name: 'Blue'  },  // ci: 3
+  { bg: '#5dcaa5', bd: '#0f6e56', name: 'Teal'  },  // ci: 4
+  { bg: '#ef9f27', bd: '#854f0b', name: 'Amber' },  // ci: 5
+  { bg: '#185fa5', bd: '#042c53', name: 'Navy'  },  // ci: 6 (white text)
+  { bg: '#2c2c2a', bd: '#444441', name: 'Dark'  }   // ci: 7 (white text)
 ];
 
-/* --- Determine if a color index is "dark" (needs white text, full fill) --- */
-function isDarkColor(ci) { return ci >= 2; }
+/* --- Determine if a color index is "dark" (needs white text) --- */
+function isDarkColor(ci) { return ci >= 6; }
 
 /* --- Create a DOM element for a node --- */
 /* Soft modern style: colored bubble fill, no top bar, no heavy borders */
