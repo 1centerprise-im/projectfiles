@@ -197,13 +197,58 @@ function onContextMenu(e) {
   ctxMenu.classList.add('visible');
 }
 
+/* --- Unsaved changes modal --- */
+function showUnsavedModal() {
+  var old = document.getElementById('unsavedModal');
+  if (old) old.remove();
+  var m = document.createElement('div');
+  m.id = 'unsavedModal';
+  m.className = 'token-modal-overlay';
+  m.innerHTML =
+    '<div class="token-modal">' +
+    '<h3>Unsaved Changes</h3>' +
+    '<p>You have unsaved changes. Do you want to save before leaving?</p>' +
+    '<div class="token-actions" style="justify-content:space-between">' +
+    '<button class="tb-btn" id="unsavedCancel">Cancel</button>' +
+    '<div style="display:flex;gap:8px">' +
+    '<button class="tb-btn" id="unsavedLeave" style="color:var(--red)">Leave Without Saving</button>' +
+    '<button class="tb-btn primary" id="unsavedSave">Save and Leave</button>' +
+    '</div></div></div>';
+  document.body.appendChild(m);
+  document.getElementById('unsavedCancel').onclick = function() { m.remove(); };
+  document.getElementById('unsavedLeave').onclick = function() {
+    hasUnsavedChanges = false;
+    window.location.href = 'projects.html';
+  };
+  document.getElementById('unsavedSave').onclick = async function() {
+    try {
+      showToast('Saving...', false);
+      await saveToGitHub(folder, mapName, mapData);
+      hasUnsavedChanges = false;
+      showToast('Saved to GitHub');
+      window.location.href = 'projects.html';
+    } catch (err) {
+      if (err.message === 'NO_TOKEN' || err.message === 'INVALID_TOKEN') {
+        m.remove();
+        showTokenModal(function() { document.getElementById('unsavedSave').click(); });
+      } else {
+        showToast('Save failed: ' + err.message, true);
+      }
+    }
+  };
+}
+
 /* --- Wire toolbar buttons (called once at init) --- */
 function setupToolbar() {
   document.getElementById('mapTitle').addEventListener('input', function(e) {
-    mapData.title = e.target.value; autoSave();
+    mapData.title = e.target.value; hasUnsavedChanges = true; autoSave();
   });
   document.getElementById('btnMyMaps').addEventListener('click', function() {
-    window.location.href = 'projects.html';
+    if (hasUnsavedChanges) {
+      showUnsavedModal();
+    } else {
+      window.location.href = 'projects.html';
+    }
   });
   document.getElementById('btnAddNode').addEventListener('click', addNodeAtCenter);
   document.getElementById('btnSave').addEventListener('click', doSave);

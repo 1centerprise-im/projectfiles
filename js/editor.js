@@ -8,6 +8,7 @@ var nodeEls = {}, undoStack = [];
 var isPanning = false, isDragging = false, isResizing = false;
 var isConnecting = false, isRubberBand = false;
 var connectFrom = null, spaceDown = false;
+var hasUnsavedChanges = false;
 var dragStart = {x:0,y:0}, panStart = {x:0,y:0};
 var canvas, edgeSvg, container, formatPanel, zoomBadge, ctxMenu;
 
@@ -107,6 +108,9 @@ function setupEvents() {
   container.addEventListener('contextmenu', onContextMenu);
   document.addEventListener('click', function() { ctxMenu.classList.remove('visible'); });
   window.addEventListener('paste', onPaste);
+  window.addEventListener('beforeunload', function(e) {
+    if (hasUnsavedChanges) { e.preventDefault(); }
+  });
   setupToolbar();
   setupFormatPanel();
 }
@@ -315,6 +319,7 @@ async function doSave() {
   try {
     showToast('Saving...', false);
     await saveToGitHub(folder, mapName, mapData);
+    hasUnsavedChanges = false;
     showToast('Saved to GitHub');
   } catch (err) {
     if (err.message === 'NO_TOKEN' || err.message === 'INVALID_TOKEN') {
@@ -389,7 +394,7 @@ function fitView() {
 }
 
 /* --- Undo (snapshot-based) --- */
-function pushUndo() { undoStack.push(JSON.stringify(mapData)); if (undoStack.length > 30) undoStack.shift(); }
+function pushUndo() { undoStack.push(JSON.stringify(mapData)); if (undoStack.length > 30) undoStack.shift(); hasUnsavedChanges = true; }
 function undo() {
   if (undoStack.length < 2) return;
   undoStack.pop(); mapData = JSON.parse(undoStack[undoStack.length - 1]);

@@ -345,17 +345,7 @@ async function createNewMap(modal) {
   var authHeaders = { 'Authorization': 'token ' + token, 'Accept': 'application/vnd.github.v3+json' };
 
   try {
-    /* Update index.json */
-    var newMapEntry = { id: cleanMapName, name: rawMapName, number: '', organization: '', status: 'active' };
-
-    if (isNewFolder) {
-      indexData.folders.push({ name: folderName, label: folderLabel, maps: [newMapEntry] });
-    } else {
-      var folder = indexData.folders.find(function(fd) { return fd.name === folderName; });
-      if (folder) folder.maps.push(newMapEntry);
-    }
-
-    /* Save index.json to GitHub - GET fresh SHA first */
+    /* Step 1: Fetch FRESH index.json from GitHub API (not cached page version) */
     var indexPath = 'maps/index.json';
     var indexUrl = 'https://api.github.com/repos/' + GH_OWNER + '/' + GH_REPO + '/contents/' + indexPath;
     var indexSha = '';
@@ -365,8 +355,25 @@ async function createNewMap(modal) {
       showHomeToast('Invalid token', true);
       return;
     }
-    if (getIdx.ok) { indexSha = (await getIdx.json()).sha; }
+    if (getIdx.ok) {
+      var idxData = await getIdx.json();
+      indexSha = idxData.sha;
+      /* Decode the fresh content from GitHub */
+      var freshContent = decodeURIComponent(escape(atob(idxData.content.replace(/\n/g, ''))));
+      indexData = JSON.parse(freshContent);
+    }
 
+    /* Step 2: Add new map entry to the fresh data */
+    var newMapEntry = { id: cleanMapName, name: rawMapName, number: '', organization: '', status: 'active' };
+
+    if (isNewFolder) {
+      indexData.folders.push({ name: folderName, label: folderLabel, maps: [newMapEntry] });
+    } else {
+      var folder = indexData.folders.find(function(fd) { return fd.name === folderName; });
+      if (folder) folder.maps.push(newMapEntry);
+    }
+
+    /* Step 3: PUT updated index.json with fresh SHA */
     var indexContent = btoa(unescape(encodeURIComponent(JSON.stringify(indexData, null, 2) + '\n')));
     var idxBody = { message: 'Add new map ' + cleanMapName, content: indexContent };
     if (indexSha) idxBody.sha = indexSha;
