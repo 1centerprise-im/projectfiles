@@ -32,7 +32,7 @@
       <select id="statusFilter" class="projects-select">
         <option value="">All Statuses</option>
         <option value="active">Active</option>
-<option value="completed">Completed</option>
+        <option value="completed">Completed</option>
         <option value="on-process">On-Process</option>
       </select>
     </div>
@@ -44,8 +44,9 @@
           <tr>
             <th class="col-num">#</th>
             <th class="col-name">PROJECT NAME</th>
-<th class="col-status">STATUS</th>
+            <th class="col-status">STATUS</th>
             <th class="col-action"></th>
+            <th class="col-delete"></th>
           </tr>
         </thead>
         <tbody id="projectsBody">
@@ -60,6 +61,7 @@
     </footer>
   </div>
 
+  <script src="js/storage.js"></script>
   <script src="js/home.js"></script>
 </body>
 </html>

@@ -38,73 +38,18 @@
           "number": "075",
           "organization": "UNICEF",
           "status": "active"
-        },
-        {
-          "id": "test_7",
-          "name": "test 7",
-          "number": "",
-          "organization": "",
-          "status": "active"
-        },
-        {
-          "id": "test_09",
-          "name": "test 09",
-          "number": "",
-          "organization": "",
-          "status": "active"
-        },
-        {
-          "id": "test_10",
-          "name": "test 10",
-          "number": "",
-          "organization": "",
-          "status": "active"
         }
       ]
     },
     {
       "name": "pfd",
       "label": "PFD",
-      "maps": [
-        {
-          "id": "Test_08",
-          "name": "Test 08",
-          "number": "",
-          "organization": "",
-          "status": "active"
-        }
-      ]
+      "maps": []
     },
     {
       "name": "zarzamin",
       "label": "Zarzamin",
       "maps": []
-    },
-    {
-      "name": "test_folder_01",
-      "label": "TEST FOLDER 01",
-      "maps": [
-        {
-          "id": "Test_4",
-          "name": "Test 4",
-          "number": "",
-          "organization": "",
-          "status": "active"
-        }
-      ]
-    },
-    {
-      "name": "test_folder_02",
-      "label": "test folder 02",
-      "maps": [
-        {
-          "id": "test_5",
-          "name": "test 5",
-          "number": "",
-          "organization": "",
-          "status": "active"
-        }
-      ]
     }
   ]
 }

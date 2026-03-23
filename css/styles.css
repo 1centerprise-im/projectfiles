@@ -548,6 +548,23 @@ button { font-family: 'Nunito Sans', sans-serif; cursor: pointer; border: none; 
 .newmap-actions .btn-create { padding: 8px 18px; border-radius: 6px; color: #fff; background: var(--dk-gold); border: none; cursor: pointer; font-size: 0.85rem; font-weight: 700; }
 .newmap-actions .btn-create:hover { opacity: 0.9; }
 
+/* --- Delete button (subtle, red on hover) --- */
+.col-delete { width: 32px; text-align: center; }
+.delete-btn {
+  display: inline-block; font-size: 1.1rem; color: #4b5563; cursor: pointer;
+  width: 24px; height: 24px; line-height: 24px; text-align: center;
+  border-radius: 4px; transition: color 0.15s, background 0.15s;
+}
+.delete-btn:hover { color: #ef4444; background: rgba(239,68,68,0.1); }
+
+/* --- Delete confirm button --- */
+.btn-delete-confirm {
+  padding: 8px 18px; border-radius: 6px; color: #fff;
+  background: #ef4444; border: none; cursor: pointer;
+  font-size: 0.85rem; font-weight: 700;
+}
+.btn-delete-confirm:hover { background: #dc2626; }
+
 /* ==========================================================
    RESPONSIVE
    ========================================================== */
