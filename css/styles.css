@@ -516,6 +516,37 @@ button { font-family: 'Nunito Sans', sans-serif; cursor: pointer; border: none; 
 }
 .status-dropdown-item:hover { background: #374151; }
 
+/* ===== NEW MAP BUTTON & MODAL ===== */
+.btn-new-map {
+  padding: 10px 20px; background: transparent; border: 1px solid var(--dk-gold);
+  color: var(--dk-gold); border-radius: 6px; font-family: 'Nunito Sans', sans-serif;
+  font-size: 0.85rem; font-weight: 700; cursor: pointer; transition: background 0.2s, color 0.2s;
+  white-space: nowrap;
+}
+.btn-new-map:hover { background: var(--dk-gold); color: var(--dk-bg); }
+
+.newmap-modal {
+  background: #1f2937; border-radius: 12px; padding: 28px 32px;
+  max-width: 440px; width: 90%; box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+  font-family: 'Nunito Sans', sans-serif; color: #e5e7eb;
+}
+.newmap-modal h3 { margin-bottom: 16px; font-size: 1.1rem; color: #fff; }
+.newmap-modal label { display: block; font-size: 0.8rem; color: #9ca3af; margin-bottom: 6px; font-weight: 600; }
+.newmap-modal select,
+.newmap-modal input[type="text"] {
+  width: 100%; padding: 10px 14px; background: #111827; color: #fff;
+  border: 1px solid #374151; border-radius: 6px; font-size: 0.9rem;
+  font-family: 'Nunito Sans', sans-serif; outline: none; margin-bottom: 16px;
+}
+.newmap-modal select:focus,
+.newmap-modal input[type="text"]:focus { border-color: var(--dk-gold); }
+.newmap-link { font-size: 0.78rem; color: var(--dk-gold); cursor: pointer; display: inline-block; margin-bottom: 16px; }
+.newmap-link:hover { text-decoration: underline; }
+.newmap-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 8px; }
+.newmap-actions .btn-cancel { padding: 8px 18px; border-radius: 6px; color: #9ca3af; background: none; border: 1px solid #374151; cursor: pointer; font-size: 0.85rem; }
+.newmap-actions .btn-create { padding: 8px 18px; border-radius: 6px; color: #fff; background: var(--dk-gold); border: none; cursor: pointer; font-size: 0.85rem; font-weight: 700; }
+.newmap-actions .btn-create:hover { opacity: 0.9; }
+
 /* ==========================================================
    RESPONSIVE
    ========================================================== */
