@@ -380,8 +380,8 @@ function fitView() {
   });
   var bw = maxX - minX + PAD*2, bh = maxY - minY + PAD*2;
   var rect = container.getBoundingClientRect();
-  zoom = Math.min(rect.width / bw, rect.height / bh, 1.5);
-  zoom = Math.max(0.2, Math.min(2, zoom));
+  zoom = Math.min(rect.width / bw, rect.height / bh, 1.0);
+  zoom = Math.max(0.2, zoom);
   /* Center the bounding box in the viewport */
   panX = (rect.width / 2) - ((minX + maxX) / 2) * zoom;
   panY = (rect.height / 2) - ((minY + maxY) / 2) * zoom;
