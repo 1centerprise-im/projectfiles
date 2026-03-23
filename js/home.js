@@ -15,9 +15,19 @@ async function init() {
   if (!body) return;
 
   try {
-    var resp = await fetch('maps/index.json?t=' + Date.now(), { cache: 'no-store' });
-    if (!resp.ok) throw new Error('HTTP ' + resp.status);
-    indexData = await resp.json();
+    /* Try GitHub API first for fresh data; fall back to static fetch */
+    var token = localStorage.getItem('gh_token');
+    if (token) {
+      try {
+        var ghResult = await ghGet('maps/index.json');
+        if (ghResult) { indexData = JSON.parse(ghResult.content); }
+      } catch (e) { console.warn('[home] API fetch failed, using static:', e); }
+    }
+    if (!indexData) {
+      var resp = await fetch('maps/index.json?t=' + Date.now(), { cache: 'no-store' });
+      if (!resp.ok) throw new Error('HTTP ' + resp.status);
+      indexData = await resp.json();
+    }
 
     rebuildProjectList();
 

@@ -221,13 +221,17 @@ function showUnsavedModal() {
     window.location.href = 'projects.html';
   };
   document.getElementById('unsavedSave').onclick = async function() {
+    var btn = document.getElementById('unsavedSave');
+    btn.disabled = true;
+    btn.textContent = 'Saving...';
     try {
-      showToast('Saving...', false);
       await saveMap(folder, mapName, mapData);
       hasUnsavedChanges = false;
       showToast('Saved to GitHub');
       window.location.href = 'projects.html';
     } catch (err) {
+      btn.disabled = false;
+      btn.textContent = 'Save and Leave';
       showToast('Save failed: ' + err.message, true);
     }
   };
