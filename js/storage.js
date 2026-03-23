@@ -126,37 +126,39 @@ async function saveToGitHub(folder, mapName, mapData) {
   return true;
 }
 
-/* Save index.json to GitHub */
+/* Save index.json to GitHub - always GET fresh SHA before PUT */
 async function saveIndexToGitHub(indexData) {
   var token = getGitHubToken();
   if (!token) throw new Error('NO_TOKEN');
 
   var path = 'maps/index.json';
-  var url = 'https://api.github.com/repos/' + GH_OWNER + '/' + GH_REPO + '/contents/' + path;
-  var content = btoa(unescape(encodeURIComponent(JSON.stringify(indexData, null, 2) + '\n')));
+  var apiUrl = 'https://api.github.com/repos/' + GH_OWNER + '/' + GH_REPO + '/contents/' + path;
+  var authHeaders = { 'Authorization': 'token ' + token, 'Accept': 'application/vnd.github.v3+json' };
 
+  /* Step 1: GET fresh SHA */
   var sha = '';
-  try {
-    var getResp = await fetch(url + '?t=' + Date.now(), {
-      headers: { 'Authorization': 'token ' + token, 'Accept': 'application/vnd.github.v3+json', 'If-None-Match': '' },
-      cache: 'no-store'
-    });
-    if (getResp.ok) { sha = (await getResp.json()).sha; }
-  } catch (e) {}
+  var getResp = await fetch(apiUrl, { headers: authHeaders, cache: 'no-store' });
+  if (getResp.status === 401 || getResp.status === 403) {
+    localStorage.removeItem('gh_pat');
+    throw new Error('INVALID_TOKEN');
+  }
+  if (getResp.ok) { sha = (await getResp.json()).sha; }
 
+  /* Step 2: PUT with fresh SHA */
+  var content = btoa(unescape(encodeURIComponent(JSON.stringify(indexData, null, 2) + '\n')));
   var body = { message: 'Update project index', content: content };
   if (sha) body.sha = sha;
 
-  var putResp = await fetch(url, {
+  var putResp = await fetch(apiUrl, {
     method: 'PUT',
-    headers: {
-      'Authorization': 'token ' + token,
-      'Accept': 'application/vnd.github.v3+json',
-      'Content-Type': 'application/json'
-    },
+    headers: Object.assign({ 'Content-Type': 'application/json' }, authHeaders),
     body: JSON.stringify(body)
   });
 
+  if (putResp.status === 401 || putResp.status === 403) {
+    localStorage.removeItem('gh_pat');
+    throw new Error('INVALID_TOKEN');
+  }
   if (!putResp.ok) {
     var err = await putResp.json().catch(function() { return {}; });
     throw new Error(err.message || 'HTTP ' + putResp.status);

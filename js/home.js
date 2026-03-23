@@ -187,28 +187,37 @@ async function saveIndexViaAPI() {
 
   try {
     var path = 'maps/index.json';
-    var url = 'https://api.github.com/repos/' + GH_OWNER + '/' + GH_REPO + '/contents/' + path;
-    var content = btoa(unescape(encodeURIComponent(JSON.stringify(indexData, null, 2) + '\n')));
+    var apiUrl = 'https://api.github.com/repos/' + GH_OWNER + '/' + GH_REPO + '/contents/' + path;
+    var authHeaders = { 'Authorization': 'token ' + token, 'Accept': 'application/vnd.github.v3+json' };
 
-    var getResp = await fetch(url, {
-      headers: { 'Authorization': 'token ' + token, 'Accept': 'application/vnd.github.v3+json' }
-    });
+    /* Step 1: GET fresh SHA - never use cached */
     var sha = '';
+    var getResp = await fetch(apiUrl, { headers: authHeaders, cache: 'no-store' });
+    if (getResp.status === 401 || getResp.status === 403) {
+      localStorage.removeItem('gh_pat');
+      showHomeToast('Invalid token - please re-enter', true);
+      showHomeTokenModal(function() { saveIndexViaAPI(); });
+      return;
+    }
     if (getResp.ok) { sha = (await getResp.json()).sha; }
 
+    /* Step 2: PUT with fresh SHA */
+    var content = btoa(unescape(encodeURIComponent(JSON.stringify(indexData, null, 2) + '\n')));
     var body = { message: 'Update project status', content: content };
     if (sha) body.sha = sha;
 
-    var putResp = await fetch(url, {
+    var putResp = await fetch(apiUrl, {
       method: 'PUT',
-      headers: {
-        'Authorization': 'token ' + token,
-        'Accept': 'application/vnd.github.v3+json',
-        'Content-Type': 'application/json'
-      },
+      headers: Object.assign({ 'Content-Type': 'application/json' }, authHeaders),
       body: JSON.stringify(body)
     });
 
+    if (putResp.status === 401 || putResp.status === 403) {
+      localStorage.removeItem('gh_pat');
+      showHomeToast('Invalid token - please re-enter', true);
+      showHomeTokenModal(function() { saveIndexViaAPI(); });
+      return;
+    }
     if (!putResp.ok) {
       var err = await putResp.json().catch(function() { return {}; });
       throw new Error(err.message || 'HTTP ' + putResp.status);
