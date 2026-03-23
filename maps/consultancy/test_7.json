@@ -129,8 +129,8 @@
     },
     {
       "id": "n13",
-      "x": 421.03703703703695,
-      "y": 162,
+      "x": 531.037037037037,
+      "y": 161,
       "w": 0,
       "h": 0,
       "text": "New Node",
@@ -150,8 +150,29 @@
     },
     {
       "id": "n14",
-      "x": 447.03703703703695,
-      "y": 433.70001220703125,
+      "x": 468.03703703703695,
+      "y": 469.70001220703125,
+      "w": 0,
+      "h": 0,
+      "text": "New Node",
+      "ci": 0,
+      "link": "",
+      "collapsed": false,
+      "isNote": false,
+      "fontSize": 13,
+      "fontFamily": "Nunito",
+      "textColor": "",
+      "bold": false,
+      "italic": false,
+      "textAlign": "left",
+      "shape": "rounded",
+      "borderColor": "",
+      "borderWidth": 0
+    },
+    {
+      "id": "n15",
+      "x": 241.03703703703695,
+      "y": 290.70001220703125,
       "w": 0,
       "h": 0,
       "text": "New Node",
@@ -204,7 +225,7 @@
       "color": "#ff8000"
     }
   ],
-  "nid": 15,
+  "nid": 16,
   "edgeThickness": 2,
   "edgeColor": "#b8b0a6"
 }
