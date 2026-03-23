@@ -38,21 +38,20 @@
           "number": "075",
           "organization": "UNICEF",
           "status": "active"
+        },
+        {
+          "id": "test_3",
+          "name": "test 3",
+          "number": "",
+          "organization": "",
+          "status": "active"
         }
       ]
     },
     {
       "name": "pfd",
       "label": "PFD",
-      "maps": [
-        {
-          "id": "Test_1",
-          "name": "Test 1",
-          "number": "",
-          "organization": "",
-          "status": "active"
-        }
-      ]
+      "maps": []
     },
     {
       "name": "zarzamin",
