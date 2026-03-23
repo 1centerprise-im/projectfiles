@@ -4,11 +4,41 @@
       "name": "consultancy",
       "label": "Consultancy",
       "maps": [
-        { "id": "071_CEP_CIIP", "name": "CEP CIIP", "number": "071", "organization": "Carbon/Environment", "status": "active" },
-        { "id": "072_Community_Resilience", "name": "Community Resilience", "number": "072", "organization": "Community Development", "status": "active" },
-        { "id": "073_CIP_Invest_Committee", "name": "CIP Investment Committee", "number": "073", "organization": "Finance / Investment", "status": "active" },
-        { "id": "074_IOM", "name": "IOM", "number": "074", "organization": "IOM", "status": "active" },
-        { "id": "075_Ilmhona_UNICEF", "name": "Ilmhona UNICEF", "number": "075", "organization": "UNICEF", "status": "active" }
+        {
+          "id": "071_CEP_CIIP",
+          "name": "CEP CIIP",
+          "number": "071",
+          "organization": "Carbon/Environment",
+          "status": "completed"
+        },
+        {
+          "id": "072_Community_Resilience",
+          "name": "Community Resilience",
+          "number": "072",
+          "organization": "Community Development",
+          "status": "active"
+        },
+        {
+          "id": "073_CIP_Invest_Committee",
+          "name": "CIP Investment Committee",
+          "number": "073",
+          "organization": "Finance / Investment",
+          "status": "active"
+        },
+        {
+          "id": "074_IOM",
+          "name": "IOM",
+          "number": "074",
+          "organization": "IOM",
+          "status": "active"
+        },
+        {
+          "id": "075_Ilmhona_UNICEF",
+          "name": "Ilmhona UNICEF",
+          "number": "075",
+          "organization": "UNICEF",
+          "status": "active"
+        }
       ]
     },
     {
