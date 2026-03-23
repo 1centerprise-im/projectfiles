@@ -46,28 +46,13 @@ async function init() {
       }
     });
 
-    // Populate organization filter
-    var orgs = [];
-    allProjects.forEach(function(p) {
-      if (p.organization && orgs.indexOf(p.organization) === -1) orgs.push(p.organization);
-    });
-    orgs.sort();
-    var orgFilter = document.getElementById('orgFilter');
-    orgs.forEach(function(o) {
-      var opt = document.createElement('option');
-      opt.value = o;
-      opt.textContent = o;
-      orgFilter.appendChild(opt);
-    });
-
     // Bind events
     document.getElementById('searchInput').addEventListener('input', renderTable);
-    document.getElementById('orgFilter').addEventListener('change', renderTable);
     document.getElementById('statusFilter').addEventListener('change', renderTable);
 
     renderTable();
   } catch (err) {
-    body.innerHTML = '<tr><td colspan="5" style="color:#ef4444;padding:20px;">Failed to load project data</td></tr>';
+    body.innerHTML = '<tr><td colspan="4" style="color:#ef4444;padding:20px;">Failed to load project data</td></tr>';
     console.error(err);
   }
 }
@@ -75,18 +60,15 @@ async function init() {
 function renderTable() {
   var body = document.getElementById('projectsBody');
   var search = (document.getElementById('searchInput').value || '').toLowerCase();
-  var orgVal = document.getElementById('orgFilter').value;
   var statusVal = document.getElementById('statusFilter').value;
 
   var filtered = allProjects.filter(function(p) {
     if (p.empty) return true; // always show empty folders
     var matchSearch = !search ||
       p.name.toLowerCase().indexOf(search) !== -1 ||
-      p.organization.toLowerCase().indexOf(search) !== -1 ||
       p.number.toLowerCase().indexOf(search) !== -1;
-    var matchOrg = !orgVal || p.organization === orgVal;
     var matchStatus = !statusVal || p.status === statusVal;
-    return matchSearch && matchOrg && matchStatus;
+    return matchSearch && matchStatus;
   });
 
   // Sort: non-empty first (active first), then empty folders at bottom
@@ -106,7 +88,7 @@ function renderTable() {
       tr.innerHTML =
         '<td class="col-num"></td>' +
         '<td class="col-name"><span class="project-name-text">' + esc(p.folderLabel) + '</span></td>' +
-        '<td class="col-org" colspan="2"><span class="muted-text">No maps yet</span></td>' +
+        '<td class="col-status"><span class="muted-text">No maps yet</span></td>' +
         '<td class="col-action"></td>';
     } else {
       count++;
@@ -114,7 +96,6 @@ function renderTable() {
       tr.innerHTML =
         '<td class="col-num">' + esc(p.number) + '</td>' +
         '<td class="col-name"><span class="project-name-text">' + esc(p.name) + '</span></td>' +
-        '<td class="col-org">' + esc(p.organization) + '</td>' +
         '<td class="col-status"><span class="status-badge status-' + esc(p.status) + '">' + capitalize(p.status) + '</span></td>' +
         '<td class="col-action"><a href="editor.html?folder=' + encodeURIComponent(p.folder) + '&map=' + encodeURIComponent(p.id) + '" class="open-link">OPEN</a></td>';
 

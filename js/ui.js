@@ -203,7 +203,7 @@ function setupToolbar() {
     mapData.title = e.target.value; autoSave();
   });
   document.getElementById('btnMyMaps').addEventListener('click', function() {
-    window.location.href = 'index.html';
+    window.location.href = 'projects.html';
   });
   document.getElementById('btnAddNode').addEventListener('click', addNodeAtCenter);
   document.getElementById('btnAutoLayout').addEventListener('click', doAutoLayout);
