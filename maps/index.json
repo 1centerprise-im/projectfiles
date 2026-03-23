@@ -38,6 +38,13 @@
           "number": "075",
           "organization": "UNICEF",
           "status": "active"
+        },
+        {
+          "id": "test_7",
+          "name": "test 7",
+          "number": "",
+          "organization": "",
+          "status": "active"
         }
       ]
     },
