@@ -92,6 +92,19 @@
           "status": "active"
         }
       ]
+    },
+    {
+      "name": "test_folder_02",
+      "label": "test folder 02",
+      "maps": [
+        {
+          "id": "test_5",
+          "name": "test 5",
+          "number": "",
+          "organization": "",
+          "status": "active"
+        }
+      ]
     }
   ]
 }
