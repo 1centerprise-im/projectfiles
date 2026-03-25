@@ -52,6 +52,18 @@
           "status": "active"
         }
       ]
+    },
+    {
+      "name": "pfd",
+      "label": "PFD",
+      "maps": [
+        {
+          "id": "Test_03",
+          "name": "Test 03",
+          "number": "",
+          "status": "active"
+        }
+      ]
     }
   ]
 }
