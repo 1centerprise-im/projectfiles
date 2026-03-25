@@ -149,10 +149,11 @@ function onPaste(e) {
   if (e.target.tagName === 'TEXTAREA' || e.target.tagName === 'INPUT') return;
   if (selectedNodes.size !== 1) return;
   var text = (e.clipboardData || window.clipboardData).getData('text');
-  if (text && text.startsWith('http')) {
+  if (text && text.trim().startsWith('http')) {
+    e.preventDefault();
     var id = selectedNodes.values().next().value;
     var node = mapData.nodes.find(function(n) { return n.id === id; });
-    if (node) { node.link = text.trim(); fullRender(); autoSave(); }
+    if (node) { node.link = text.trim(); pushUndo(); fullRender(); autoSave(); showToast('Link added to node'); }
   }
 }
 

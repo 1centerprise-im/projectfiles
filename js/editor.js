@@ -94,6 +94,25 @@ function attachNodeEvents(el, node) {
     e.stopPropagation();
     startEditing(el, node, function() { fullRender(); autoSave(); });
   });
+  /* Drag-and-drop URL onto node to set as link */
+  el.addEventListener('dragover', function(e) {
+    e.preventDefault(); e.stopPropagation();
+    el.style.outline = '2px dashed #5b8af0';
+  });
+  el.addEventListener('dragleave', function(e) {
+    el.style.outline = '';
+  });
+  el.addEventListener('drop', function(e) {
+    e.preventDefault(); e.stopPropagation();
+    el.style.outline = '';
+    var url = e.dataTransfer.getData('text/uri-list') || e.dataTransfer.getData('text/plain') || '';
+    url = url.trim();
+    if (url.startsWith('http')) {
+      node.link = url;
+      pushUndo(); fullRender(); autoSave();
+      showToast('Link added to node');
+    }
+  });
 }
 
 /* --- Setup global event listeners --- */
@@ -105,6 +124,13 @@ function setupEvents() {
   window.addEventListener('keydown', onKeyDown);
   window.addEventListener('keyup', function(e) { if (e.code === 'Space') spaceDown = false; });
   edgeSvg.addEventListener('click', onEdgeClick);
+  /* Single click on empty canvas deselects all */
+  container.addEventListener('click', function(e) {
+    if (!e.target.closest('.mm-node') && !e.target.closest('.edge-hit')) {
+      selectedNodes.clear(); selectedEdge = null;
+      deselectAllEdges(edgeSvg); updateSelectionVisuals(); hideFormatPanel();
+    }
+  });
   container.addEventListener('contextmenu', onContextMenu);
   document.addEventListener('click', function() { ctxMenu.classList.remove('visible'); });
   window.addEventListener('paste', onPaste);
