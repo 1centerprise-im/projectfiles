@@ -66,8 +66,8 @@
     },
     {
       "id": "n6",
-      "x": 1579.843816070441,
-      "y": 221.46814968713736,
+      "x": 1562.1728728203993,
+      "y": 171.9895085870202,
       "w": 0,
       "h": 0,
       "text": "02_ADMINISTRATION_MGT",
@@ -108,7 +108,7 @@
     },
     {
       "id": "n8",
-      "x": 1252.550027542081,
+      "x": 1250.7829332170768,
       "y": 166.3512304038889,
       "w": 0,
       "h": 0,
@@ -336,6 +336,27 @@
       "shape": "rounded",
       "borderColor": "",
       "borderWidth": 0
+    },
+    {
+      "id": "n51",
+      "x": 1682.1588363849173,
+      "y": 343.87790427542825,
+      "w": 0,
+      "h": 0,
+      "text": "New Node",
+      "ci": 0,
+      "link": "",
+      "collapsed": false,
+      "isNote": false,
+      "fontSize": 13,
+      "fontFamily": "Nunito",
+      "textColor": "",
+      "bold": false,
+      "italic": false,
+      "textAlign": "left",
+      "shape": "rounded",
+      "borderColor": "",
+      "borderWidth": 0
     }
   ],
   "edges": [
@@ -416,7 +437,7 @@
       "to": "n49"
     }
   ],
-  "nid": 51,
+  "nid": 52,
   "edgeThickness": 3,
   "edgeColor": "#c8cad0"
 }
