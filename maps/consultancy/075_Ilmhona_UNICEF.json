@@ -210,6 +210,48 @@
       "shape": "rounded",
       "borderColor": "",
       "borderWidth": 0
+    },
+    {
+      "id": "n37",
+      "x": 2123.8094385041777,
+      "y": 166.6998279070194,
+      "w": 0,
+      "h": 0,
+      "text": "D1",
+      "ci": 0,
+      "link": "https://drive.google.com/drive/folders/1zhFmmNz5WsUjWKhrydaadWyKgJTR6qIa?usp=drive_link",
+      "collapsed": false,
+      "isNote": false,
+      "fontSize": 13,
+      "fontFamily": "Nunito",
+      "textColor": "",
+      "bold": false,
+      "italic": false,
+      "textAlign": "left",
+      "shape": "rounded",
+      "borderColor": "",
+      "borderWidth": 0
+    },
+    {
+      "id": "n39",
+      "x": 2127.033536539086,
+      "y": 247.30227877973,
+      "w": 0,
+      "h": 0,
+      "text": "D2",
+      "ci": 0,
+      "link": "https://drive.google.com/drive/folders/19fpqUZ3JosQ5k1Mk8az-fFRyZgAQebkn?usp=drive_link",
+      "collapsed": false,
+      "isNote": false,
+      "fontSize": 13,
+      "fontFamily": "Nunito",
+      "textColor": "",
+      "bold": false,
+      "italic": false,
+      "textAlign": "left",
+      "shape": "rounded",
+      "borderColor": "",
+      "borderWidth": 0
     }
   ],
   "edges": [
@@ -258,9 +300,19 @@
       "id": "e24",
       "from": "n3",
       "to": "n20"
+    },
+    {
+      "id": "e38",
+      "from": "n7",
+      "to": "n37"
+    },
+    {
+      "id": "e40",
+      "from": "n7",
+      "to": "n39"
     }
   ],
-  "nid": 37,
+  "nid": 41,
   "edgeThickness": 3,
   "edgeColor": "#c8cad0"
 }
