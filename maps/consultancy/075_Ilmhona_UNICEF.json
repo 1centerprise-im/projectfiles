@@ -88,7 +88,7 @@
     {
       "id": "n7",
       "x": 1882.6299886708903,
-      "y": 173.6057610180698,
+      "y": 172.1902819018411,
       "w": 0,
       "h": 0,
       "text": "03_DELIVERABLES",
@@ -210,6 +210,69 @@
       "shape": "rounded",
       "borderColor": "",
       "borderWidth": 0
+    },
+    {
+      "id": "n33",
+      "x": 2118.6299886708903,
+      "y": 172.1902819018411,
+      "w": 0,
+      "h": 0,
+      "text": "New Node",
+      "ci": 0,
+      "link": "",
+      "collapsed": false,
+      "isNote": false,
+      "fontSize": 13,
+      "fontFamily": "Nunito",
+      "textColor": "",
+      "bold": false,
+      "italic": false,
+      "textAlign": "left",
+      "shape": "rounded",
+      "borderColor": "",
+      "borderWidth": 0
+    },
+    {
+      "id": "n35",
+      "x": 2137.913035280476,
+      "y": 293.92148589751093,
+      "w": 0,
+      "h": 0,
+      "text": "New Node",
+      "ci": 0,
+      "link": "",
+      "collapsed": false,
+      "isNote": false,
+      "fontSize": 13,
+      "fontFamily": "Nunito",
+      "textColor": "",
+      "bold": false,
+      "italic": false,
+      "textAlign": "left",
+      "shape": "rounded",
+      "borderColor": "",
+      "borderWidth": 0
+    },
+    {
+      "id": "n37",
+      "x": 2116.1471875194284,
+      "y": 411.4062525444946,
+      "w": 0,
+      "h": 0,
+      "text": "New Node",
+      "ci": 0,
+      "link": "",
+      "collapsed": false,
+      "isNote": false,
+      "fontSize": 13,
+      "fontFamily": "Nunito",
+      "textColor": "",
+      "bold": false,
+      "italic": false,
+      "textAlign": "left",
+      "shape": "rounded",
+      "borderColor": "",
+      "borderWidth": 0
     }
   ],
   "edges": [
@@ -258,9 +321,24 @@
       "id": "e24",
       "from": "n3",
       "to": "n20"
+    },
+    {
+      "id": "e34",
+      "from": "n7",
+      "to": "n33"
+    },
+    {
+      "id": "e36",
+      "from": "n33",
+      "to": "n35"
+    },
+    {
+      "id": "e38",
+      "from": "n35",
+      "to": "n37"
     }
   ],
-  "nid": 33,
+  "nid": 39,
   "edgeThickness": 3,
   "edgeColor": "#c8cad0"
 }
