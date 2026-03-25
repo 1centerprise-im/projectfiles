@@ -651,7 +651,15 @@ button { font-family: 'Nunito Sans', sans-serif; cursor: pointer; border: none; 
   opacity: 0;
   transition: opacity 0.15s;
 }
-.folder-card:hover .folder-delete-btn {
+.folder-share-btn {
+  position: absolute;
+  top: 8px;
+  right: 30px;
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+.folder-card:hover .folder-delete-btn,
+.folder-card:hover .folder-share-btn {
   opacity: 1;
 }
 
@@ -719,6 +727,117 @@ button { font-family: 'Nunito Sans', sans-serif; cursor: pointer; border: none; 
   height: 20px;
   color: var(--dk-gold);
   flex-shrink: 0;
+}
+
+/* ===== SHARE BUTTON (row-level) ===== */
+.share-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 4px;
+  color: var(--dk-muted);
+  cursor: pointer;
+  transition: color 0.15s, background 0.15s;
+  vertical-align: middle;
+}
+.share-btn:hover {
+  color: var(--dk-gold);
+  background: rgba(201,168,76,0.1);
+}
+.row-share-btn {
+  margin-right: 8px;
+}
+
+/* ===== PROJECT CONTEXT MENU ===== */
+.project-ctx-menu {
+  position: fixed;
+  z-index: 10000;
+  background: #1f2937;
+  border: 1px solid #374151;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+  padding: 4px 0;
+  min-width: 180px;
+  font-family: 'Nunito Sans', sans-serif;
+}
+.project-ctx-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 16px;
+  font-size: 0.85rem;
+  color: #e5e7eb;
+  cursor: pointer;
+  transition: background 0.12s;
+}
+.project-ctx-item:hover {
+  background: rgba(201,168,76,0.1);
+}
+.project-ctx-item svg {
+  flex-shrink: 0;
+  color: var(--dk-muted);
+}
+.project-ctx-item:hover svg {
+  color: var(--dk-gold);
+}
+
+/* ===== VIEW-ONLY BANNER (editor) ===== */
+.view-only-banner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 16px;
+  background: #1e293b;
+  border-bottom: 1px solid #334155;
+  font-family: 'Nunito Sans', sans-serif;
+  flex-shrink: 0;
+  z-index: 100;
+}
+.view-only-label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  color: #94a3b8;
+  background: #334155;
+  padding: 2px 10px;
+  border-radius: 4px;
+}
+.view-only-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #e2e8f0;
+  flex: 1;
+}
+.view-only-edit-btn {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--dk-gold, #c9a84c);
+  text-decoration: none;
+  padding: 4px 14px;
+  border: 1px solid var(--dk-gold, #c9a84c);
+  border-radius: 5px;
+  transition: background 0.2s, color 0.2s;
+  white-space: nowrap;
+}
+.view-only-edit-btn:hover {
+  background: var(--dk-gold, #c9a84c);
+  color: #0a0f1a;
+  text-decoration: none;
+}
+
+/* View-only mode: hide all node interaction handles */
+.view-only .mm-node {
+  cursor: default;
+}
+.view-only .node-actions,
+.view-only .node-connect,
+.view-only .node-resize,
+.view-only .node-delete,
+.view-only .node-add-child,
+.view-only .node-collapse {
+  display: none !important;
 }
 
 /* ==========================================================

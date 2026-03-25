@@ -9,6 +9,7 @@ var isPanning = false, isDragging = false, isResizing = false;
 var isConnecting = false, isRubberBand = false;
 var connectFrom = null, spaceDown = false;
 var hasUnsavedChanges = false;
+var isViewOnly = false;
 var dragStart = {x:0,y:0}, panStart = {x:0,y:0};
 var canvas, edgeSvg, container, formatPanel, zoomBadge, ctxMenu;
 
@@ -23,6 +24,7 @@ async function initEditor() {
   var params = new URLSearchParams(window.location.search);
   folder = params.get('folder') || '';
   mapName = params.get('map') || '';
+  isViewOnly = params.get('mode') === 'view';
   canvas = document.getElementById('canvas');
   edgeSvg = document.getElementById('edge-svg');
   container = document.getElementById('canvasContainer');
@@ -34,7 +36,69 @@ async function initEditor() {
   if (!mapData) mapData = createEmptyMap(mapName ? mapName.replace(/_/g,' ') : 'New Map');
   document.getElementById('mapTitle').value = mapData.title || '';
   console.log('[editor] Loaded:', mapData.title, mapData.nodes.length, 'nodes');
-  fullRender(); setupEvents(); fitView(); updateZoomBadge(); pushUndo();
+
+  if (isViewOnly) {
+    setupViewOnlyMode();
+  } else {
+    setupEvents();
+  }
+  fullRender(); fitView(); updateZoomBadge();
+  if (!isViewOnly) pushUndo();
+}
+
+/* --- View-only mode: hide toolbar, show banner, only allow pan/zoom --- */
+function setupViewOnlyMode() {
+  // Hide toolbar and format panel
+  var toolbar = document.querySelector('.toolbar');
+  if (toolbar) toolbar.style.display = 'none';
+  if (formatPanel) formatPanel.style.display = 'none';
+
+  // Create view-only banner
+  var banner = document.createElement('div');
+  banner.className = 'view-only-banner';
+  banner.innerHTML =
+    '<span class="view-only-label">VIEW ONLY</span>' +
+    '<span class="view-only-title">' + escHtml(mapData.title || 'Untitled') + '</span>' +
+    '<a class="view-only-edit-btn" href="' + getEditorUrl() + '">Open in Editor</a>';
+  document.querySelector('.editor-wrap').insertBefore(banner, container);
+
+  // Mark as view-only for CSS
+  container.classList.add('view-only');
+
+  // Only allow pan and zoom
+  container.addEventListener('mousedown', onViewOnlyDown);
+  window.addEventListener('mousemove', onViewOnlyMove);
+  window.addEventListener('mouseup', onViewOnlyUp);
+  container.addEventListener('wheel', onWheel, { passive: false });
+}
+
+function getEditorUrl() {
+  var url = 'editor.html?folder=' + encodeURIComponent(folder) + '&map=' + encodeURIComponent(mapName);
+  return url;
+}
+
+function escHtml(str) {
+  var d = document.createElement('div');
+  d.textContent = str || '';
+  return d.innerHTML;
+}
+
+function onViewOnlyDown(e) {
+  isPanning = true;
+  dragStart = {x: e.clientX, y: e.clientY};
+  panStart = {x: panX, y: panY};
+  container.classList.add('panning');
+}
+function onViewOnlyMove(e) {
+  if (isPanning) {
+    panX = panStart.x + (e.clientX - dragStart.x);
+    panY = panStart.y + (e.clientY - dragStart.y);
+    applyTransform();
+  }
+}
+function onViewOnlyUp() {
+  isPanning = false;
+  container.classList.remove('panning');
 }
 
 function fullRender() {
@@ -54,7 +118,7 @@ function fullRender() {
     if (hiddenIds[node.id]) el.style.display = 'none';
     canvas.appendChild(el);
     nodeEls[node.id] = el;
-    attachNodeEvents(el, node);
+    if (!isViewOnly) attachNodeEvents(el, node);
   });
   /* Draw ALL edges as SVG paths */
   renderAllEdges(edgeSvg, mapData.edges, mapData.nodes, nodeEls,

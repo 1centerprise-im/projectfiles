@@ -16,6 +16,7 @@ async function init() {
   try {
     indexData = await loadIndex();
     wireEvents();
+    checkUrlParams();
     render();
   } catch (err) {
     body.innerHTML = '<tr><td colspan="5" style="color:#ef4444;padding:20px;">Failed to load project data</td></tr>';
@@ -32,6 +33,11 @@ function wireEvents() {
     e.preventDefault();
     currentFolder = null;
     render();
+  });
+  // Close any open context menu on click
+  document.addEventListener('click', function() {
+    var cm = document.getElementById('projectCtxMenu');
+    if (cm) cm.remove();
   });
 }
 
@@ -93,14 +99,28 @@ function renderFolderCards(container, search) {
         '<span class="folder-card-name">' + esc(folder.label) + '</span>' +
         '<span class="folder-card-count">' + mapCount + ' map' + (mapCount !== 1 ? 's' : '') + '</span>' +
       '</div>' +
+      '<span class="share-btn folder-share-btn" title="Copy share link">' + linkSvg() + '</span>' +
       '<span class="delete-btn folder-delete-btn" data-folder="' + esc(folder.name) +
       '" title="Delete folder">&times;</span>';
 
     // Click to open folder
     card.addEventListener('click', function(e) {
-      if (e.target.closest('.delete-btn')) return;
+      if (e.target.closest('.delete-btn') || e.target.closest('.share-btn')) return;
       currentFolder = folder.name;
       render();
+    });
+
+    // Share folder link
+    card.querySelector('.share-btn').addEventListener('click', function(e) {
+      e.stopPropagation();
+      copyShareLink(getFolderShareUrl(folder.name));
+    });
+
+    // Right-click context menu on folder
+    card.addEventListener('contextmenu', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      showProjectCtxMenu(e.clientX, e.clientY, getFolderShareUrl(folder.name));
     });
 
     // Delete folder
@@ -190,20 +210,37 @@ function renderMapsTable(folderName, search, statusVal) {
 
     var folderTag = search ? '<span class="map-folder-tag">' + esc(item.folderLabel) + '</span>' : '';
 
+    var viewUrl = getMapViewUrl(item.folder, m.id);
     tr.innerHTML =
       '<td class="col-num">' + esc(m.number || '') + '</td>' +
       '<td class="col-name"><span class="project-name-text">' + esc(m.name) + '</span>' + folderTag + '</td>' +
       '<td class="col-status">' + statusHtml + '</td>' +
-      '<td class="col-action"><a href="editor.html?folder=' + encodeURIComponent(item.folder) +
-      '&map=' + encodeURIComponent(m.id) + '" class="open-link">OPEN</a></td>' +
+      '<td class="col-action">' +
+        '<span class="share-btn row-share-btn" title="Copy share link">' + linkSvg() + '</span>' +
+        '<a href="editor.html?folder=' + encodeURIComponent(item.folder) +
+        '&map=' + encodeURIComponent(m.id) + '" class="open-link">OPEN</a></td>' +
       '<td class="col-delete"><span class="delete-btn" data-folder="' + esc(item.folder) +
       '" data-map-id="' + esc(m.id) + '" data-map-name="' + esc(m.name) +
       '" data-type="map" title="Delete map">&times;</span></td>';
 
+    // Share map link
+    tr.querySelector('.share-btn').addEventListener('click', function(e) {
+      e.stopPropagation();
+      copyShareLink(viewUrl);
+    });
+
+    // Right-click context menu on map row
+    tr.addEventListener('contextmenu', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      showProjectCtxMenu(e.clientX, e.clientY, viewUrl);
+    });
+
     // Click row to open map
     tr.addEventListener('click', function(e) {
       if (e.target.tagName === 'A' || e.target.closest('.status-badge') ||
-          e.target.closest('.status-dropdown') || e.target.closest('.delete-btn')) return;
+          e.target.closest('.status-dropdown') || e.target.closest('.delete-btn') ||
+          e.target.closest('.share-btn')) return;
       window.location.href = 'editor.html?folder=' + encodeURIComponent(item.folder) + '&map=' + encodeURIComponent(m.id);
     });
 
@@ -635,4 +672,88 @@ function esc(str) {
   var d = document.createElement('div');
   d.textContent = str || '';
   return d.innerHTML;
+}
+
+/* ============================================================
+   SHARE LINK HELPERS
+   ============================================================ */
+function linkSvg() {
+  return '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' +
+    '<path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>' +
+    '<path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>';
+}
+
+function getBaseUrl() {
+  return window.location.origin + window.location.pathname.replace(/\/[^/]*$/, '/');
+}
+
+function getFolderShareUrl(folderName) {
+  return getBaseUrl() + 'projects.html?folder=' + encodeURIComponent(folderName);
+}
+
+function getMapViewUrl(folderName, mapId) {
+  return getBaseUrl() + 'editor.html?folder=' + encodeURIComponent(folderName) +
+    '&map=' + encodeURIComponent(mapId) + '&mode=view';
+}
+
+function copyShareLink(url) {
+  navigator.clipboard.writeText(url).then(function() {
+    showHomeToast('Link copied!');
+  }).catch(function() {
+    // Fallback
+    var ta = document.createElement('textarea');
+    ta.value = url; ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.select();
+    document.execCommand('copy'); ta.remove();
+    showHomeToast('Link copied!');
+  });
+}
+
+/* ============================================================
+   RIGHT-CLICK CONTEXT MENU
+   ============================================================ */
+function showProjectCtxMenu(x, y, shareUrl) {
+  var old = document.getElementById('projectCtxMenu');
+  if (old) old.remove();
+
+  var menu = document.createElement('div');
+  menu.id = 'projectCtxMenu';
+  menu.className = 'project-ctx-menu';
+  menu.innerHTML =
+    '<div class="project-ctx-item" data-action="copy">' + linkSvg() + ' Copy share link</div>' +
+    '<div class="project-ctx-item" data-action="newtab">' +
+      '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' +
+      '<path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>' +
+      ' Open in new tab</div>';
+
+  menu.style.left = x + 'px';
+  menu.style.top = y + 'px';
+  document.body.appendChild(menu);
+
+  // Adjust if overflows viewport
+  var rect = menu.getBoundingClientRect();
+  if (rect.right > window.innerWidth) menu.style.left = (x - rect.width) + 'px';
+  if (rect.bottom > window.innerHeight) menu.style.top = (y - rect.height) + 'px';
+
+  menu.querySelector('[data-action="copy"]').addEventListener('click', function(e) {
+    e.stopPropagation();
+    copyShareLink(shareUrl);
+    menu.remove();
+  });
+  menu.querySelector('[data-action="newtab"]').addEventListener('click', function(e) {
+    e.stopPropagation();
+    window.open(shareUrl, '_blank');
+    menu.remove();
+  });
+}
+
+/* ============================================================
+   URL PARAMS: open folder from share link
+   ============================================================ */
+function checkUrlParams() {
+  var params = new URLSearchParams(window.location.search);
+  var folderParam = params.get('folder');
+  if (folderParam && indexData.folders.find(function(f) { return f.name === folderParam; })) {
+    currentFolder = folderParam;
+  }
 }
