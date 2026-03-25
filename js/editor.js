@@ -90,6 +90,7 @@ function attachNodeEvents(el, node) {
     updateSelectionVisuals(); showFormatPanel();
     beginDrag(e);
   });
+  el.addEventListener('click', function(e) { e.stopPropagation(); });
   el.addEventListener('dblclick', function(e) {
     e.stopPropagation();
     startEditing(el, node, function() { fullRender(); autoSave(); });
