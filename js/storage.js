@@ -80,17 +80,24 @@ async function ghDelete(path, message) {
   return true;
 }
 
-// Load a map JSON (public fetch, no API needed)
+// Load a map JSON - try GitHub API first (always fresh), fallback to static
 async function loadMap(folder, mapName) {
+  // Try GitHub API first (always fresh)
+  try {
+    const result = await ghGet(`maps/${folder}/${mapName}.json`);
+    if (result) {
+      const data = JSON.parse(result.content);
+      console.log(`[storage] Loaded ${folder}/${mapName} from API: ${data.nodes?.length || 0} nodes`);
+      return data;
+    }
+  } catch(e) {
+    console.warn('[storage] API load failed, falling back to static:', e);
+  }
+  // Fallback to static fetch (for when no token is set)
   const res = await fetch(`maps/${folder}/${mapName}.json?t=${Date.now()}`, { cache: 'no-store' });
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
   const data = await res.json();
-  if (!data.nodes) data.nodes = [];
-  if (!data.edges) data.edges = [];
-  if (!data.nid) data.nid = data.nodes.length + 1;
-  if (!data.edgeThickness) data.edgeThickness = 2;
-  if (!data.edgeColor) data.edgeColor = '#c8c0b8';
-  console.log(`[storage] Loaded ${folder}/${mapName}: ${data.nodes.length} nodes, ${data.edges.length} edges`);
+  console.log(`[storage] Loaded ${folder}/${mapName} from static: ${data.nodes?.length || 0} nodes`);
   return data;
 }
 
@@ -100,8 +107,14 @@ async function saveMap(folder, mapName, mapData) {
   await ghPut(`maps/${folder}/${mapName}.json`, json, `Update ${mapName} via Mind Map Editor`);
 }
 
-// Load index.json (public fetch)
+// Load index.json - try GitHub API first (always fresh), fallback to static
 async function loadIndex() {
+  try {
+    const result = await ghGet('maps/index.json');
+    if (result) return JSON.parse(result.content);
+  } catch(e) {
+    console.warn('[storage] API index load failed, falling back to static:', e);
+  }
   const res = await fetch(`maps/index.json?t=${Date.now()}`, { cache: 'no-store' });
   if (!res.ok) throw new Error('Failed to load index');
   return await res.json();
