@@ -90,7 +90,6 @@ function attachNodeEvents(el, node) {
     updateSelectionVisuals(); showFormatPanel();
     beginDrag(e);
   });
-  el.addEventListener('click', function(e) { e.stopPropagation(); });
   el.addEventListener('dblclick', function(e) {
     e.stopPropagation();
     startEditing(el, node, function() { fullRender(); autoSave(); });
@@ -125,13 +124,6 @@ function setupEvents() {
   window.addEventListener('keydown', onKeyDown);
   window.addEventListener('keyup', function(e) { if (e.code === 'Space') spaceDown = false; });
   edgeSvg.addEventListener('click', onEdgeClick);
-  /* Single click on empty canvas deselects all */
-  container.addEventListener('click', function(e) {
-    if (!e.target.closest('.mm-node') && !e.target.closest('.edge-hit')) {
-      selectedNodes.clear(); selectedEdge = null;
-      deselectAllEdges(edgeSvg); updateSelectionVisuals(); hideFormatPanel();
-    }
-  });
   container.addEventListener('contextmenu', onContextMenu);
   document.addEventListener('click', function() { ctxMenu.classList.remove('visible'); });
   window.addEventListener('paste', onPaste);
