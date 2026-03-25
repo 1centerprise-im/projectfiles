@@ -565,6 +565,162 @@ button { font-family: 'Nunito Sans', sans-serif; cursor: pointer; border: none; 
 }
 .btn-delete-confirm:hover { background: #dc2626; }
 
+/* ===== NEW FOLDER BUTTON ===== */
+.btn-new-folder {
+  padding: 10px 20px; background: transparent; border: 1px solid var(--dk-border);
+  color: var(--dk-muted); border-radius: 6px; font-family: 'Nunito Sans', sans-serif;
+  font-size: 0.85rem; font-weight: 700; cursor: pointer; transition: background 0.2s, color 0.2s, border-color 0.2s;
+  white-space: nowrap;
+}
+.btn-new-folder:hover { border-color: var(--dk-gold); color: var(--dk-gold); }
+
+/* ===== BREADCRUMB ===== */
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 20px;
+  font-size: 0.85rem;
+}
+.breadcrumb-link {
+  color: var(--dk-gold);
+  text-decoration: none;
+  font-weight: 600;
+  transition: opacity 0.2s;
+}
+.breadcrumb-link:hover { opacity: 0.7; text-decoration: none; }
+.breadcrumb-sep { color: var(--dk-muted); }
+.breadcrumb-current { color: var(--dk-text); font-weight: 600; }
+
+/* ===== FOLDER CARDS GRID ===== */
+.folders-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 12px;
+  margin-bottom: 24px;
+}
+.folder-card {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 18px;
+  background: var(--dk-card);
+  border: 1px solid var(--dk-border);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+}
+.folder-card:hover {
+  border-color: var(--dk-gold);
+  background: rgba(201,168,76,0.04);
+}
+.folder-card-dragover {
+  border-color: var(--dk-gold) !important;
+  background: rgba(201,168,76,0.1) !important;
+  box-shadow: 0 0 12px rgba(201,168,76,0.2);
+}
+.folder-card-icon {
+  color: var(--dk-gold);
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+}
+.folder-card-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.folder-card-name {
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--dk-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.folder-card-count {
+  font-size: 0.75rem;
+  color: var(--dk-muted);
+}
+.folder-delete-btn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+.folder-card:hover .folder-delete-btn {
+  opacity: 1;
+}
+
+/* ===== MAP FOLDER TAG (in search results) ===== */
+.map-folder-tag {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 1px 8px;
+  background: rgba(201,168,76,0.12);
+  color: var(--dk-gold);
+  font-size: 0.7rem;
+  font-weight: 600;
+  border-radius: 10px;
+  vertical-align: middle;
+}
+
+/* ===== DRAGGING ROW ===== */
+.dragging-row {
+  opacity: 0.4;
+}
+.project-row[draggable="true"] {
+  cursor: grab;
+}
+.project-row[draggable="true"]:active {
+  cursor: grabbing;
+}
+
+/* ===== ROOT DROP ZONE ===== */
+.root-drop-zone {
+  padding: 14px 20px;
+  margin-bottom: 16px;
+  border: 2px dashed var(--dk-border);
+  border-radius: 8px;
+  text-align: center;
+  font-size: 0.82rem;
+  color: var(--dk-muted);
+  transition: border-color 0.2s, background 0.2s, color 0.2s;
+}
+.root-drop-zone-active {
+  border-color: var(--dk-gold);
+  background: rgba(201,168,76,0.06);
+  color: var(--dk-gold);
+}
+
+/* ===== MOVE FOLDER LIST (in modal) ===== */
+.move-folder-list {
+  margin: 12px 0 16px;
+}
+.move-folder-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  color: #e5e7eb;
+  font-size: 0.9rem;
+  transition: background 0.15s;
+}
+.move-folder-option:hover {
+  background: rgba(201,168,76,0.1);
+}
+.move-folder-option svg {
+  width: 20px;
+  height: 20px;
+  color: var(--dk-gold);
+  flex-shrink: 0;
+}
+
 /* ==========================================================
    RESPONSIVE
    ========================================================== */
@@ -573,4 +729,5 @@ button { font-family: 'Nunito Sans', sans-serif; cursor: pointer; border: none; 
   .projects-header { flex-direction: column; gap: 12px; }
   .projects-filters { flex-direction: column; }
   .projects-table .col-org { display: none; }
+  .folders-grid { grid-template-columns: 1fr; }
 }

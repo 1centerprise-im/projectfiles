@@ -19,15 +19,23 @@
     <!-- Header -->
     <header class="projects-header">
       <div class="projects-header-left">
-        <p class="projects-label">ALL PROJECTS</p>
-        <h1 class="projects-title">Project Files</h1>
+        <p class="projects-label" id="headerLabel">ALL PROJECTS</p>
+        <h1 class="projects-title" id="headerTitle">Project Files</h1>
       </div>
       <a href="index.html" class="projects-back">&larr; BACK</a>
     </header>
 
+    <!-- Breadcrumb (hidden at root) -->
+    <div id="breadcrumb" class="breadcrumb" style="display:none">
+      <a href="#" id="breadcrumbBack" class="breadcrumb-link">&larr; All Projects</a>
+      <span class="breadcrumb-sep">/</span>
+      <span id="breadcrumbFolder" class="breadcrumb-current"></span>
+    </div>
+
     <!-- Filters -->
     <div class="projects-filters">
       <input type="text" id="searchInput" class="projects-search" placeholder="Search projects...">
+      <button class="btn-new-folder" id="btnNewFolder">+ New Folder</button>
       <button class="btn-new-map" id="btnNewMap">+ New Map</button>
       <select id="statusFilter" class="projects-select">
         <option value="">All Statuses</option>
@@ -35,6 +43,14 @@
         <option value="completed">Completed</option>
         <option value="on-process">On-Process</option>
       </select>
+    </div>
+
+    <!-- Folder cards grid (root view only) -->
+    <div id="foldersGrid" class="folders-grid"></div>
+
+    <!-- Root drop zone (shown when inside a folder, to move maps out) -->
+    <div id="rootDropZone" class="root-drop-zone" style="display:none">
+      Drop here to move to root level
     </div>
 
     <!-- Table -->

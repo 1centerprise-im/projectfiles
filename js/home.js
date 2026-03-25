@@ -1,133 +1,228 @@
 /* ============================================================
    HOME.JS - Logic for projects.html
-   Fetches maps/index.json, renders the project table,
-   handles search/filter, status change, create/delete maps.
+   Folder-based file browser with drag-and-drop.
    Requires storage.js to be loaded first.
    ============================================================ */
 
 document.addEventListener('DOMContentLoaded', init);
 
-var allProjects = [];
 var indexData = null;
+var currentFolder = null; // null = root view, string = inside that folder
 
 async function init() {
   var body = document.getElementById('projectsBody');
   if (!body) return;
 
   try {
-    /* Try GitHub API first for fresh data; fall back to static fetch */
-    var token = localStorage.getItem('gh_token');
-    if (token) {
-      try {
-        var ghResult = await ghGet('maps/index.json');
-        if (ghResult) { indexData = JSON.parse(ghResult.content); }
-      } catch (e) { console.warn('[home] API fetch failed, using static:', e); }
-    }
-    if (!indexData) {
-      var resp = await fetch('maps/index.json?t=' + Date.now(), { cache: 'no-store' });
-      if (!resp.ok) throw new Error('HTTP ' + resp.status);
-      indexData = await resp.json();
-    }
-
-    rebuildProjectList();
-
-    document.getElementById('searchInput').addEventListener('input', renderTable);
-    document.getElementById('statusFilter').addEventListener('change', renderTable);
-    document.getElementById('btnNewMap').addEventListener('click', showNewMapModal);
-    renderTable();
+    indexData = await loadIndex();
+    wireEvents();
+    render();
   } catch (err) {
     body.innerHTML = '<tr><td colspan="5" style="color:#ef4444;padding:20px;">Failed to load project data</td></tr>';
     console.error(err);
   }
 }
 
-/* Build the flat allProjects array from indexData */
-function rebuildProjectList() {
-  allProjects = [];
-  indexData.folders.forEach(function(folder) {
-    if (folder.maps.length === 0) {
-      allProjects.push({
-        folder: folder.name, folderLabel: folder.label,
-        id: null, name: folder.label, number: '',
-        organization: '', status: '', empty: true
-      });
-    } else {
-      folder.maps.forEach(function(m) {
-        allProjects.push({
-          folder: folder.name, folderLabel: folder.label,
-          id: m.id, name: m.name, number: m.number || '',
-          organization: m.organization || '',
-          status: (m.status || '').toLowerCase(),
-          empty: false
-        });
-      });
-    }
+function wireEvents() {
+  document.getElementById('searchInput').addEventListener('input', render);
+  document.getElementById('statusFilter').addEventListener('change', render);
+  document.getElementById('btnNewMap').addEventListener('click', showNewMapModal);
+  document.getElementById('btnNewFolder').addEventListener('click', showNewFolderModal);
+  document.getElementById('breadcrumbBack').addEventListener('click', function(e) {
+    e.preventDefault();
+    currentFolder = null;
+    render();
   });
 }
 
-function renderTable() {
-  var body = document.getElementById('projectsBody');
+/* ============================================================
+   MAIN RENDER
+   ============================================================ */
+function render() {
   var search = (document.getElementById('searchInput').value || '').toLowerCase();
   var statusVal = document.getElementById('statusFilter').value;
+  var breadcrumb = document.getElementById('breadcrumb');
+  var foldersGrid = document.getElementById('foldersGrid');
+  var rootDropZone = document.getElementById('rootDropZone');
+  var headerLabel = document.getElementById('headerLabel');
+  var headerTitle = document.getElementById('headerTitle');
 
-  var filtered = allProjects.filter(function(p) {
-    if (p.empty) return true;
+  if (currentFolder === null) {
+    /* ---- ROOT VIEW ---- */
+    breadcrumb.style.display = 'none';
+    rootDropZone.style.display = 'none';
+    headerLabel.textContent = 'ALL PROJECTS';
+    headerTitle.textContent = 'Project Files';
+    renderFolderCards(foldersGrid, search);
+    renderMapsTable(null, search, statusVal);
+  } else {
+    /* ---- INSIDE A FOLDER ---- */
+    var folder = indexData.folders.find(function(f) { return f.name === currentFolder; });
+    breadcrumb.style.display = 'flex';
+    document.getElementById('breadcrumbFolder').textContent = folder ? folder.label : currentFolder;
+    foldersGrid.innerHTML = '';
+    rootDropZone.style.display = 'block';
+    headerLabel.textContent = 'FOLDER';
+    headerTitle.textContent = folder ? folder.label : currentFolder;
+    renderMapsTable(currentFolder, search, statusVal);
+    setupRootDropZone();
+  }
+}
+
+/* ============================================================
+   FOLDER CARDS (root view)
+   ============================================================ */
+function renderFolderCards(container, search) {
+  container.innerHTML = '';
+
+  // If searching, show all matching maps across all folders instead of folder cards
+  if (search) {
+    container.innerHTML = '';
+    return; // search results shown in the table below
+  }
+
+  indexData.folders.forEach(function(folder) {
+    var card = document.createElement('div');
+    card.className = 'folder-card';
+    card.dataset.folder = folder.name;
+
+    var mapCount = folder.maps.length;
+    card.innerHTML =
+      '<div class="folder-card-icon">' + folderSvg() + '</div>' +
+      '<div class="folder-card-info">' +
+        '<span class="folder-card-name">' + esc(folder.label) + '</span>' +
+        '<span class="folder-card-count">' + mapCount + ' map' + (mapCount !== 1 ? 's' : '') + '</span>' +
+      '</div>' +
+      '<span class="delete-btn folder-delete-btn" data-folder="' + esc(folder.name) +
+      '" title="Delete folder">&times;</span>';
+
+    // Click to open folder
+    card.addEventListener('click', function(e) {
+      if (e.target.closest('.delete-btn')) return;
+      currentFolder = folder.name;
+      render();
+    });
+
+    // Delete folder
+    card.querySelector('.delete-btn').addEventListener('click', function(e) {
+      e.stopPropagation();
+      confirmDeleteFolder(folder.name);
+    });
+
+    // Drop target: accept dragged maps
+    card.addEventListener('dragover', function(e) {
+      e.preventDefault();
+      card.classList.add('folder-card-dragover');
+    });
+    card.addEventListener('dragleave', function(e) {
+      card.classList.remove('folder-card-dragover');
+    });
+    card.addEventListener('drop', function(e) {
+      e.preventDefault();
+      card.classList.remove('folder-card-dragover');
+      handleMapDrop(e, folder.name, folder.label);
+    });
+
+    container.appendChild(card);
+  });
+}
+
+function folderSvg() {
+  return '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">' +
+    '<path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>';
+}
+
+/* ============================================================
+   MAPS TABLE
+   ============================================================ */
+function renderMapsTable(folderName, search, statusVal) {
+  var body = document.getElementById('projectsBody');
+  body.innerHTML = '';
+  var count = 0;
+  var maps = [];
+
+  if (folderName !== null) {
+    // Inside a specific folder
+    var folder = indexData.folders.find(function(f) { return f.name === folderName; });
+    if (folder) {
+      folder.maps.forEach(function(m) {
+        maps.push({ folder: folder.name, folderLabel: folder.label, map: m });
+      });
+    }
+  } else if (search) {
+    // Searching: show all maps across all folders
+    indexData.folders.forEach(function(folder) {
+      folder.maps.forEach(function(m) {
+        maps.push({ folder: folder.name, folderLabel: folder.label, map: m });
+      });
+    });
+  } else {
+    // Root view, no search: don't show maps in folders (they're in folder cards)
+    // Only show root-level maps if any exist (currently the structure doesn't have root maps)
+    // This is here for future-proofing
+  }
+
+  // Filter
+  maps = maps.filter(function(item) {
+    var m = item.map;
     var matchSearch = !search ||
-      p.name.toLowerCase().indexOf(search) !== -1 ||
-      p.number.toLowerCase().indexOf(search) !== -1;
-    var matchStatus = !statusVal || p.status === statusVal;
+      m.name.toLowerCase().indexOf(search) !== -1 ||
+      (m.number || '').toLowerCase().indexOf(search) !== -1 ||
+      item.folderLabel.toLowerCase().indexOf(search) !== -1;
+    var matchStatus = !statusVal || (m.status || '').toLowerCase() === statusVal;
     return matchSearch && matchStatus;
   });
 
-  filtered.sort(function(a, b) {
-    if (a.empty !== b.empty) return a.empty ? 1 : -1;
-    return 0;
-  });
-
-  body.innerHTML = '';
-  var count = 0;
-
-  filtered.forEach(function(p) {
+  maps.forEach(function(item) {
+    var m = item.map;
+    count++;
     var tr = document.createElement('tr');
+    tr.className = 'project-row';
+    tr.draggable = true;
+    tr.dataset.mapId = m.id;
+    tr.dataset.folder = item.folder;
+    tr.dataset.mapName = m.name;
 
-    if (p.empty) {
-      tr.className = 'project-row empty-row';
-      tr.innerHTML =
-        '<td class="col-num"></td>' +
-        '<td class="col-name"><span class="project-name-text">' + esc(p.folderLabel) + '</span></td>' +
-        '<td class="col-status"><span class="muted-text">No maps yet</span></td>' +
-        '<td class="col-action"></td>' +
-        '<td class="col-delete"><span class="delete-btn" data-folder="' + esc(p.folder) +
-        '" data-type="folder" title="Delete folder">&times;</span></td>';
-    } else {
-      count++;
-      tr.className = 'project-row';
-      var statusHtml = '<span class="status-badge status-' + esc(p.status) +
-        '" data-project-id="' + esc(p.id) + '" data-folder="' + esc(p.folder) +
-        '" style="cursor:pointer" title="Click to change status">' +
-        capitalize(p.status) + '</span>';
-      tr.innerHTML =
-        '<td class="col-num">' + esc(p.number) + '</td>' +
-        '<td class="col-name"><span class="project-name-text">' + esc(p.name) + '</span></td>' +
-        '<td class="col-status">' + statusHtml + '</td>' +
-        '<td class="col-action"><a href="editor.html?folder=' + encodeURIComponent(p.folder) +
-        '&map=' + encodeURIComponent(p.id) + '" class="open-link">OPEN</a></td>' +
-        '<td class="col-delete"><span class="delete-btn" data-folder="' + esc(p.folder) +
-        '" data-map-id="' + esc(p.id) + '" data-map-name="' + esc(p.name) +
-        '" data-type="map" title="Delete map">&times;</span></td>';
+    var statusHtml = '<span class="status-badge status-' + esc((m.status || '').toLowerCase()) +
+      '" data-project-id="' + esc(m.id) + '" data-folder="' + esc(item.folder) +
+      '" style="cursor:pointer" title="Click to change status">' +
+      capitalize(m.status || '') + '</span>';
 
-      tr.style.cursor = 'pointer';
-      tr.addEventListener('click', function(e) {
-        if (e.target.tagName === 'A' || e.target.closest('.status-badge') ||
-            e.target.closest('.status-dropdown') || e.target.closest('.delete-btn')) return;
-        window.location.href = 'editor.html?folder=' + encodeURIComponent(p.folder) + '&map=' + encodeURIComponent(p.id);
-      });
-    }
+    var folderTag = search ? '<span class="map-folder-tag">' + esc(item.folderLabel) + '</span>' : '';
+
+    tr.innerHTML =
+      '<td class="col-num">' + esc(m.number || '') + '</td>' +
+      '<td class="col-name"><span class="project-name-text">' + esc(m.name) + '</span>' + folderTag + '</td>' +
+      '<td class="col-status">' + statusHtml + '</td>' +
+      '<td class="col-action"><a href="editor.html?folder=' + encodeURIComponent(item.folder) +
+      '&map=' + encodeURIComponent(m.id) + '" class="open-link">OPEN</a></td>' +
+      '<td class="col-delete"><span class="delete-btn" data-folder="' + esc(item.folder) +
+      '" data-map-id="' + esc(m.id) + '" data-map-name="' + esc(m.name) +
+      '" data-type="map" title="Delete map">&times;</span></td>';
+
+    // Click row to open map
+    tr.addEventListener('click', function(e) {
+      if (e.target.tagName === 'A' || e.target.closest('.status-badge') ||
+          e.target.closest('.status-dropdown') || e.target.closest('.delete-btn')) return;
+      window.location.href = 'editor.html?folder=' + encodeURIComponent(item.folder) + '&map=' + encodeURIComponent(m.id);
+    });
+
+    // Drag start
+    tr.addEventListener('dragstart', function(e) {
+      e.dataTransfer.setData('application/x-map-id', m.id);
+      e.dataTransfer.setData('application/x-map-folder', item.folder);
+      e.dataTransfer.setData('application/x-map-name', m.name);
+      e.dataTransfer.effectAllowed = 'move';
+      tr.classList.add('dragging-row');
+    });
+    tr.addEventListener('dragend', function() {
+      tr.classList.remove('dragging-row');
+    });
 
     body.appendChild(tr);
   });
 
-  /* Wire up status badge clicks */
+  // Wire status badges
   body.querySelectorAll('.status-badge').forEach(function(badge) {
     badge.addEventListener('click', function(e) {
       e.stopPropagation();
@@ -135,20 +230,113 @@ function renderTable() {
     });
   });
 
-  /* Wire up delete button clicks */
+  // Wire delete buttons
   body.querySelectorAll('.delete-btn').forEach(function(btn) {
     btn.addEventListener('click', function(e) {
       e.stopPropagation();
-      var type = btn.dataset.type;
-      if (type === 'map') {
-        confirmDeleteMap(btn.dataset.folder, btn.dataset.mapId, btn.dataset.mapName);
-      } else if (type === 'folder') {
-        confirmDeleteFolder(btn.dataset.folder);
-      }
+      confirmDeleteMap(btn.dataset.folder, btn.dataset.mapId, btn.dataset.mapName);
     });
   });
 
   document.getElementById('projectCount').textContent = count + ' project' + (count !== 1 ? 's' : '');
+}
+
+/* ============================================================
+   ROOT DROP ZONE (when inside a folder)
+   ============================================================ */
+function setupRootDropZone() {
+  var zone = document.getElementById('rootDropZone');
+  zone.addEventListener('dragover', function(e) {
+    e.preventDefault();
+    zone.classList.add('root-drop-zone-active');
+  });
+  zone.addEventListener('dragleave', function() {
+    zone.classList.remove('root-drop-zone-active');
+  });
+  zone.addEventListener('drop', function(e) {
+    e.preventDefault();
+    zone.classList.remove('root-drop-zone-active');
+    // "Root level" isn't supported in the current folder structure,
+    // so dropping here shows available folders to move to
+    var mapId = e.dataTransfer.getData('application/x-map-id');
+    var fromFolder = e.dataTransfer.getData('application/x-map-folder');
+    var mapName = e.dataTransfer.getData('application/x-map-name');
+    if (!mapId || !fromFolder) return;
+    showMoveToFolderModal(mapId, fromFolder, mapName);
+  });
+}
+
+/* ============================================================
+   DRAG & DROP: Move map to folder
+   ============================================================ */
+async function handleMapDrop(e, toFolder, toFolderLabel) {
+  var mapId = e.dataTransfer.getData('application/x-map-id');
+  var fromFolder = e.dataTransfer.getData('application/x-map-folder');
+  var mapName = e.dataTransfer.getData('application/x-map-name');
+
+  if (!mapId || !fromFolder) return;
+  if (fromFolder === toFolder) {
+    showHomeToast('Already in this folder');
+    return;
+  }
+
+  showHomeToast('Moving...');
+  try {
+    indexData = await moveMapToFolder(mapId, fromFolder, toFolder, toFolderLabel);
+    render();
+    showHomeToast('Moved \'' + mapName + '\' to ' + toFolderLabel);
+  } catch (err) {
+    showHomeToast('Move failed: ' + err.message, true);
+  }
+}
+
+/* Move-to-folder modal (when dropping on root zone or clicking move button) */
+function showMoveToFolderModal(mapId, fromFolder, mapName) {
+  var old = document.getElementById('moveFolderModal');
+  if (old) old.remove();
+
+  var opts = '';
+  indexData.folders.forEach(function(f) {
+    if (f.name !== fromFolder) {
+      opts += '<div class="move-folder-option" data-folder="' + esc(f.name) +
+        '" data-label="' + esc(f.label) + '">' +
+        folderSvg() + ' ' + esc(f.label) + '</div>';
+    }
+  });
+
+  if (!opts) {
+    showHomeToast('No other folders to move to');
+    return;
+  }
+
+  var m = document.createElement('div');
+  m.id = 'moveFolderModal';
+  m.className = 'token-modal-overlay';
+  m.innerHTML =
+    '<div class="newmap-modal">' +
+    '<h3>Move "' + esc(mapName) + '" to...</h3>' +
+    '<div class="move-folder-list">' + opts + '</div>' +
+    '<div class="newmap-actions">' +
+    '<button class="btn-cancel" id="moveCancel">Cancel</button>' +
+    '</div></div>';
+  document.body.appendChild(m);
+
+  document.getElementById('moveCancel').onclick = function() { m.remove(); };
+  m.querySelectorAll('.move-folder-option').forEach(function(opt) {
+    opt.addEventListener('click', async function() {
+      var toFolder = opt.dataset.folder;
+      var toLabel = opt.dataset.label;
+      m.remove();
+      showHomeToast('Moving...');
+      try {
+        indexData = await moveMapToFolder(mapId, fromFolder, toFolder, toLabel);
+        render();
+        showHomeToast('Moved \'' + mapName + '\' to ' + toLabel);
+      } catch (err) {
+        showHomeToast('Move failed: ' + err.message, true);
+      }
+    });
+  });
 }
 
 /* ============================================================
@@ -191,11 +379,6 @@ function showStatusDropdown(badge) {
 }
 
 async function changeStatus(folderName, projectId, newStatus) {
-  /* Update local data */
-  var project = allProjects.find(function(p) { return p.id === projectId && p.folder === folderName; });
-  if (project) project.status = newStatus;
-
-  /* Update indexData */
   indexData.folders.forEach(function(f) {
     if (f.name === folderName) {
       f.maps.forEach(function(m) {
@@ -203,10 +386,7 @@ async function changeStatus(folderName, projectId, newStatus) {
       });
     }
   });
-
-  renderTable();
-
-  /* Save to GitHub immediately */
+  render();
   showHomeToast('Saving...');
   try {
     await saveIndex(indexData);
@@ -242,14 +422,12 @@ function confirmDeleteMap(folder, mapId, mapName) {
     showHomeToast('Deleting...');
     try {
       await deleteMap(folder, mapId);
-      /* Refresh local data */
       indexData.folders.forEach(function(f) {
         if (f.name === folder) {
           f.maps = f.maps.filter(function(mp) { return mp.id !== mapId; });
         }
       });
-      rebuildProjectList();
-      renderTable();
+      render();
       showHomeToast('Map deleted');
     } catch (err) {
       showHomeToast('Delete failed: ' + err.message, true);
@@ -258,8 +436,15 @@ function confirmDeleteMap(folder, mapId, mapName) {
 }
 
 function confirmDeleteFolder(folderName) {
+  var folder = indexData.folders.find(function(f) { return f.name === folderName; });
+  var mapCount = folder ? folder.maps.length : 0;
+
   var old = document.getElementById('deleteModal');
   if (old) old.remove();
+
+  var warning = mapCount > 0
+    ? '<p style="color:#f97316;margin:8px 0;font-size:0.85rem">This folder contains ' + mapCount + ' map' + (mapCount !== 1 ? 's' : '') + '. They will also be deleted.</p>'
+    : '';
 
   var m = document.createElement('div');
   m.id = 'deleteModal';
@@ -268,6 +453,7 @@ function confirmDeleteFolder(folderName) {
     '<div class="newmap-modal">' +
     '<h3>Delete Folder</h3>' +
     '<p style="color:#ccc;margin:12px 0">Delete folder <strong>' + esc(folderName) + '</strong>? This cannot be undone.</p>' +
+    warning +
     '<div class="newmap-actions">' +
     '<button class="btn-cancel" id="delCancel">Cancel</button>' +
     '<button class="btn-delete-confirm" id="delConfirm">Delete</button>' +
@@ -280,15 +466,63 @@ function confirmDeleteFolder(folderName) {
     showHomeToast('Deleting...');
     try {
       await deleteFolder(folderName);
-      /* Refresh local data */
       indexData.folders = indexData.folders.filter(function(f) { return f.name !== folderName; });
-      rebuildProjectList();
-      renderTable();
+      if (currentFolder === folderName) currentFolder = null;
+      render();
       showHomeToast('Folder deleted');
     } catch (err) {
       showHomeToast('Delete failed: ' + err.message, true);
     }
   };
+}
+
+/* ============================================================
+   NEW FOLDER MODAL
+   ============================================================ */
+function showNewFolderModal() {
+  var old = document.getElementById('newFolderModal');
+  if (old) old.remove();
+
+  var m = document.createElement('div');
+  m.id = 'newFolderModal';
+  m.className = 'token-modal-overlay';
+  m.innerHTML =
+    '<div class="newmap-modal">' +
+    '<h3>Create New Folder</h3>' +
+    '<label>Folder Name</label>' +
+    '<input type="text" id="nfName" placeholder="e.g. Consultancy">' +
+    '<div class="newmap-actions">' +
+    '<button class="btn-cancel" id="nfCancel">Cancel</button>' +
+    '<button class="btn-create" id="nfCreate">Create</button>' +
+    '</div></div>';
+  document.body.appendChild(m);
+
+  document.getElementById('nfCancel').onclick = function() { m.remove(); };
+  document.getElementById('nfCreate').onclick = async function() {
+    var label = document.getElementById('nfName').value.trim();
+    if (!label) { showHomeToast('Enter a folder name', true); return; }
+    var name = label.toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_|_$/g, '');
+    if (!name) { showHomeToast('Invalid folder name', true); return; }
+
+    // Check duplicate
+    if (indexData.folders.find(function(f) { return f.name === name; })) {
+      showHomeToast('Folder already exists', true);
+      return;
+    }
+
+    showHomeToast('Creating...');
+    try {
+      await createFolder(name, label);
+      indexData.folders.push({ name: name, label: label, maps: [] });
+      m.remove();
+      render();
+      showHomeToast('Folder created');
+    } catch (err) {
+      showHomeToast('Failed: ' + err.message, true);
+    }
+  };
+
+  document.getElementById('nfName').focus();
 }
 
 /* ============================================================
@@ -298,9 +532,11 @@ function showNewMapModal() {
   var old = document.getElementById('newMapModal');
   if (old) old.remove();
 
+  // If inside a folder, pre-select it
   var folderOpts = '';
   indexData.folders.forEach(function(f) {
-    folderOpts += '<option value="' + esc(f.name) + '">' + esc(f.label) + '</option>';
+    var sel = (currentFolder && f.name === currentFolder) ? ' selected' : '';
+    folderOpts += '<option value="' + esc(f.name) + '"' + sel + '>' + esc(f.label) + '</option>';
   });
 
   var m = document.createElement('div');
@@ -360,7 +596,6 @@ async function handleCreateMap(modal) {
 
   showHomeToast('Creating...');
   try {
-    /* createMap in storage.js handles: create file + update index.json */
     await createMap(folderName, cleanMapName, rawMapName, folderLabel);
     modal.remove();
     showHomeToast('Map created!');
@@ -382,7 +617,7 @@ function showHomeToast(msg, isError) {
   t.textContent = msg;
   document.body.appendChild(t);
   setTimeout(function() { t.classList.add('visible'); }, 10);
-  if (msg !== 'Creating...' && msg !== 'Saving...' && msg !== 'Deleting...') {
+  if (msg !== 'Creating...' && msg !== 'Saving...' && msg !== 'Deleting...' && msg !== 'Moving...') {
     setTimeout(function() { t.classList.remove('visible'); setTimeout(function() { t.remove(); }, 300); }, 3000);
   }
 }

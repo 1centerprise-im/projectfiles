@@ -206,6 +206,46 @@ async function deleteFolder(folderName) {
   return true;
 }
 
+// Move a map file from one folder to another on GitHub, and update index.json
+async function moveMapToFolder(mapId, fromFolder, toFolder, toFolderLabel) {
+  // 1. Read the map file content from old location
+  const fileResult = await ghGet(`maps/${fromFolder}/${mapId}.json`);
+  if (!fileResult) throw new Error('Map file not found at old location');
+
+  // 2. Write the file to new location
+  await ghPut(`maps/${toFolder}/${mapId}.json`, fileResult.content, `Move ${mapId} from ${fromFolder} to ${toFolder}`);
+
+  // 3. Delete from old location
+  await ghDelete(`maps/${fromFolder}/${mapId}.json`, `Move ${mapId} - remove from ${fromFolder}`);
+
+  // 4. Update index.json: move the map entry between folders
+  const indexResult = await ghGet('maps/index.json');
+  if (!indexResult) throw new Error('index.json not found');
+  const index = JSON.parse(indexResult.content);
+
+  // Find and remove from source folder
+  let mapEntry = null;
+  const srcFolder = index.folders.find(f => f.name === fromFolder);
+  if (srcFolder) {
+    const idx = srcFolder.maps.findIndex(m => m.id === mapId);
+    if (idx !== -1) {
+      mapEntry = srcFolder.maps.splice(idx, 1)[0];
+    }
+  }
+  if (!mapEntry) throw new Error('Map entry not found in index');
+
+  // Find or create target folder, add map
+  let destFolder = index.folders.find(f => f.name === toFolder);
+  if (!destFolder) {
+    destFolder = { name: toFolder, label: toFolderLabel || toFolder, maps: [] };
+    index.folders.push(destFolder);
+  }
+  destFolder.maps.push(mapEntry);
+
+  await saveIndex(index);
+  return index;
+}
+
 // Default blank map (for editor when no file exists)
 function createEmptyMap(title) {
   return {
