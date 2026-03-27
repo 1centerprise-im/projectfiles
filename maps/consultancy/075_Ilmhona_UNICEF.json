@@ -10,7 +10,6 @@
       "text": "075_Ilmhona_UNICEF",
       "ci": 3,
       "link": "",
-      "collapsed": false,
       "isNote": false,
       "fontSize": 15,
       "fontFamily": "Nunito",
@@ -20,7 +19,8 @@
       "textAlign": "left",
       "shape": "rounded",
       "borderColor": "#007bff",
-      "borderWidth": 0
+      "borderWidth": 0,
+      "collapsedChildren": []
     },
     {
       "id": "n2",
@@ -29,9 +29,8 @@
       "w": 0,
       "h": 0,
       "text": "01_Gap_Analyses",
-      "ci": 3,
+      "ci": 2,
       "link": "https://drive.google.com/drive/folders/1b8sKqXCgl69qLxcvdn6Bjiz_A5gRsp4U?usp=drive_link",
-      "collapsed": false,
       "isNote": false,
       "fontSize": 13,
       "fontFamily": "Nunito",
@@ -41,7 +40,8 @@
       "textAlign": "left",
       "shape": "rounded",
       "borderColor": "",
-      "borderWidth": 0
+      "borderWidth": 0,
+      "collapsedChildren": []
     },
     {
       "id": "n3",
@@ -50,9 +50,8 @@
       "w": 0,
       "h": 0,
       "text": "02_M&E",
-      "ci": 3,
+      "ci": 5,
       "link": "https://drive.google.com/drive/folders/1nXQD7IIcAY0CIw6Be8tZQB02d0A6EFm6?usp=drive_link",
-      "collapsed": false,
       "isNote": false,
       "fontSize": 13,
       "fontFamily": "Nunito",
@@ -62,18 +61,18 @@
       "textAlign": "left",
       "shape": "rounded",
       "borderColor": "",
-      "borderWidth": 0
+      "borderWidth": 0,
+      "collapsedChildren": []
     },
     {
       "id": "n6",
-      "x": 1562.1728728203993,
-      "y": 171.9895085870202,
+      "x": 1563.2218423326142,
+      "y": 165.6956915137301,
       "w": 0,
       "h": 0,
       "text": "02_ADMINISTRATION_MGT",
       "ci": 3,
       "link": "https://drive.google.com/drive/folders/16aBP8gHHw_2kYjMZdJG1AemFwY2mBdf3?usp=drive_link",
-      "collapsed": false,
       "isNote": false,
       "fontSize": 13,
       "fontFamily": "Nunito",
@@ -83,7 +82,8 @@
       "textAlign": "left",
       "shape": "rounded",
       "borderColor": "",
-      "borderWidth": 0
+      "borderWidth": 0,
+      "collapsedChildren": []
     },
     {
       "id": "n7",
@@ -92,9 +92,8 @@
       "w": 0,
       "h": 0,
       "text": "03_DELIVERABLES",
-      "ci": 0,
+      "ci": 3,
       "link": "https://drive.google.com/drive/folders/1-CkgY3V0MCu6cKJf6Xk89el1Ex34kofq?usp=drive_link",
-      "collapsed": false,
       "isNote": false,
       "fontSize": 13,
       "fontFamily": "Nunito",
@@ -104,7 +103,8 @@
       "textAlign": "left",
       "shape": "rounded",
       "borderColor": "",
-      "borderWidth": 0
+      "borderWidth": 0,
+      "collapsedChildren": []
     },
     {
       "id": "n8",
@@ -115,7 +115,6 @@
       "text": "01_PROJECT_FOUNDATION",
       "ci": 3,
       "link": "https://drive.google.com/drive/folders/1SCmeY7lDAc7apNXNXIAosv9hxGLnE2Rh?usp=drive_link",
-      "collapsed": false,
       "isNote": false,
       "fontSize": 13,
       "fontFamily": "Nunito",
@@ -125,7 +124,8 @@
       "textAlign": "left",
       "shape": "rounded",
       "borderColor": "",
-      "borderWidth": 0
+      "borderWidth": 0,
+      "collapsedChildren": []
     },
     {
       "id": "n17",
@@ -136,7 +136,6 @@
       "text": "00_TOR",
       "ci": 3,
       "link": "https://drive.google.com/drive/folders/1YgrerZ9iUcqlq2XqjMnTucPAEW9v-Myi?usp=drive_link",
-      "collapsed": false,
       "isNote": false,
       "fontSize": 13,
       "fontFamily": "Nunito",
@@ -146,7 +145,8 @@
       "textAlign": "left",
       "shape": "rounded",
       "borderColor": "",
-      "borderWidth": 0
+      "borderWidth": 0,
+      "collapsedChildren": []
     },
     {
       "id": "n18",
@@ -157,7 +157,6 @@
       "text": "01_Agreement_Contract",
       "ci": 3,
       "link": "https://drive.google.com/drive/folders/1cH5-2vxdKUz_kvlHMQhtIztti83peQai?usp=drive_link",
-      "collapsed": false,
       "isNote": false,
       "fontSize": 13,
       "fontFamily": "Nunito",
@@ -167,7 +166,8 @@
       "textAlign": "left",
       "shape": "rounded",
       "borderColor": "",
-      "borderWidth": 0
+      "borderWidth": 0,
+      "collapsedChildren": []
     },
     {
       "id": "n19",
@@ -178,7 +178,6 @@
       "text": "02_Project_Documents",
       "ci": 3,
       "link": "https://drive.google.com/drive/folders/1rlBm5xQ-RHZfzyTIU18ylZLCXi_m9l3Y?usp=drive_link",
-      "collapsed": false,
       "isNote": false,
       "fontSize": 13,
       "fontFamily": "Nunito",
@@ -188,7 +187,8 @@
       "textAlign": "left",
       "shape": "rounded",
       "borderColor": "",
-      "borderWidth": 0
+      "borderWidth": 0,
+      "collapsedChildren": []
     },
     {
       "id": "n20",
@@ -199,7 +199,6 @@
       "text": "03_Materials",
       "ci": 3,
       "link": "https://drive.google.com/drive/folders/1R9qtMPWKUQCnXT5pKgI4BmhhyYqbkyOy?usp=drive_link",
-      "collapsed": false,
       "isNote": false,
       "fontSize": 13,
       "fontFamily": "Nunito",
@@ -209,18 +208,18 @@
       "textAlign": "left",
       "shape": "rounded",
       "borderColor": "",
-      "borderWidth": 0
+      "borderWidth": 0,
+      "collapsedChildren": []
     },
     {
       "id": "n37",
-      "x": 2125.197883103641,
-      "y": 166.6998279070194,
+      "x": 2129.3937611525007,
+      "y": 168.79776693144944,
       "w": 0,
       "h": 0,
       "text": "D1",
-      "ci": 0,
+      "ci": 4,
       "link": "https://drive.google.com/drive/folders/1zhFmmNz5WsUjWKhrydaadWyKgJTR6qIa?usp=drive_link",
-      "collapsed": false,
       "isNote": false,
       "fontSize": 13,
       "fontFamily": "Nunito",
@@ -230,18 +229,18 @@
       "textAlign": "left",
       "shape": "rounded",
       "borderColor": "",
-      "borderWidth": 0
+      "borderWidth": 0,
+      "collapsedChildren": []
     },
     {
       "id": "n39",
-      "x": 1996.5197441895627,
-      "y": 566.644536656223,
+      "x": 2338.48380517166,
+      "y": 168.03612201451494,
       "w": 0,
       "h": 0,
       "text": "D2",
-      "ci": 0,
+      "ci": 4,
       "link": "https://drive.google.com/drive/folders/19fpqUZ3JosQ5k1Mk8az-fFRyZgAQebkn?usp=drive_link",
-      "collapsed": false,
       "isNote": false,
       "fontSize": 13,
       "fontFamily": "Nunito",
@@ -251,18 +250,18 @@
       "textAlign": "left",
       "shape": "rounded",
       "borderColor": "",
-      "borderWidth": 0
+      "borderWidth": 0,
+      "collapsedChildren": []
     },
     {
       "id": "n41",
-      "x": 2212.4369883240465,
-      "y": 69.50870594460844,
+      "x": 1824.318268804489,
+      "y": 323.3593279006435,
       "w": 0,
       "h": 0,
       "text": "1. Inception & Desk Review",
       "ci": 0,
       "link": "https://drive.google.com/drive/folders/1hV3onlWnX0GjIy8-d4H_am0kMKmUrkvA?usp=drive_link",
-      "collapsed": false,
       "isNote": false,
       "fontSize": 13,
       "fontFamily": "Nunito",
@@ -272,18 +271,18 @@
       "textAlign": "left",
       "shape": "rounded",
       "borderColor": "",
-      "borderWidth": 0
+      "borderWidth": 0,
+      "collapsedChildren": []
     },
     {
       "id": "n43",
-      "x": 2336.0085576762544,
-      "y": 126.43493452259204,
+      "x": 2041.2481247438336,
+      "y": 440.07681867488327,
       "w": 0,
       "h": 0,
       "text": "2. M&E Framework Development",
       "ci": 0,
       "link": "https://drive.google.com/drive/folders/1PBHCGkb0JT9e-XbT0Cx9sKI52bS9ML7N?usp=drive_link",
-      "collapsed": false,
       "isNote": false,
       "fontSize": 13,
       "fontFamily": "Nunito",
@@ -293,18 +292,18 @@
       "textAlign": "left",
       "shape": "rounded",
       "borderColor": "",
-      "borderWidth": 0
+      "borderWidth": 0,
+      "collapsedChildren": []
     },
     {
       "id": "n47",
-      "x": 2192.9987639315636,
-      "y": 348.5860704366743,
+      "x": 1818.5166480708015,
+      "y": 513.2742838544326,
       "w": 0,
       "h": 0,
       "text": "4. Capacity Building & Orientation",
       "ci": 0,
       "link": "https://drive.google.com/drive/folders/1zw32hMVxisQAm20KuLUpMXMqAWjy-Obr?usp=drive_link",
-      "collapsed": false,
       "isNote": false,
       "fontSize": 13,
       "fontFamily": "Nunito",
@@ -314,18 +313,18 @@
       "textAlign": "left",
       "shape": "rounded",
       "borderColor": "",
-      "borderWidth": 0
+      "borderWidth": 0,
+      "collapsedChildren": []
     },
     {
       "id": "n49",
-      "x": 2374.8850064612193,
-      "y": 272.22161746620844,
+      "x": 2338.1710735336937,
+      "y": 469.4278857626323,
       "w": 0,
       "h": 0,
       "text": "3. Tool Development",
       "ci": 0,
       "link": "https://drive.google.com/drive/folders/1P8O-8XuA5ZC7UTAUDEBEfX3w0KyGSAMB?usp=drive_link",
-      "collapsed": false,
       "isNote": false,
       "fontSize": 13,
       "fontFamily": "Nunito",
@@ -335,18 +334,19 @@
       "textAlign": "left",
       "shape": "rounded",
       "borderColor": "",
-      "borderWidth": 0
+      "borderWidth": 0,
+      "collapsedChildren": []
     },
     {
-      "id": "n51",
-      "x": 1682.1588363849173,
-      "y": 343.87790427542825,
+      "id": "n53",
+      "x": 2261.0020050547805,
+      "y": 527.5453401089867,
       "w": 0,
       "h": 0,
-      "text": "New Node",
+      "text": "Materials_for_D1",
       "ci": 0,
-      "link": "",
-      "collapsed": false,
+      "link": "https://drive.google.com/drive/folders/1x62B_pgFE6R-_O3fVRmAaehVkDkCGzzd?usp=drive_link",
+      "collapsedChildren": [],
       "isNote": false,
       "fontSize": 13,
       "fontFamily": "Nunito",
@@ -412,11 +412,6 @@
       "to": "n37"
     },
     {
-      "id": "e40",
-      "from": "n7",
-      "to": "n39"
-    },
-    {
       "id": "e42",
       "from": "n37",
       "to": "n41"
@@ -435,9 +430,21 @@
       "id": "e50",
       "from": "n37",
       "to": "n49"
+    },
+    {
+      "id": "e52",
+      "from": "n37",
+      "to": "n39",
+      "thickness": 6.5,
+      "color": "#00ff00"
+    },
+    {
+      "id": "e54",
+      "from": "n37",
+      "to": "n53"
     }
   ],
-  "nid": 52,
+  "nid": 55,
   "edgeThickness": 3,
   "edgeColor": "#c8cad0"
 }
