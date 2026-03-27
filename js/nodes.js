@@ -87,18 +87,20 @@ function renderNodeElement(node) {
 }
 
 /* --- Create the Google Drive link icon --- */
-/* A colored triangle SVG. Clicking it opens the URL in a new tab. */
+/* Clean inline SVG triangle. Clicking opens the URL in a new tab. */
 function makeLinkIcon(url) {
   var icon = document.createElement('div');
   icon.className = 'node-link-icon';
   icon.title = 'Open in Google Drive';
-  icon.innerHTML = '<svg viewBox="0 0 87.3 78" width="20" height="20" xmlns="http://www.w3.org/2000/svg">' +
-    '<path d="M6.6 66.85L14.2 78h58.9l7.6-11.15z" fill="#0066da"/>' +
-    '<path d="M29.15 0L0 50.55l14.2 11.15L58.3 0z" fill="#00ac47"/>' +
-    '<path d="M58.3 0L29.15 50.55h58.15L80.7 0z" fill="#ea4335"/>' +
-    '<path d="M29.15 50.55l-14.95 16.3L21.8 78h36.5l7.6-11.15z" fill="#00832d"/>' +
-    '<path d="M58.3 0H29.15l29.15 50.55h28.4z" fill="#2684fc"/>' +
-    '<path d="M14.2 61.7L29.15 50.55 0 50.55z" fill="#ffba00"/></svg>';
+  icon.innerHTML =
+    '<svg viewBox="0 0 87.3 78" width="16" height="14" xmlns="http://www.w3.org/2000/svg">' +
+    '<path d="M6.6 66.85L3.3 72.15 16.6 78H70.7L74 72.15 6.6 66.85Z" fill="#0066DA"/>' +
+    '<path d="M29.15 39L16.6 0 0 27.3 13.3 53.6 29.15 39Z" fill="#00AC47"/>' +
+    '<path d="M87.3 53.6L74 27.3 43.65 0 29.15 39 87.3 53.6Z" fill="#EA4335"/>' +
+    '<path d="M87.3 53.6L74 72.15 70.7 78H74L87.3 53.6Z" fill="#00832D"/>' +
+    '<path d="M13.3 53.6L6.6 66.85 74 72.15 87.3 53.6H13.3Z" fill="#2684FC"/>' +
+    '<path d="M43.65 0L29.15 39 13.3 53.6H87.3L74 27.3 43.65 0Z" fill="#FFBA00"/>' +
+    '</svg>';
   icon.addEventListener('click', function(e) {
     e.stopPropagation();
     window.open(url, '_blank');
