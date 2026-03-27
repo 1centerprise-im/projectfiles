@@ -50,15 +50,9 @@ function setupFormatPanel() {
   fp.querySelector('#fpBorderWidth').addEventListener('input', function(e) {
     applyToSelected(function(n) { n.borderWidth = parseInt(e.target.value) || 0; });
   });
-  /* Edge formatting */
+  /* Edge formatting - label only (color/arrows handled by toolbar swatches) */
   fp.querySelector('#fpEdgeLabel').addEventListener('input', function(e) {
     applyToEdge(function(ed) { ed.label = e.target.value; });
-  });
-  fp.querySelector('#fpEdgeThick').addEventListener('input', function(e) {
-    applyToEdge(function(ed) { ed.thickness = parseFloat(e.target.value) || 2; });
-  });
-  fp.querySelector('#fpEdgeColor').addEventListener('input', function(e) {
-    applyToEdge(function(ed) { ed.color = e.target.value; });
   });
 }
 
@@ -113,8 +107,6 @@ function updateFormatPanelValues() {
     var ed = mapData.edges.find(function(e) { return e.id === selectedEdge; });
     if (ed) {
       formatPanel.querySelector('#fpEdgeLabel').value = ed.label || '';
-      formatPanel.querySelector('#fpEdgeThick').value = ed.thickness || mapData.edgeThickness || 2;
-      formatPanel.querySelector('#fpEdgeColor').value = ed.color || mapData.edgeColor || '#b8b0a6';
       updateArrowButton(ed.arrow || 'none');
     }
     nfc.style.display = 'none'; efc.style.display = 'flex';
@@ -270,6 +262,7 @@ function setupToolbar() {
     }
   });
   document.getElementById('btnAddNode').addEventListener('click', addNodeAtCenter);
+  document.getElementById('btnDraw').addEventListener('click', toggleDrawMode);
   document.getElementById('btnSave').addEventListener('click', doSave);
   document.querySelectorAll('.color-swatch').forEach(function(sw) {
     sw.addEventListener('click', function() { recolorSelected(parseInt(sw.dataset.ci)); });
@@ -293,4 +286,49 @@ function setupToolbar() {
       updateArrowButton(next);
     });
   }
+}
+
+/* ============================================================
+   DRAW MODE - freehand arrow annotations
+   ============================================================ */
+function toggleDrawMode() {
+  drawMode = !drawMode;
+  var btn = document.getElementById('btnDraw');
+  if (drawMode) {
+    btn.classList.add('active');
+    container.classList.add('draw-mode');
+  } else {
+    btn.classList.remove('active');
+    container.classList.remove('draw-mode');
+  }
+}
+
+/* Get the currently selected color index for annotations */
+function getDrawColor() {
+  var COLORS = [
+    { bg:'#f5f0e8', bd:'#d4cbbe' }, { bg:'#fff0c4', bd:'#c8960a' },
+    { bg:'#f0997b', bd:'#993c1d' }, { bg:'#85b7eb', bd:'#185fa5' },
+    { bg:'#5dcaa5', bd:'#0f6e56' }, { bg:'#ef9f27', bd:'#854f0b' },
+    { bg:'#185fa5', bd:'#042c53' }, { bg:'#2c2c2a', bd:'#444441' }
+  ];
+  /* Use the border color of the last-used node color, default to index 7 (dark) */
+  var ci = 7;
+  if (selectedNodes.size > 0) {
+    var firstId = selectedNodes.values().next().value;
+    var n = mapData.nodes.find(function(nd) { return nd.id === firstId; });
+    if (n) ci = n.ci || 0;
+  }
+  return COLORS[ci] ? COLORS[ci].bd : '#2c2c2a';
+}
+
+/* Handle annotation click (delegated from SVG) */
+function onAnnotationClick(e) {
+  var hit = e.target.closest('.annotation-hit');
+  if (!hit) return;
+  if (drawMode) return; /* Don't select while drawing */
+  e.stopPropagation();
+  selectedNodes.clear(); updateSelectionVisuals();
+  selectedEdge = null; deselectAllEdges(edgeSvg);
+  selectedAnnotation = hit.dataset.annId;
+  selectAnnotation(edgeSvg, selectedAnnotation);
 }

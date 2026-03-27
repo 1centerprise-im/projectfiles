@@ -8,7 +8,7 @@
 /* --- Ensure SVG defs has arrow markers for a given color --- */
 function ensureArrowMarker(svg, color, position) {
   /* position: 'end' or 'start' */
-  var markerId = 'arrow-' + position + '-' + color.replace('#', '');
+  var markerId = 'arrow-' + position + '-' + color.replace(/[^a-zA-Z0-9]/g, '');
   if (svg.querySelector('#' + markerId)) return markerId;
 
   var defs = svg.querySelector('defs');
@@ -16,20 +16,20 @@ function ensureArrowMarker(svg, color, position) {
 
   var marker = document.createElementNS('http://www.w3.org/2000/svg', 'marker');
   marker.setAttribute('id', markerId);
-  marker.setAttribute('viewBox', '0 0 10 10');
+  marker.setAttribute('viewBox', '0 0 8 6');
   marker.setAttribute('markerWidth', '8');
-  marker.setAttribute('markerHeight', '8');
+  marker.setAttribute('markerHeight', '6');
   marker.setAttribute('orient', 'auto-start-reverse');
   if (position === 'end') {
-    marker.setAttribute('refX', '9');
-    marker.setAttribute('refY', '5');
+    marker.setAttribute('refX', '8');
+    marker.setAttribute('refY', '3');
   } else {
-    marker.setAttribute('refX', '1');
-    marker.setAttribute('refY', '5');
+    marker.setAttribute('refX', '0');
+    marker.setAttribute('refY', '3');
   }
 
   var poly = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-  poly.setAttribute('d', 'M 0 0 L 10 5 L 0 10 z');
+  poly.setAttribute('d', 'M 0 0 L 8 3 L 0 6 Z');
   poly.setAttribute('fill', color);
   marker.appendChild(poly);
   defs.appendChild(marker);
@@ -60,7 +60,7 @@ function renderAllEdges(svg, edges, nodes, nodeEls, defaultThick, defaultColor, 
 
     var from = getNodeCenter(fromNode, fromEl);
     var to = getNodeCenter(toNode, toEl);
-    var thick = edge.thickness || defaultThick || 1.5;
+    var thick = 1.5; /* fixed thin edge width */
     var color = edge.color || defaultColor || '#c8c0b8';
     var arrow = edge.arrow || 'none';
 
@@ -261,4 +261,65 @@ function edgeExists(edges, a, b) {
   return edges.some(function(e) {
     return (e.from === a && e.to === b) || (e.from === b && e.to === a);
   });
+}
+
+/* ============================================================
+   ANNOTATIONS - freehand arrows drawn on the canvas
+   ============================================================ */
+
+/* Render all annotations into the SVG */
+function renderAnnotations(svg, annotations) {
+  /* Remove old annotation elements */
+  svg.querySelectorAll('.annotation-group').forEach(function(g) { g.remove(); });
+  if (!annotations || !annotations.length) return;
+
+  annotations.forEach(function(ann) {
+    var g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+    g.setAttribute('class', 'annotation-group');
+    g.dataset.annId = ann.id;
+
+    var color = ann.color || '#c8c0b8';
+
+    /* Arrow marker for this annotation */
+    var markerId = ensureArrowMarker(svg, color, 'end');
+
+    /* The visible line */
+    var line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+    line.setAttribute('x1', ann.x1);
+    line.setAttribute('y1', ann.y1);
+    line.setAttribute('x2', ann.x2);
+    line.setAttribute('y2', ann.y2);
+    line.setAttribute('stroke', color);
+    line.setAttribute('stroke-width', '2');
+    line.setAttribute('stroke-linecap', 'round');
+    line.setAttribute('marker-end', 'url(#' + markerId + ')');
+    line.setAttribute('class', 'annotation-line');
+    g.appendChild(line);
+
+    /* Wider invisible hit area for click selection */
+    var hit = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+    hit.setAttribute('x1', ann.x1);
+    hit.setAttribute('y1', ann.y1);
+    hit.setAttribute('x2', ann.x2);
+    hit.setAttribute('y2', ann.y2);
+    hit.setAttribute('stroke', 'transparent');
+    hit.setAttribute('stroke-width', '14');
+    hit.setAttribute('class', 'annotation-hit');
+    hit.style.cursor = 'pointer';
+    hit.style.pointerEvents = 'stroke';
+    hit.dataset.annId = ann.id;
+    g.appendChild(hit);
+
+    svg.appendChild(g);
+  });
+}
+
+/* Highlight a selected annotation */
+function selectAnnotation(svg, annId) {
+  deselectAllAnnotations(svg);
+  var line = svg.querySelector('.annotation-group[data-ann-id="' + annId + '"] .annotation-line');
+  if (line) line.classList.add('selected');
+}
+function deselectAllAnnotations(svg) {
+  svg.querySelectorAll('.annotation-line.selected').forEach(function(l) { l.classList.remove('selected'); });
 }
