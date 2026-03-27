@@ -105,13 +105,13 @@ function fullRender() {
   /* Remove old node divs */
   canvas.querySelectorAll('.mm-node').forEach(function(el) { el.remove(); });
   nodeEls = {};
-  /* Find nodes hidden by collapsed ancestors */
-  var hiddenIds = {};
-  mapData.nodes.forEach(function(n) {
-    if (n.collapsed) {
-      getDescendants(n.id, mapData.edges).forEach(function(id) { hiddenIds[id] = true; });
-    }
-  });
+
+  /* Migrate old collapsed:boolean data to collapsedChildren arrays */
+  migrateCollapseData(mapData.nodes, mapData.edges);
+
+  /* Compute which nodes are hidden by selective collapse */
+  var hiddenIds = getHiddenNodeIds(mapData.nodes, mapData.edges);
+
   /* Create a DOM element for EACH node in the data */
   mapData.nodes.forEach(function(node) {
     var el = renderNodeElement(node);
@@ -120,19 +120,41 @@ function fullRender() {
     nodeEls[node.id] = el;
     if (!isViewOnly) attachNodeEvents(el, node);
   });
-  /* Draw ALL edges as SVG paths */
+
+  /* Edge toggle callback for per-child collapse */
+  var toggleCb = isViewOnly ? null : function(parentId, childId) {
+    toggleSingleChildCollapse(parentId, childId);
+  };
+
+  /* Draw ALL edges (with hidden info and toggle callback) */
   renderAllEdges(edgeSvg, mapData.edges, mapData.nodes, nodeEls,
-    mapData.edgeThickness, mapData.edgeColor);
-  /* Update collapse toggle labels */
+    mapData.edgeThickness, mapData.edgeColor, hiddenIds, toggleCb);
+
+  /* Update collapse button labels on each node */
   mapData.nodes.forEach(function(n) {
     var el = nodeEls[n.id]; if (!el) return;
     var btn = el.querySelector('.node-collapse'); if (!btn) return;
     var ch = getChildren(n.id, mapData.edges);
     if (!ch.length) { btn.style.display = 'none'; return; }
     btn.style.display = 'flex';
-    btn.textContent = n.collapsed ? ch.length : '\u2212';
+    var cc = n.collapsedChildren || [];
+    if (cc.length > 0 && cc.length >= ch.length) {
+      /* All children collapsed: show count as expand-all indicator */
+      btn.textContent = '+' + cc.length;
+      btn.title = 'Expand all children';
+    } else if (cc.length > 0) {
+      /* Some children collapsed: show partial count */
+      btn.textContent = cc.length + '/\u2212';
+      btn.title = 'Collapse all children';
+    } else {
+      /* No children collapsed: show minus */
+      btn.textContent = '\u2212';
+      btn.title = 'Collapse all children';
+    }
   });
-  console.log('[editor] Rendered', Object.keys(nodeEls).length, 'nodes');
+
+  console.log('[editor] Rendered', Object.keys(nodeEls).length, 'nodes,',
+    Object.keys(hiddenIds).length, 'hidden');
 }
 
 function attachNodeEvents(el, node) {
@@ -244,6 +266,7 @@ function updateZoomBadge() { zoomBadge.textContent = Math.round(zoom * 100) + '%
 /* --- Node dragging --- */
 function beginDrag(e) {
   isDragging = true; dragStart = toCanvas(e); window._dOff = {};
+  window._hiddenDragInited = false; window._hiddenOff = {};
   selectedNodes.forEach(function(id) {
     var n = mapData.nodes.find(function(n) { return n.id === id; });
     if (n) window._dOff[id] = {x:n.x, y:n.y};
@@ -256,7 +279,30 @@ function doDrag(e) {
     var o = window._dOff[id];
     if (n && o) { n.x = o.x+dx; n.y = o.y+dy; var el = nodeEls[id]; if (el) { el.style.left=n.x+'px'; el.style.top=n.y+'px'; } }
   });
-  renderAllEdges(edgeSvg, mapData.edges, mapData.nodes, nodeEls, mapData.edgeThickness, mapData.edgeColor);
+  /* Also move hidden descendants so they keep relative positions */
+  if (!window._hiddenDragInited) {
+    window._hiddenDragInited = true;
+    window._hiddenOff = {};
+    var hiddenIds = getHiddenNodeIds(mapData.nodes, mapData.edges);
+    selectedNodes.forEach(function(id) {
+      var descs = getDescendants(id, mapData.edges);
+      descs.forEach(function(did) {
+        if (hiddenIds[did] && !window._hiddenOff[did]) {
+          var dn = mapData.nodes.find(function(nd) { return nd.id === did; });
+          if (dn) window._hiddenOff[did] = { x: dn.x, y: dn.y };
+        }
+      });
+    });
+  }
+  for (var hid in window._hiddenOff) {
+    var hn = mapData.nodes.find(function(nd) { return nd.id === hid; });
+    var ho = window._hiddenOff[hid];
+    if (hn && ho) { hn.x = ho.x + dx; hn.y = ho.y + dy; }
+  }
+  var hiddenIds = getHiddenNodeIds(mapData.nodes, mapData.edges);
+  renderAllEdges(edgeSvg, mapData.edges, mapData.nodes, nodeEls,
+    mapData.edgeThickness, mapData.edgeColor, hiddenIds,
+    isViewOnly ? null : function(pid, cid) { toggleSingleChildCollapse(pid, cid); });
 }
 
 /* --- Node resizing --- */
@@ -270,7 +316,10 @@ function doResize(e) {
   n.w = Math.max(60, s.w+(e.clientX-s.x)/zoom);
   n.h = Math.max(30, s.h+(e.clientY-s.y)/zoom);
   updateNodeElement(nodeEls[n.id], n);
-  renderAllEdges(edgeSvg, mapData.edges, mapData.nodes, nodeEls, mapData.edgeThickness, mapData.edgeColor);
+  var hiddenIds = getHiddenNodeIds(mapData.nodes, mapData.edges);
+  renderAllEdges(edgeSvg, mapData.edges, mapData.nodes, nodeEls,
+    mapData.edgeThickness, mapData.edgeColor, hiddenIds,
+    isViewOnly ? null : function(pid, cid) { toggleSingleChildCollapse(pid, cid); });
 }
 
 /* --- Connection dragging --- */
@@ -351,9 +400,35 @@ function addChild(parent, isNote) {
   mapData.edges.push(createEdgeData(eid, parent.id, id));
   fullRender(); pushUndo(); autoSave();
 }
+/* Toggle ALL children collapsed/expanded (collapse-all shortcut) */
 function toggleCollapse(node) {
-  node.collapsed = !node.collapsed;
-  if (!node.collapsed) pushNeighborsAway(node);
+  if (!node.collapsedChildren) node.collapsedChildren = [];
+  var ch = getChildren(node.id, mapData.edges);
+  if (node.collapsedChildren.length >= ch.length) {
+    /* All collapsed -> expand all */
+    node.collapsedChildren = [];
+    pushNeighborsAway(node);
+  } else {
+    /* Collapse all children */
+    node.collapsedChildren = ch.slice();
+  }
+  fullRender(); pushUndo(); autoSave();
+}
+
+/* Toggle a single child branch collapsed/expanded (edge toggle) */
+function toggleSingleChildCollapse(parentId, childId) {
+  var parent = mapData.nodes.find(function(n) { return n.id === parentId; });
+  if (!parent) return;
+  if (!parent.collapsedChildren) parent.collapsedChildren = [];
+  var idx = parent.collapsedChildren.indexOf(childId);
+  if (idx === -1) {
+    /* Collapse this child */
+    parent.collapsedChildren.push(childId);
+  } else {
+    /* Expand this child */
+    parent.collapsedChildren.splice(idx, 1);
+    pushNeighborsAway(parent);
+  }
   fullRender(); pushUndo(); autoSave();
 }
 
