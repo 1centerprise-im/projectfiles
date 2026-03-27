@@ -53,33 +53,57 @@ function renderAllEdges(svg, edges, nodes, nodeEls, defaultThick, defaultColor) 
   });
 }
 
-/* --- Build a right-angle (orthogonal) SVG path between two points --- */
+/* --- Build a smooth bezier SVG path between two points --- */
 function makeBezierPath(from, to, thickness, color, edgeId) {
   var path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-  path.setAttribute('d', orthoD(from, to));
+  path.setAttribute('d', bezierD(from, to));
   path.setAttribute('stroke', color);
   path.setAttribute('stroke-width', thickness);
   path.setAttribute('fill', 'none');
-  path.setAttribute('stroke-linejoin', 'round');
+  path.setAttribute('stroke-linecap', 'round');
   path.setAttribute('class', 'edge-path');
   path.dataset.edgeId = edgeId;
   return path;
 }
 
-/* --- Build the "d" attribute for an orthogonal (right-angle) path --- */
-/* Goes horizontal to midpoint X, then vertical, then horizontal to target */
-function orthoD(from, to) {
-  var midX = (from.x + to.x) / 2;
-  return 'M ' + from.x + ' ' + from.y +
-    ' L ' + midX + ' ' + from.y +
-    ' L ' + midX + ' ' + to.y +
-    ' L ' + to.x + ' ' + to.y;
+/* --- Build the "d" attribute for a smooth cubic bezier curve --- */
+/* Determines curve direction based on relative node positions.       */
+/* Control point offset is ~50% of the dominant axis distance.        */
+function bezierD(from, to) {
+  var dx = to.x - from.x;
+  var dy = to.y - from.y;
+  var ax = Math.abs(dx);
+  var ay = Math.abs(dy);
+
+  /* Offset for control points: 50% of distance, min 40px */
+  var cp1x, cp1y, cp2x, cp2y;
+
+  if (ax >= ay) {
+    /* Primarily horizontal: curve exits/enters on left/right sides */
+    var off = Math.max(ax * 0.5, 40);
+    cp1x = from.x + (dx > 0 ? off : -off);
+    cp1y = from.y;
+    cp2x = to.x - (dx > 0 ? off : -off);
+    cp2y = to.y;
+  } else {
+    /* Primarily vertical: curve exits/enters on top/bottom */
+    var off = Math.max(ay * 0.5, 40);
+    cp1x = from.x;
+    cp1y = from.y + (dy > 0 ? off : -off);
+    cp2x = to.x;
+    cp2y = to.y - (dy > 0 ? off : -off);
+  }
+
+  return 'M ' + from.x + ',' + from.y +
+    ' C ' + cp1x + ',' + cp1y +
+    ' ' + cp2x + ',' + cp2y +
+    ' ' + to.x + ',' + to.y;
 }
 
 /* --- Invisible wider path for click detection on edges --- */
 function makeHitArea(from, to, edgeId) {
   var hit = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-  hit.setAttribute('d', orthoD(from, to));
+  hit.setAttribute('d', bezierD(from, to));
   hit.setAttribute('stroke', 'transparent');
   hit.setAttribute('stroke-width', '14');
   hit.setAttribute('fill', 'none');
