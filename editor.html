@@ -31,24 +31,6 @@
         <div class="color-swatch" data-ci="7" style="background:#2c2c2a" title="Dark"></div>
       </div>
       <div class="sep"></div>
-      <!-- Edge style (visible when an edge is selected) -->
-      <div class="edge-style-group" id="edgeStyleGroup" style="display:none">
-        <span class="fp-label" style="font-size:10px;opacity:0.6">EDGE:</span>
-        <div class="edge-color-swatches">
-          <div class="edge-color-sw" data-color="#c8c0b8" style="background:#c8c0b8" title="Gray"></div>
-          <div class="edge-color-sw" data-color="#f5f0e8" style="background:#f5f0e8" title="Cream"></div>
-          <div class="edge-color-sw" data-color="#c8960a" style="background:#c8960a" title="Gold"></div>
-          <div class="edge-color-sw" data-color="#993c1d" style="background:#993c1d" title="Coral"></div>
-          <div class="edge-color-sw" data-color="#185fa5" style="background:#185fa5" title="Blue"></div>
-          <div class="edge-color-sw" data-color="#0f6e56" style="background:#0f6e56" title="Teal"></div>
-          <div class="edge-color-sw" data-color="#854f0b" style="background:#854f0b" title="Amber"></div>
-          <div class="edge-color-sw" data-color="#2c2c2a" style="background:#2c2c2a" title="Dark"></div>
-        </div>
-        <button class="tb-btn edge-arrow-btn" id="btnEdgeArrow" title="Toggle arrows">&#8594;</button>
-      </div>
-      <div class="sep"></div>
-      <button class="tb-btn" id="btnDraw" title="Draw arrow annotation"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:3px"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/><path d="M2 2l7.586 7.586"/><circle cx="11" cy="11" r="2"/></svg>Draw</button>
-      <div class="sep"></div>
       <button class="tb-btn primary" id="btnSave">Save</button>
       <span class="toolbar-credits">
         designed and developed by <a href="https://ilkhom-makhkambaev.mystrikingly.com/" target="_blank">Ilkhom Makhkambaev</a>
@@ -94,10 +76,7 @@
         <input type="color" class="fp-input" id="fpBorderColor" value="#c8c0b8">
         <input type="range" class="fp-range" id="fpBorderWidth" min="0" max="8" value="2">
       </div>
-      <div id="edgeFormatControls" style="display:none; align-items:center; gap:8px; flex-wrap:wrap;">
-        <span class="fp-label">Edge Label:</span>
-        <input type="text" class="fp-select" id="fpEdgeLabel" placeholder="Label" style="min-width:140px">
-      </div>
+      <!-- Edge format controls removed - simple connectors only -->
     </div>
 
     <!-- CANVAS AREA -->

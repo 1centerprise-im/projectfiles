@@ -10,8 +10,6 @@ function showFormatPanel() {
 }
 function hideFormatPanel() {
   formatPanel.classList.remove('visible');
-  var esg = document.getElementById('edgeStyleGroup');
-  if (esg) esg.style.display = 'none';
 }
 
 /* --- Wire up all format panel controls (called once at init) --- */
@@ -50,10 +48,6 @@ function setupFormatPanel() {
   fp.querySelector('#fpBorderWidth').addEventListener('input', function(e) {
     applyToSelected(function(n) { n.borderWidth = parseInt(e.target.value) || 0; });
   });
-  /* Edge formatting - label only (color/arrows handled by toolbar swatches) */
-  fp.querySelector('#fpEdgeLabel').addEventListener('input', function(e) {
-    applyToEdge(function(ed) { ed.label = e.target.value; });
-  });
 }
 
 /* --- Apply function to all selected nodes, re-render, save --- */
@@ -72,25 +66,9 @@ function toggleProp(prop) {
   applyToSelected(function(n) { n[prop] = val; });
 }
 
-/* --- Apply function to the selected edge --- */
-function applyToEdge(fn) {
-  if (!selectedEdge) return;
-  var ed = mapData.edges.find(function(e) { return e.id === selectedEdge; });
-  if (ed) {
-    fn(ed);
-    var hiddenIds = getHiddenNodeIds(mapData.nodes, mapData.edges);
-    renderAllEdges(edgeSvg, mapData.edges, mapData.nodes, nodeEls,
-      mapData.edgeThickness, mapData.edgeColor, hiddenIds);
-    selectEdge(edgeSvg, selectedEdge);
-    pushUndo(); autoSave();
-  }
-}
-
 /* --- Sync format panel values to current selection --- */
 function updateFormatPanelValues() {
   var nfc = document.getElementById('nodeFormatControls');
-  var efc = document.getElementById('edgeFormatControls');
-  var esg = document.getElementById('edgeStyleGroup');
   if (selectedNodes.size > 0) {
     var n = mapData.nodes.find(function(nd) { return selectedNodes.has(nd.id); });
     if (!n) return;
@@ -101,26 +79,8 @@ function updateFormatPanelValues() {
     formatPanel.querySelector('#fpItalic').classList.toggle('active', !!n.italic);
     formatPanel.querySelector('#fpBorderColor').value = n.borderColor || '#c8c0b8';
     formatPanel.querySelector('#fpBorderWidth').value = n.borderWidth || 0;
-    nfc.style.display = 'flex'; efc.style.display = 'none';
-    if (esg) esg.style.display = 'none';
-  } else if (selectedEdge) {
-    var ed = mapData.edges.find(function(e) { return e.id === selectedEdge; });
-    if (ed) {
-      formatPanel.querySelector('#fpEdgeLabel').value = ed.label || '';
-      updateArrowButton(ed.arrow || 'none');
-    }
-    nfc.style.display = 'none'; efc.style.display = 'flex';
-    if (esg) esg.style.display = 'flex';
+    nfc.style.display = 'flex';
   }
-}
-
-/* --- Update arrow toggle button label --- */
-function updateArrowButton(arrow) {
-  var btn = document.getElementById('btnEdgeArrow');
-  if (!btn) return;
-  if (arrow === 'end') { btn.innerHTML = '&#8594;'; btn.title = 'Arrow at end (click to cycle)'; }
-  else if (arrow === 'both') { btn.innerHTML = '&#8596;'; btn.title = 'Arrows both ends (click to cycle)'; }
-  else { btn.innerHTML = '&#8212;'; btn.title = 'No arrows (click to cycle)'; }
 }
 
 /* --- Selection visual update (add/remove CSS classes) --- */
@@ -141,18 +101,6 @@ function recolorSelected(ci) {
     if (n) { n.ci = ci; updateNodeElement(nodeEls[id], n); }
   });
   pushUndo(); autoSave();
-}
-
-/* --- Edge click handler (delegated from SVG) --- */
-function onEdgeClick(e) {
-  var hit = e.target.closest('.edge-hit');
-  if (!hit) return;
-  selectedNodes.clear(); updateSelectionVisuals();
-  selectedEdge = hit.dataset.edgeId;
-  selectEdge(edgeSvg, selectedEdge);
-  showFormatPanel();
-  var esg = document.getElementById('edgeStyleGroup');
-  if (esg) esg.style.display = 'flex';
 }
 
 /* --- Paste: Ctrl+V to attach URL to selected node --- */
@@ -262,73 +210,8 @@ function setupToolbar() {
     }
   });
   document.getElementById('btnAddNode').addEventListener('click', addNodeAtCenter);
-  document.getElementById('btnDraw').addEventListener('click', toggleDrawMode);
   document.getElementById('btnSave').addEventListener('click', doSave);
   document.querySelectorAll('.color-swatch').forEach(function(sw) {
     sw.addEventListener('click', function() { recolorSelected(parseInt(sw.dataset.ci)); });
   });
-  /* Edge color swatches */
-  document.querySelectorAll('.edge-color-sw').forEach(function(sw) {
-    sw.addEventListener('click', function() {
-      applyToEdge(function(ed) { ed.color = sw.dataset.color; });
-    });
-  });
-  /* Arrow toggle: cycles none -> end -> both -> none */
-  var arrowBtn = document.getElementById('btnEdgeArrow');
-  if (arrowBtn) {
-    arrowBtn.addEventListener('click', function() {
-      if (!selectedEdge) return;
-      var ed = mapData.edges.find(function(e) { return e.id === selectedEdge; });
-      if (!ed) return;
-      var cur = ed.arrow || 'none';
-      var next = cur === 'none' ? 'end' : cur === 'end' ? 'both' : 'none';
-      applyToEdge(function(ed) { ed.arrow = next; });
-      updateArrowButton(next);
-    });
-  }
-}
-
-/* ============================================================
-   DRAW MODE - freehand arrow annotations
-   ============================================================ */
-function toggleDrawMode() {
-  drawMode = !drawMode;
-  var btn = document.getElementById('btnDraw');
-  if (drawMode) {
-    btn.classList.add('active');
-    container.classList.add('draw-mode');
-  } else {
-    btn.classList.remove('active');
-    container.classList.remove('draw-mode');
-  }
-}
-
-/* Get the currently selected color index for annotations */
-function getDrawColor() {
-  var COLORS = [
-    { bg:'#f5f0e8', bd:'#d4cbbe' }, { bg:'#fff0c4', bd:'#c8960a' },
-    { bg:'#f0997b', bd:'#993c1d' }, { bg:'#85b7eb', bd:'#185fa5' },
-    { bg:'#5dcaa5', bd:'#0f6e56' }, { bg:'#ef9f27', bd:'#854f0b' },
-    { bg:'#185fa5', bd:'#042c53' }, { bg:'#2c2c2a', bd:'#444441' }
-  ];
-  /* Use the border color of the last-used node color, default to index 7 (dark) */
-  var ci = 7;
-  if (selectedNodes.size > 0) {
-    var firstId = selectedNodes.values().next().value;
-    var n = mapData.nodes.find(function(nd) { return nd.id === firstId; });
-    if (n) ci = n.ci || 0;
-  }
-  return COLORS[ci] ? COLORS[ci].bd : '#2c2c2a';
-}
-
-/* Handle annotation click (delegated from SVG) */
-function onAnnotationClick(e) {
-  var hit = e.target.closest('.annotation-hit');
-  if (!hit) return;
-  if (drawMode) return; /* Don't select while drawing */
-  e.stopPropagation();
-  selectedNodes.clear(); updateSelectionVisuals();
-  selectedEdge = null; deselectAllEdges(edgeSvg);
-  selectedAnnotation = hit.dataset.annId;
-  selectAnnotation(edgeSvg, selectedAnnotation);
 }

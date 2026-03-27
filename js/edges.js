@@ -1,40 +1,8 @@
 /* ============================================================
-   EDGES.JS - Edge rendering, creation, deletion, formatting
+   EDGES.JS - Simple curved connector lines between nodes
    - renderAllEdges(): clears SVG and redraws all edges
-   - Smooth bezier curves between nodes
-   - Edge selection, labels, hit areas, temp connection line
+   - Smooth bezier curves, no styling/selection/arrows
    ============================================================ */
-
-/* --- Ensure SVG defs has arrow markers for a given color --- */
-function ensureArrowMarker(svg, color, position) {
-  /* position: 'end' or 'start' */
-  var markerId = 'arrow-' + position + '-' + color.replace(/[^a-zA-Z0-9]/g, '');
-  if (svg.querySelector('#' + markerId)) return markerId;
-
-  var defs = svg.querySelector('defs');
-  if (!defs) { defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs'); svg.insertBefore(defs, svg.firstChild); }
-
-  var marker = document.createElementNS('http://www.w3.org/2000/svg', 'marker');
-  marker.setAttribute('id', markerId);
-  marker.setAttribute('viewBox', '0 0 8 6');
-  marker.setAttribute('markerWidth', '8');
-  marker.setAttribute('markerHeight', '6');
-  marker.setAttribute('orient', 'auto-start-reverse');
-  if (position === 'end') {
-    marker.setAttribute('refX', '8');
-    marker.setAttribute('refY', '3');
-  } else {
-    marker.setAttribute('refX', '0');
-    marker.setAttribute('refY', '3');
-  }
-
-  var poly = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-  poly.setAttribute('d', 'M 0 0 L 8 3 L 0 6 Z');
-  poly.setAttribute('fill', color);
-  marker.appendChild(poly);
-  defs.appendChild(marker);
-  return markerId;
-}
 
 /* --- Redraw all edges into the SVG element --- */
 /* hiddenIds: object keyed by node IDs that should not be drawn */
@@ -60,32 +28,9 @@ function renderAllEdges(svg, edges, nodes, nodeEls, defaultThick, defaultColor, 
 
     var from = getNodeCenter(fromNode, fromEl);
     var to = getNodeCenter(toNode, toEl);
-    var thick = 1.5; /* fixed thin edge width */
-    var color = edge.color || defaultColor || '#c8c0b8';
-    var arrow = edge.arrow || 'none';
 
-    /* Visible bezier curve */
-    var path = makeBezierPath(from, to, thick, color, edge.id);
-
-    /* Apply arrow markers */
-    if (arrow === 'end' || arrow === 'both') {
-      var endId = ensureArrowMarker(svg, color, 'end');
-      path.setAttribute('marker-end', 'url(#' + endId + ')');
-    }
-    if (arrow === 'both') {
-      var startId = ensureArrowMarker(svg, color, 'start');
-      path.setAttribute('marker-start', 'url(#' + startId + ')');
-    }
-
-    svg.appendChild(path);
-
-    /* Wider invisible hit area for click selection */
-    svg.appendChild(makeHitArea(from, to, edge.id));
-
-    /* Edge label at midpoint */
-    if (edge.label) {
-      svg.appendChild(makeEdgeLabel(from, to, edge.label));
-    }
+    /* Simple bezier curve - fixed gray color and 1.5px width */
+    svg.appendChild(makeBezierPath(from, to, 1.5, '#b0a89e', edge.id));
   });
 }
 
@@ -180,49 +125,9 @@ function bezierD(from, to) {
     ' ' + to.x + ',' + to.y;
 }
 
-/* --- Invisible wider hit area for click detection --- */
-function makeHitArea(from, to, edgeId) {
-  var hit = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-  hit.setAttribute('d', bezierD(from, to));
-  hit.setAttribute('stroke', 'transparent');
-  hit.setAttribute('stroke-width', '14');
-  hit.setAttribute('fill', 'none');
-  hit.setAttribute('class', 'edge-hit');
-  hit.style.cursor = 'pointer';
-  hit.style.pointerEvents = 'stroke';
-  hit.dataset.edgeId = edgeId;
-  return hit;
-}
-
-/* --- Text label at the midpoint of an edge --- */
-function makeEdgeLabel(from, to, text) {
-  var mx = (from.x + to.x) / 2;
-  var my = (from.y + to.y) / 2 - 8;
-  var label = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-  label.setAttribute('x', mx);
-  label.setAttribute('y', my);
-  label.setAttribute('text-anchor', 'middle');
-  label.setAttribute('class', 'edge-label');
-  label.textContent = text;
-  return label;
-}
-
 /* --- Create new edge data object --- */
 function createEdgeData(id, fromId, toId) {
   return { id: id, from: fromId, to: toId };
-}
-
-/* --- Highlight selected edge --- */
-function selectEdge(svg, edgeId) {
-  deselectAllEdges(svg);
-  svg.querySelectorAll('.edge-path[data-edge-id="' + edgeId + '"]')
-    .forEach(function(p) { p.classList.add('selected'); });
-}
-
-/* --- Remove selection from all edges --- */
-function deselectAllEdges(svg) {
-  svg.querySelectorAll('.edge-path.selected')
-    .forEach(function(p) { p.classList.remove('selected'); });
 }
 
 /* --- Delete edge by id --- */
@@ -261,65 +166,4 @@ function edgeExists(edges, a, b) {
   return edges.some(function(e) {
     return (e.from === a && e.to === b) || (e.from === b && e.to === a);
   });
-}
-
-/* ============================================================
-   ANNOTATIONS - freehand arrows drawn on the canvas
-   ============================================================ */
-
-/* Render all annotations into the SVG */
-function renderAnnotations(svg, annotations) {
-  /* Remove old annotation elements */
-  svg.querySelectorAll('.annotation-group').forEach(function(g) { g.remove(); });
-  if (!annotations || !annotations.length) return;
-
-  annotations.forEach(function(ann) {
-    var g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
-    g.setAttribute('class', 'annotation-group');
-    g.dataset.annId = ann.id;
-
-    var color = ann.color || '#c8c0b8';
-
-    /* Arrow marker for this annotation */
-    var markerId = ensureArrowMarker(svg, color, 'end');
-
-    /* The visible line */
-    var line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-    line.setAttribute('x1', ann.x1);
-    line.setAttribute('y1', ann.y1);
-    line.setAttribute('x2', ann.x2);
-    line.setAttribute('y2', ann.y2);
-    line.setAttribute('stroke', color);
-    line.setAttribute('stroke-width', '2');
-    line.setAttribute('stroke-linecap', 'round');
-    line.setAttribute('marker-end', 'url(#' + markerId + ')');
-    line.setAttribute('class', 'annotation-line');
-    g.appendChild(line);
-
-    /* Wider invisible hit area for click selection */
-    var hit = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-    hit.setAttribute('x1', ann.x1);
-    hit.setAttribute('y1', ann.y1);
-    hit.setAttribute('x2', ann.x2);
-    hit.setAttribute('y2', ann.y2);
-    hit.setAttribute('stroke', 'transparent');
-    hit.setAttribute('stroke-width', '14');
-    hit.setAttribute('class', 'annotation-hit');
-    hit.style.cursor = 'pointer';
-    hit.style.pointerEvents = 'stroke';
-    hit.dataset.annId = ann.id;
-    g.appendChild(hit);
-
-    svg.appendChild(g);
-  });
-}
-
-/* Highlight a selected annotation */
-function selectAnnotation(svg, annId) {
-  deselectAllAnnotations(svg);
-  var line = svg.querySelector('.annotation-group[data-ann-id="' + annId + '"] .annotation-line');
-  if (line) line.classList.add('selected');
-}
-function deselectAllAnnotations(svg) {
-  svg.querySelectorAll('.annotation-line.selected').forEach(function(l) { l.classList.remove('selected'); });
 }

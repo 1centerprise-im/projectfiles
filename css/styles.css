@@ -409,25 +409,7 @@ button { font-family: 'Nunito Sans', sans-serif; cursor: pointer; border: none; 
   z-index: 1;
   pointer-events: none;
 }
-#edge-svg .edge-hit { pointer-events: stroke; }
-#edge-svg .edge-path { stroke-linecap: round; stroke-linejoin: round; }
-#edge-svg .edge-path.selected { stroke-width: 3px !important; stroke-dasharray: 6,3; }
-#edge-svg .edge-label { font-family: 'Nunito Sans', sans-serif; font-size: 11px; fill: var(--text); pointer-events: none; }
-
-/* --- Annotation (drawn arrows) styles --- */
-#edge-svg .annotation-line { pointer-events: none; }
-#edge-svg .annotation-line.selected { stroke-width: 3px !important; stroke-dasharray: 6,3; }
-#edge-svg .annotation-hit { pointer-events: stroke; }
-#canvasContainer.draw-mode { cursor: crosshair; }
-#canvasContainer.draw-mode .mm-node { pointer-events: none; }
-.tb-btn.active { background: var(--accent); color: #fff; }
-
-/* --- Edge style toolbar group --- */
-.edge-style-group { display: none; align-items: center; gap: 6px; }
-.edge-color-swatches { display: flex; gap: 2px; align-items: center; }
-.edge-color-sw { width: 8px; height: 8px; border-radius: 50%; cursor: pointer; border: 1px solid rgba(0,0,0,0.2); transition: transform 0.15s; }
-.edge-color-sw:hover { transform: scale(1.4); }
-.edge-arrow-btn { font-size: 14px; min-width: 24px; padding: 2px 4px; }
+#edge-svg .edge-path { stroke-linecap: round; stroke-linejoin: round; pointer-events: none; }
 
 /* --- Collapse badge (below collapsed nodes, in SVG = lower z than nodes) --- */
 #edge-svg .collapse-badge { pointer-events: all; }

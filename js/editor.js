@@ -3,12 +3,10 @@
 
 var mapData = null, folder = '', mapName = '';
 var zoom = 1, panX = 0, panY = 0;
-var selectedNodes = new Set(), selectedEdge = null;
+var selectedNodes = new Set();
 var nodeEls = {}, undoStack = [];
 var isPanning = false, isDragging = false, isResizing = false;
 var isConnecting = false, isRubberBand = false;
-var isDrawing = false, drawMode = false, selectedAnnotation = null;
-var drawStart = null;
 var connectFrom = null, spaceDown = false;
 var hasUnsavedChanges = false;
 var isViewOnly = false;
@@ -36,7 +34,6 @@ async function initEditor() {
   /* Load map JSON from server, or create empty for new maps */
   if (params.get('new') !== '1' && folder && mapName) mapData = await loadMap(folder, mapName);
   if (!mapData) mapData = createEmptyMap(mapName ? mapName.replace(/_/g,' ') : 'New Map');
-  if (!mapData.annotations) mapData.annotations = [];
   document.getElementById('mapTitle').value = mapData.title || '';
   console.log('[editor] Loaded:', mapData.title, mapData.nodes.length, 'nodes');
 
@@ -51,12 +48,10 @@ async function initEditor() {
 
 /* --- View-only mode: hide toolbar, show banner, only allow pan/zoom --- */
 function setupViewOnlyMode() {
-  // Hide toolbar and format panel
   var toolbar = document.querySelector('.toolbar');
   if (toolbar) toolbar.style.display = 'none';
   if (formatPanel) formatPanel.style.display = 'none';
 
-  // Create view-only banner
   var banner = document.createElement('div');
   banner.className = 'view-only-banner';
   banner.innerHTML =
@@ -64,11 +59,8 @@ function setupViewOnlyMode() {
     '<span class="view-only-title">' + escHtml(mapData.title || 'Untitled') + '</span>' +
     '<a class="view-only-edit-btn" href="' + getEditorUrl() + '">Open in Editor</a>';
   document.querySelector('.editor-wrap').insertBefore(banner, container);
-
-  // Mark as view-only for CSS
   container.classList.add('view-only');
 
-  // Only allow pan and zoom
   container.addEventListener('mousedown', onViewOnlyDown);
   window.addEventListener('mousemove', onViewOnlyMove);
   window.addEventListener('mouseup', onViewOnlyUp);
@@ -76,8 +68,7 @@ function setupViewOnlyMode() {
 }
 
 function getEditorUrl() {
-  var url = 'editor.html?folder=' + encodeURIComponent(folder) + '&map=' + encodeURIComponent(mapName);
-  return url;
+  return 'editor.html?folder=' + encodeURIComponent(folder) + '&map=' + encodeURIComponent(mapName);
 }
 
 function escHtml(str) {
@@ -138,7 +129,6 @@ function fullRender() {
     if (n.collapsed) {
       btn.textContent = '+';
       btn.title = 'Expand all children';
-      /* Draw a count badge below the node (in SVG, below node z-index) */
       drawCollapseBadge(edgeSvg, n, el, mapData.edges, function() {
         toggleCollapse(n);
       });
@@ -148,12 +138,8 @@ function fullRender() {
     }
   });
 
-  /* Draw annotations (freehand arrows) */
-  renderAnnotations(edgeSvg, mapData.annotations || []);
-
   console.log('[editor] Rendered', Object.keys(nodeEls).length, 'nodes,',
-    Object.keys(hiddenIds).length, 'hidden,',
-    (mapData.annotations || []).length, 'annotations');
+    Object.keys(hiddenIds).length, 'hidden');
 }
 
 function attachNodeEvents(el, node) {
@@ -171,7 +157,6 @@ function attachNodeEvents(el, node) {
     } else if (!selectedNodes.has(node.id)) {
       selectedNodes.clear(); selectedNodes.add(node.id);
     }
-    selectedEdge = null; deselectAllEdges(edgeSvg);
     updateSelectionVisuals(); showFormatPanel();
     beginDrag(e);
   });
@@ -208,8 +193,6 @@ function setupEvents() {
   container.addEventListener('wheel', onWheel, { passive: false });
   window.addEventListener('keydown', onKeyDown);
   window.addEventListener('keyup', function(e) { if (e.code === 'Space') spaceDown = false; });
-  edgeSvg.addEventListener('click', onEdgeClick);
-  edgeSvg.addEventListener('click', onAnnotationClick);
   container.addEventListener('contextmenu', onContextMenu);
   document.addEventListener('click', function() { ctxMenu.classList.remove('visible'); });
   window.addEventListener('paste', onPaste);
@@ -220,20 +203,14 @@ function setupEvents() {
   setupFormatPanel();
 }
 
-/* --- Canvas mousedown: pan, rubber band, or draw --- */
+/* --- Canvas mousedown: pan or rubber band --- */
 function onCanvasDown(e) {
-  if (e.target.closest('.mm-node') || e.target.closest('.edge-hit') || e.target.closest('.annotation-hit')) return;
+  if (e.target.closest('.mm-node')) return;
   if (e.button === 1 || spaceDown) {
     isPanning = true; dragStart = {x:e.clientX,y:e.clientY};
     panStart = {x:panX,y:panY}; container.classList.add('panning');
-  } else if (e.button === 0 && drawMode) {
-    /* Start drawing an annotation arrow */
-    isDrawing = true;
-    drawStart = toCanvas(e);
-    drawTempLine(edgeSvg, drawStart, drawStart);
   } else if (e.button === 0) {
-    selectedNodes.clear(); selectedEdge = null; selectedAnnotation = null;
-    deselectAllEdges(edgeSvg); deselectAllAnnotations(edgeSvg);
+    selectedNodes.clear();
     updateSelectionVisuals(); hideFormatPanel();
     isRubberBand = true; dragStart = toCanvas(e);
     setRubberBand(e.clientX, e.clientY, 0, 0);
@@ -241,7 +218,6 @@ function onCanvasDown(e) {
 }
 function onMove(e) {
   if (isPanning) { panX = panStart.x+(e.clientX-dragStart.x); panY = panStart.y+(e.clientY-dragStart.y); applyTransform(); }
-  else if (isDrawing) { var c = toCanvas(e); drawTempLine(edgeSvg, drawStart, c); }
   else if (isDragging) doDrag(e);
   else if (isResizing) doResize(e);
   else if (isConnecting) doConnect(e);
@@ -249,24 +225,6 @@ function onMove(e) {
 }
 function onUp(e) {
   if (isPanning) { isPanning = false; container.classList.remove('panning'); }
-  if (isDrawing) {
-    isDrawing = false;
-    removeTempLine(edgeSvg);
-    var end = toCanvas(e);
-    var dx = end.x - drawStart.x, dy = end.y - drawStart.y;
-    if (Math.sqrt(dx*dx + dy*dy) > 10) { /* Min length to avoid accidental clicks */
-      if (!mapData.annotations) mapData.annotations = [];
-      mapData.annotations.push({
-        id: 'ann' + (mapData.nid++),
-        x1: drawStart.x, y1: drawStart.y,
-        x2: end.x, y2: end.y,
-        color: getDrawColor(),
-        type: 'arrow'
-      });
-      fullRender(); pushUndo(); autoSave();
-    }
-    drawStart = null;
-  }
   if (isDragging) { isDragging = false; pushUndo(); autoSave(); }
   if (isResizing) { isResizing = false; pushUndo(); autoSave(); }
   if (isConnecting) { endConnect(e); isConnecting = false; }
@@ -291,7 +249,6 @@ function updateZoomBadge() { zoomBadge.textContent = Math.round(zoom * 100) + '%
 /* --- Node dragging --- */
 function beginDrag(e) {
   isDragging = true; dragStart = toCanvas(e); window._dOff = {};
-  /* Also track hidden descendants so they move with their parent */
   window._hiddenOff = {};
   var hiddenIds = getHiddenNodeIds(mapData.nodes, mapData.edges);
   selectedNodes.forEach(function(id) {
@@ -312,7 +269,6 @@ function doDrag(e) {
     var o = window._dOff[id];
     if (n && o) { n.x = o.x+dx; n.y = o.y+dy; var el = nodeEls[id]; if (el) { el.style.left=n.x+'px'; el.style.top=n.y+'px'; } }
   });
-  /* Move hidden descendants too */
   for (var hid in window._hiddenOff) {
     var hn = mapData.nodes.find(function(nd) { return nd.id === hid; });
     var ho = window._hiddenOff[hid];
@@ -389,20 +345,13 @@ function onKeyDown(e) {
   if (e.ctrlKey && e.key === 'z') { undo(); e.preventDefault(); }
   if (e.ctrlKey && e.key === 'a') { selectAll(); e.preventDefault(); }
   if (e.key === 'Escape') {
-    if (drawMode) toggleDrawMode();
-    selectedNodes.clear(); selectedEdge = null; selectedAnnotation = null;
-    deselectAllEdges(edgeSvg); deselectAllAnnotations(edgeSvg);
+    selectedNodes.clear();
     updateSelectionVisuals(); hideFormatPanel();
   }
 }
 
-/* --- Node/edge operations --- */
+/* --- Node operations --- */
 function deleteSelection() {
-  if (selectedAnnotation) {
-    mapData.annotations = (mapData.annotations || []).filter(function(a) { return a.id !== selectedAnnotation; });
-    selectedAnnotation = null;
-  }
-  if (selectedEdge) { mapData.edges = deleteEdgeById(mapData.edges, selectedEdge); selectedEdge = null; }
   if (selectedNodes.size) deleteNodes();
   fullRender(); pushUndo(); autoSave();
 }
@@ -437,7 +386,6 @@ function toggleCollapse(node) {
 function pushNeighborsAway(expandedNode) {
   var descendants = getDescendants(expandedNode.id, mapData.edges);
   if (!descendants.length) return;
-  /* Calculate bounding box of the expanded subtree */
   var minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
   descendants.forEach(function(id) {
     var n = mapData.nodes.find(function(nd) { return nd.id === id; });
@@ -451,14 +399,12 @@ function pushNeighborsAway(expandedNode) {
   var PAD = 30;
   var subtreeSet = new Set(descendants);
   subtreeSet.add(expandedNode.id);
-  /* Push non-subtree nodes that overlap */
   mapData.nodes.forEach(function(n) {
     if (subtreeSet.has(n.id)) return;
     var nw = n.w > 0 ? n.w : 140, nh = n.h > 0 ? n.h : 40;
     var overlapsX = n.x + nw > minX - PAD && n.x < maxX + PAD;
     var overlapsY = n.y + nh > minY - PAD && n.y < maxY + PAD;
     if (overlapsX && overlapsY) {
-      /* Push down if node is below the expanded node, else push right */
       if (n.y > expandedNode.y) {
         n.y = maxY + PAD;
       } else if (n.x > expandedNode.x) {
@@ -510,7 +456,6 @@ function fitView() {
   var rect = container.getBoundingClientRect();
   zoom = Math.min(rect.width / bw, rect.height / bh, 1.0);
   zoom = Math.max(0.2, zoom);
-  /* Center the bounding box in the viewport */
   panX = (rect.width / 2) - ((minX + maxX) / 2) * zoom;
   panY = (rect.height / 2) - ((minY + maxY) / 2) * zoom;
   applyTransform();
@@ -521,5 +466,5 @@ function pushUndo() { undoStack.push(JSON.stringify(mapData)); if (undoStack.len
 function undo() {
   if (undoStack.length < 2) return;
   undoStack.pop(); mapData = JSON.parse(undoStack[undoStack.length - 1]);
-  selectedNodes.clear(); selectedEdge = null; fullRender(); hideFormatPanel();
+  selectedNodes.clear(); fullRender(); hideFormatPanel();
 }
