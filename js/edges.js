@@ -13,6 +13,23 @@ function renderAllEdges(svg, edges, nodes, nodeEls, defaultThick, defaultColor, 
   svg.innerHTML = '';
   hiddenIds = hiddenIds || {};
 
+  /* Pre-compute stub counts per parent so we can spread badges */
+  var stubCounts = {}; /* parentId -> total collapsed-child stubs */
+  var stubIndexes = {}; /* parentId -> next index to assign */
+  edges.forEach(function(edge) {
+    var fromNode = null, toNode = null;
+    for (var i = 0; i < nodes.length; i++) {
+      if (nodes[i].id === edge.from) fromNode = nodes[i];
+      if (nodes[i].id === edge.to) toNode = nodes[i];
+    }
+    if (!fromNode || !toNode) return;
+    if (hiddenIds[fromNode.id]) return;
+    if (hiddenIds[toNode.id] && fromNode.collapsedChildren &&
+        fromNode.collapsedChildren.indexOf(toNode.id) !== -1) {
+      stubCounts[fromNode.id] = (stubCounts[fromNode.id] || 0) + 1;
+    }
+  });
+
   edges.forEach(function(edge) {
     var fromNode = null, toNode = null;
     for (var i = 0; i < nodes.length; i++) {
@@ -34,12 +51,13 @@ function renderAllEdges(svg, edges, nodes, nodeEls, defaultThick, defaultColor, 
 
     /* --- CHILD IS HIDDEN: draw stub + badge --- */
     if (hiddenIds[toNode.id]) {
-      /* Only draw stub if the PARENT directly collapsed this child */
       if (fromNode.collapsedChildren && fromNode.collapsedChildren.indexOf(toNode.id) !== -1) {
         var count = countHiddenInBranch(toNode.id, edges);
-        drawCollapsedStub(svg, from, toNode, fromEl, thick, color, count, edge.id, onToggleChild, fromNode.id);
+        var idx = stubIndexes[fromNode.id] || 0;
+        stubIndexes[fromNode.id] = idx + 1;
+        var total = stubCounts[fromNode.id] || 1;
+        drawCollapsedStub(svg, from, toNode, fromEl, thick, color, count, edge.id, onToggleChild, fromNode.id, idx, total);
       }
-      /* If hidden by a deeper ancestor, draw nothing */
       return;
     }
 
@@ -56,7 +74,7 @@ function renderAllEdges(svg, edges, nodes, nodeEls, defaultThick, defaultColor, 
       svg.appendChild(makeEdgeLabel(from, to, edge.label));
     }
 
-    /* Edge toggle circle at midpoint (only if callback provided = edit mode) */
+    /* Edge toggle circle at midpoint (only in edit mode) */
     if (onToggleChild) {
       var toggle = makeEdgeToggle(from, to, color, edge.id, function() {
         onToggleChild(fromNode.id, toNode.id);
@@ -161,20 +179,37 @@ function makeEdgeToggle(from, to, color, edgeId, onClick) {
   return g;
 }
 
-/* --- Draw a collapsed stub: short line from parent + count badge --- */
-function drawCollapsedStub(svg, from, toNode, fromEl, thick, color, count, edgeId, onToggleChild, parentId) {
-  /* Determine direction: aim toward where the child is */
-  var dx = toNode.x - from.x;
-  var dy = toNode.y - from.y;
-  var dist = Math.sqrt(dx * dx + dy * dy) || 1;
-  var stubLen = 25;
-  var endX = from.x + (dx / dist) * stubLen;
-  var endY = from.y + (dy / dist) * stubLen;
+/* --- Draw a collapsed stub: short line from parent EDGE + count badge --- */
+/* stubIndex/stubTotal used to spread multiple badges horizontally.        */
+function drawCollapsedStub(svg, from, toNode, fromEl, thick, color, count, edgeId, onToggleChild, parentId, stubIndex, stubTotal) {
+  /* Calculate parent node edge (bottom center by default, spread if multiple) */
+  var pw = fromEl ? fromEl.offsetWidth : 140;
+  var ph = fromEl ? fromEl.offsetHeight : 40;
+  var fromNode = null;
+  /* Find the parent node data to get its x/y */
+  var parentX = from.x - pw / 2;
+  var parentY = from.y - ph / 2;
+
+  /* Spread multiple stubs horizontally along the bottom edge */
+  stubIndex = stubIndex || 0;
+  stubTotal = stubTotal || 1;
+  var spacing = Math.min(40, pw / (stubTotal + 1));
+  var startOffset = -(stubTotal - 1) * spacing / 2;
+  var xOff = startOffset + stubIndex * spacing;
+
+  /* Start point: bottom edge of parent, spread horizontally */
+  var startX = from.x + xOff;
+  var startY = parentY + ph + 2; /* just below the node */
+
+  /* End point: below the start with gap */
+  var stubLen = 20;
+  var endX = startX;
+  var endY = startY + stubLen;
 
   /* Stub line */
   var stub = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-  stub.setAttribute('x1', from.x);
-  stub.setAttribute('y1', from.y);
+  stub.setAttribute('x1', startX);
+  stub.setAttribute('y1', startY);
   stub.setAttribute('x2', endX);
   stub.setAttribute('y2', endY);
   stub.setAttribute('stroke', color);
@@ -182,17 +217,19 @@ function drawCollapsedStub(svg, from, toNode, fromEl, thick, color, count, edgeI
   stub.setAttribute('stroke-linecap', 'round');
   stub.setAttribute('stroke-dasharray', '4,3');
   stub.setAttribute('class', 'edge-stub');
+  stub.style.pointerEvents = 'none';
   svg.appendChild(stub);
 
-  /* Count badge at end of stub */
+  /* Count badge at end of stub - BELOW the node with clear gap */
   var g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
   g.setAttribute('class', 'collapse-badge');
   g.style.cursor = 'pointer';
 
   var badgeW = count > 9 ? 24 : 18;
+  var badgeY = endY + 2;
   var rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
   rect.setAttribute('x', endX - badgeW / 2);
-  rect.setAttribute('y', endY - 8);
+  rect.setAttribute('y', badgeY - 8);
   rect.setAttribute('width', badgeW);
   rect.setAttribute('height', 16);
   rect.setAttribute('rx', 8);
@@ -204,7 +241,7 @@ function drawCollapsedStub(svg, from, toNode, fromEl, thick, color, count, edgeI
 
   var text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
   text.setAttribute('x', endX);
-  text.setAttribute('y', endY + 4);
+  text.setAttribute('y', badgeY + 4);
   text.setAttribute('text-anchor', 'middle');
   text.setAttribute('fill', '#ffffff');
   text.setAttribute('font-size', '10');
