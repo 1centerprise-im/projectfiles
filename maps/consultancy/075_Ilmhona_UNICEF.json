@@ -20,7 +20,7 @@
       "shape": "rounded",
       "borderColor": "#007bff",
       "borderWidth": 0,
-      "collapsedChildren": []
+      "collapsed": false
     },
     {
       "id": "n2",
@@ -41,7 +41,7 @@
       "shape": "rounded",
       "borderColor": "",
       "borderWidth": 0,
-      "collapsedChildren": []
+      "collapsed": false
     },
     {
       "id": "n3",
@@ -62,7 +62,7 @@
       "shape": "rounded",
       "borderColor": "",
       "borderWidth": 0,
-      "collapsedChildren": []
+      "collapsed": false
     },
     {
       "id": "n6",
@@ -83,7 +83,7 @@
       "shape": "rounded",
       "borderColor": "",
       "borderWidth": 0,
-      "collapsedChildren": []
+      "collapsed": false
     },
     {
       "id": "n7",
@@ -104,7 +104,7 @@
       "shape": "rounded",
       "borderColor": "",
       "borderWidth": 0,
-      "collapsedChildren": []
+      "collapsed": false
     },
     {
       "id": "n8",
@@ -125,7 +125,7 @@
       "shape": "rounded",
       "borderColor": "",
       "borderWidth": 0,
-      "collapsedChildren": []
+      "collapsed": false
     },
     {
       "id": "n17",
@@ -146,7 +146,7 @@
       "shape": "rounded",
       "borderColor": "",
       "borderWidth": 0,
-      "collapsedChildren": []
+      "collapsed": false
     },
     {
       "id": "n18",
@@ -167,7 +167,7 @@
       "shape": "rounded",
       "borderColor": "",
       "borderWidth": 0,
-      "collapsedChildren": []
+      "collapsed": false
     },
     {
       "id": "n19",
@@ -188,7 +188,7 @@
       "shape": "rounded",
       "borderColor": "",
       "borderWidth": 0,
-      "collapsedChildren": []
+      "collapsed": false
     },
     {
       "id": "n20",
@@ -209,7 +209,7 @@
       "shape": "rounded",
       "borderColor": "",
       "borderWidth": 0,
-      "collapsedChildren": []
+      "collapsed": false
     },
     {
       "id": "n37",
@@ -230,12 +230,12 @@
       "shape": "rounded",
       "borderColor": "",
       "borderWidth": 0,
-      "collapsedChildren": []
+      "collapsed": false
     },
     {
       "id": "n39",
-      "x": 2360.27219686514,
-      "y": 166.23742025692502,
+      "x": 2500.7865105927394,
+      "y": 170.3026936731057,
       "w": 0,
       "h": 0,
       "text": "D2",
@@ -251,7 +251,7 @@
       "shape": "rounded",
       "borderColor": "",
       "borderWidth": 0,
-      "collapsedChildren": []
+      "collapsed": false
     },
     {
       "id": "n41",
@@ -272,7 +272,7 @@
       "shape": "rounded",
       "borderColor": "",
       "borderWidth": 0,
-      "collapsedChildren": []
+      "collapsed": false
     },
     {
       "id": "n43",
@@ -293,7 +293,7 @@
       "shape": "rounded",
       "borderColor": "",
       "borderWidth": 0,
-      "collapsedChildren": []
+      "collapsed": false
     },
     {
       "id": "n47",
@@ -314,7 +314,7 @@
       "shape": "rounded",
       "borderColor": "",
       "borderWidth": 0,
-      "collapsedChildren": []
+      "collapsed": false
     },
     {
       "id": "n49",
@@ -335,7 +335,7 @@
       "shape": "rounded",
       "borderColor": "",
       "borderWidth": 0,
-      "collapsedChildren": []
+      "collapsed": false
     },
     {
       "id": "n53",
@@ -346,7 +346,6 @@
       "text": "Materials_for_D1",
       "ci": 0,
       "link": "https://drive.google.com/drive/folders/1x62B_pgFE6R-_O3fVRmAaehVkDkCGzzd?usp=drive_link",
-      "collapsedChildren": [],
       "isNote": false,
       "fontSize": 13,
       "fontFamily": "Nunito",
@@ -356,7 +355,8 @@
       "textAlign": "left",
       "shape": "rounded",
       "borderColor": "",
-      "borderWidth": 0
+      "borderWidth": 0,
+      "collapsed": false
     },
     {
       "id": "n57",
@@ -367,7 +367,6 @@
       "text": "Asel",
       "ci": 4,
       "link": "https://drive.google.com/drive/folders/1ll2ybQG2bRxF7mQDdSLThZT0prRHHsm6?usp=drive_link",
-      "collapsedChildren": [],
       "isNote": false,
       "fontSize": 13,
       "fontFamily": "Nunito",
@@ -377,7 +376,8 @@
       "textAlign": "left",
       "shape": "rounded",
       "borderColor": "",
-      "borderWidth": 0
+      "borderWidth": 0,
+      "collapsed": false
     }
   ],
   "edges": [
@@ -451,13 +451,6 @@
       "id": "e50",
       "from": "n37",
       "to": "n49"
-    },
-    {
-      "id": "e52",
-      "from": "n37",
-      "to": "n39",
-      "thickness": 6.5,
-      "color": "#00ff00"
     },
     {
       "id": "e54",
