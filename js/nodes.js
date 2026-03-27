@@ -154,46 +154,35 @@ function createNodeData(id, x, y, text, ci, opts) {
   return {
     id: id, x: x, y: y, w: 0, h: 0,
     text: text || 'New Node', ci: ci || 0,
-    link: '', collapsedChildren: [], isNote: !!opts.isNote,
+    link: '', collapsed: false, isNote: !!opts.isNote,
     fontSize: opts.fontSize || 13, fontFamily: opts.fontFamily || 'Nunito',
     textColor: '', bold: false, italic: false, textAlign: 'left',
     shape: 'rounded', borderColor: '', borderWidth: 0
   };
 }
 
-/* --- Migrate old collapsed:boolean to collapsedChildren array --- */
+/* --- Migrate collapsedChildren array back to collapsed boolean --- */
 function migrateCollapseData(nodes, edges) {
   nodes.forEach(function(n) {
-    if (!n.collapsedChildren) n.collapsedChildren = [];
-    /* Migrate old boolean collapsed to collapsedChildren */
-    if (n.collapsed === true && n.collapsedChildren.length === 0) {
-      var children = getChildren(n.id, edges);
-      n.collapsedChildren = children.slice();
+    /* If node has collapsedChildren array, convert to boolean */
+    if (Array.isArray(n.collapsedChildren)) {
+      n.collapsed = n.collapsedChildren.length > 0;
+      delete n.collapsedChildren;
     }
-    delete n.collapsed;
+    /* Ensure collapsed is a boolean */
+    if (typeof n.collapsed !== 'boolean') n.collapsed = false;
   });
 }
 
-/* --- Compute set of all hidden node IDs based on collapsedChildren --- */
-/* A node is hidden if any ancestor has it (or one of its ancestors)     */
-/* listed in collapsedChildren.                                          */
+/* --- Compute set of all hidden node IDs (simple: collapsed hides all descendants) --- */
 function getHiddenNodeIds(nodes, edges) {
   var hidden = {};
   nodes.forEach(function(n) {
-    if (!n.collapsedChildren || !n.collapsedChildren.length) return;
-    n.collapsedChildren.forEach(function(childId) {
-      hidden[childId] = true;
-      getDescendants(childId, edges).forEach(function(descId) {
-        hidden[descId] = true;
-      });
-    });
+    if (n.collapsed) {
+      getDescendants(n.id, edges).forEach(function(id) { hidden[id] = true; });
+    }
   });
   return hidden;
-}
-
-/* --- Count hidden nodes in a specific child's subtree --- */
-function countHiddenInBranch(childId, edges) {
-  return 1 + getDescendants(childId, edges).length;
 }
 
 /* --- Start inline editing: replace text span with textarea --- */

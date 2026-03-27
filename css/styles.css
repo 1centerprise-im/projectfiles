@@ -414,13 +414,7 @@ button { font-family: 'Nunito Sans', sans-serif; cursor: pointer; border: none; 
 #edge-svg .edge-path.selected { stroke: var(--red) !important; }
 #edge-svg .edge-label { font-family: 'Nunito Sans', sans-serif; font-size: 11px; fill: var(--text); pointer-events: none; }
 
-/* --- Edge toggle circles (hidden by default, appear on SVG hover) --- */
-#edge-svg .edge-toggle { opacity: 0; transition: opacity 0.15s ease; pointer-events: all; }
-#edge-svg:hover .edge-toggle { opacity: 0.45; }
-#edge-svg .edge-toggle:hover { opacity: 1; }
-
-/* --- Collapsed stub and badge --- */
-#edge-svg .edge-stub { opacity: 0.5; }
+/* --- Collapse badge (below collapsed nodes, in SVG = lower z than nodes) --- */
 #edge-svg .collapse-badge { pointer-events: all; }
 #edge-svg .collapse-badge:hover rect { fill: #444441; }
 #edge-svg .collapse-badge:hover { cursor: pointer; }
