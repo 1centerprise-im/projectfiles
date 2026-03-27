@@ -10,7 +10,6 @@
       "text": "074_IOM",
       "ci": 2,
       "link": "https://drive.google.com/drive/folders/1r34q3Wh4DS5s_SdJDbC4JgNFJJKNkL7Q?usp=drive_link",
-      "collapsed": false,
       "isNote": false,
       "fontSize": 13,
       "fontFamily": "Nunito",
@@ -20,7 +19,10 @@
       "textAlign": "left",
       "shape": "circle",
       "borderColor": "",
-      "borderWidth": 0
+      "borderWidth": 0,
+      "collapsedChildren": [
+        "n7"
+      ]
     },
     {
       "id": "n5",
@@ -31,7 +33,6 @@
       "text": "1st_contract",
       "ci": 1,
       "link": "https://drive.google.com/drive/folders/1TdJBxoCP29Z_SRoV6nXmppPqxSMhV7Ej?usp=drive_link",
-      "collapsed": false,
       "isNote": false,
       "fontSize": 13,
       "fontFamily": "Nunito",
@@ -41,7 +42,8 @@
       "textAlign": "left",
       "shape": "rounded",
       "borderColor": "",
-      "borderWidth": 0
+      "borderWidth": 0,
+      "collapsedChildren": []
     },
     {
       "id": "n6",
@@ -52,7 +54,6 @@
       "text": "2nd_Contract",
       "ci": 1,
       "link": "https://drive.google.com/drive/folders/1n6zi3jaDiHWnAXLpnhXLxXvMZGQn5zjs?usp=drive_link",
-      "collapsed": false,
       "isNote": false,
       "fontSize": 13,
       "fontFamily": "Nunito",
@@ -62,7 +63,8 @@
       "textAlign": "left",
       "shape": "rounded",
       "borderColor": "",
-      "borderWidth": 0
+      "borderWidth": 0,
+      "collapsedChildren": []
     },
     {
       "id": "n7",
@@ -73,7 +75,6 @@
       "text": "3rd_CONTRACT",
       "ci": 1,
       "link": "https://drive.google.com/drive/folders/1WAG-lIjX3BQ83U-rJz6L9HcY85ASDD0o?usp=drive_link",
-      "collapsed": false,
       "isNote": false,
       "fontSize": 13,
       "fontFamily": "Nunito",
@@ -83,18 +84,20 @@
       "textAlign": "left",
       "shape": "rounded",
       "borderColor": "",
-      "borderWidth": 0
+      "borderWidth": 0,
+      "collapsedChildren": [
+        "n30"
+      ]
     },
     {
       "id": "n11",
-      "x": 885.852052189161,
-      "y": 412.5632835026576,
+      "x": 1467.3603373738665,
+      "y": 362.5136134431157,
       "w": 0,
       "h": 0,
       "text": "01_PROJECT_FOUNDATION",
       "ci": 4,
       "link": "https://drive.google.com/drive/folders/1mvDmH_U0eBqOyiRBr1t93H4tAMoKuPJ1?usp=drive_link",
-      "collapsed": false,
       "isNote": false,
       "fontSize": 13,
       "fontFamily": "Nunito",
@@ -104,18 +107,24 @@
       "textAlign": "left",
       "shape": "rounded",
       "borderColor": "",
-      "borderWidth": 0
+      "borderWidth": 0,
+      "collapsedChildren": [
+        "n12",
+        "n19",
+        "n20",
+        "n21",
+        "n17"
+      ]
     },
     {
       "id": "n12",
-      "x": 1233.4406679718259,
-      "y": 417.2437492206395,
+      "x": 1580.708119567535,
+      "y": -25.84303571824637,
       "w": 0,
       "h": 0,
       "text": "02_ADMINISTRATION_MGT",
       "ci": 4,
       "link": "https://drive.google.com/drive/folders/1Z1QbjqrCnxzvsgnjNXZwfHnDo0z7nS0s?usp=drive_link",
-      "collapsed": false,
       "isNote": false,
       "fontSize": 13,
       "fontFamily": "Nunito",
@@ -125,18 +134,18 @@
       "textAlign": "left",
       "shape": "rounded",
       "borderColor": "",
-      "borderWidth": 0
+      "borderWidth": 0,
+      "collapsedChildren": []
     },
     {
       "id": "n13",
-      "x": 1582.314359637775,
-      "y": 412.70208159608944,
+      "x": 1580.708119567535,
+      "y": -30.3847033427964,
       "w": 0,
       "h": 0,
       "text": "03_DELIVERABLES",
       "ci": 4,
       "link": "https://drive.google.com/drive/folders/1_LU1ib3U_DEcrn-X4G5-lKoyYbyXda0a?usp=drive_link",
-      "collapsed": false,
       "isNote": false,
       "fontSize": 13,
       "fontFamily": "Nunito",
@@ -146,18 +155,18 @@
       "textAlign": "left",
       "shape": "rounded",
       "borderColor": "",
-      "borderWidth": 0
+      "borderWidth": 0,
+      "collapsedChildren": []
     },
     {
       "id": "n17",
-      "x": 932.7878395860286,
-      "y": 805.214747736093,
+      "x": 816.4959591535635,
+      "y": 698.9132150611142,
       "w": 0,
       "h": 0,
       "text": "_RFQ_ATS_update",
       "ci": 0,
       "link": "https://drive.google.com/drive/folders/1JN9pzT0qd3IpASNS_Iw295DUXwZkmkE3?usp=drive_link",
-      "collapsed": false,
       "isNote": false,
       "fontSize": 13,
       "fontFamily": "Nunito",
@@ -167,18 +176,18 @@
       "textAlign": "left",
       "shape": "rounded",
       "borderColor": "",
-      "borderWidth": 0
+      "borderWidth": 0,
+      "collapsedChildren": []
     },
     {
       "id": "n18",
-      "x": 666.0271668822769,
-      "y": 571.4463130659767,
+      "x": 1505.6336144782222,
+      "y": 521.3966430064348,
       "w": 0,
       "h": 0,
       "text": "00_TOR",
       "ci": 0,
       "link": "https://drive.google.com/drive/folders/1s4qilNM7LU4a12Acm6RqTrMv5oO-lews?usp=drive_link",
-      "collapsed": false,
       "isNote": false,
       "fontSize": 13,
       "fontFamily": "Nunito",
@@ -188,18 +197,18 @@
       "textAlign": "left",
       "shape": "rounded",
       "borderColor": "",
-      "borderWidth": 0
+      "borderWidth": 0,
+      "collapsedChildren": []
     },
     {
       "id": "n19",
-      "x": 1025.1280724450194,
-      "y": 671.294954721863,
+      "x": 908.8361920125544,
+      "y": 698.9132150611142,
       "w": 0,
       "h": 0,
       "text": "01_Agreement_Contract",
       "ci": 0,
       "link": "https://drive.google.com/drive/folders/1UKTSuVOac7w38C27ZUL3jwBaXI5fZ7a7?usp=drive_link",
-      "collapsed": false,
       "isNote": false,
       "fontSize": 13,
       "fontFamily": "Nunito",
@@ -209,18 +218,18 @@
       "textAlign": "left",
       "shape": "rounded",
       "borderColor": "",
-      "borderWidth": 0
+      "borderWidth": 0,
+      "collapsedChildren": []
     },
     {
       "id": "n20",
-      "x": 642.575679172057,
-      "y": 677.3376455368693,
+      "x": 526.2837987395919,
+      "y": 698.9132150611142,
       "w": 0,
       "h": 0,
       "text": "02_Project_Documents",
       "ci": 0,
       "link": "https://drive.google.com/drive/folders/1Nes-EGStJwg3QxF09CZYBqUqEzL6RJ55?usp=drive_link",
-      "collapsed": false,
       "isNote": false,
       "fontSize": 13,
       "fontFamily": "Nunito",
@@ -230,18 +239,18 @@
       "textAlign": "left",
       "shape": "rounded",
       "borderColor": "",
-      "borderWidth": 0
+      "borderWidth": 0,
+      "collapsedChildren": []
     },
     {
       "id": "n21",
-      "x": 1239.1228978007762,
-      "y": 744.9404915912031,
+      "x": 1122.8310173683112,
+      "y": 698.9132150611142,
       "w": 0,
       "h": 0,
       "text": "03_Materials",
       "ci": 0,
       "link": "https://drive.google.com/drive/folders/1XpUMSIiSWyAQ5Nk7kSlRb_pQhpvTLhEQ?usp=drive_link",
-      "collapsed": false,
       "isNote": false,
       "fontSize": 13,
       "fontFamily": "Nunito",
@@ -251,18 +260,18 @@
       "textAlign": "left",
       "shape": "rounded",
       "borderColor": "",
-      "borderWidth": 0
+      "borderWidth": 0,
+      "collapsedChildren": []
     },
     {
       "id": "n29",
-      "x": 753.914618369987,
-      "y": 848.8318240620957,
+      "x": 867.2624005636554,
+      "y": 818.9628851206561,
       "w": 0,
       "h": 0,
       "text": "01_ATS_Update",
       "ci": 3,
       "link": "https://drive.google.com/drive/folders/1IIjHgMsnd8v8CI8hpEpxz_gYbyTXnd8T?usp=drive_link",
-      "collapsed": false,
       "isNote": false,
       "fontSize": 13,
       "fontFamily": "Nunito",
@@ -272,7 +281,8 @@
       "textAlign": "left",
       "shape": "rounded",
       "borderColor": "",
-      "borderWidth": 0
+      "borderWidth": 0,
+      "collapsedChildren": []
     },
     {
       "id": "n30",
@@ -283,7 +293,6 @@
       "text": "02_Website",
       "ci": 3,
       "link": "https://drive.google.com/drive/folders/1OczCAxR_E47nfHAILjmk-SB4rBea3vLz?usp=drive_link",
-      "collapsed": false,
       "isNote": false,
       "fontSize": 13,
       "fontFamily": "Nunito",
@@ -293,7 +302,8 @@
       "textAlign": "left",
       "shape": "rounded",
       "borderColor": "",
-      "borderWidth": 0
+      "borderWidth": 0,
+      "collapsedChildren": []
     },
     {
       "id": "n34",
@@ -304,7 +314,6 @@
       "text": "01_PROJECT_FOUNDATION",
       "ci": 3,
       "link": "https://drive.google.com/drive/folders/1cBDmxpBzASDiyN9jqaSG1TvLfMaaZTT9?usp=drive_link",
-      "collapsed": true,
       "isNote": false,
       "fontSize": 13,
       "fontFamily": "Nunito",
@@ -314,7 +323,15 @@
       "textAlign": "left",
       "shape": "rounded",
       "borderColor": "",
-      "borderWidth": 0
+      "borderWidth": 0,
+      "collapsedChildren": [
+        "n35",
+        "n43",
+        "n44",
+        "n45",
+        "n46",
+        "n47"
+      ]
     },
     {
       "id": "n35",
@@ -325,7 +342,6 @@
       "text": "02_ADMINISTRATION_MGT",
       "ci": 3,
       "link": "https://drive.google.com/drive/folders/1JHTKgqLH3y2ad9pydDtObOlaB_F3Ubos?usp=drive_link",
-      "collapsed": false,
       "isNote": false,
       "fontSize": 13,
       "fontFamily": "Nunito",
@@ -335,7 +351,8 @@
       "textAlign": "left",
       "shape": "rounded",
       "borderColor": "",
-      "borderWidth": 0
+      "borderWidth": 0,
+      "collapsedChildren": []
     },
     {
       "id": "n36",
@@ -346,7 +363,6 @@
       "text": "03_DELIVERABLES",
       "ci": 3,
       "link": "https://drive.google.com/drive/folders/1yYKzkPJ9C3_4qDWi1lrrWVPeJY31Zkst?usp=drive_link",
-      "collapsed": false,
       "isNote": false,
       "fontSize": 13,
       "fontFamily": "Nunito",
@@ -356,7 +372,8 @@
       "textAlign": "left",
       "shape": "rounded",
       "borderColor": "",
-      "borderWidth": 0
+      "borderWidth": 0,
+      "collapsedChildren": []
     },
     {
       "id": "n43",
@@ -367,7 +384,6 @@
       "text": "_RFQ_ATS_update",
       "ci": 0,
       "link": "https://drive.google.com/drive/folders/1GyLXKC5lWFT_ImsQRtKRh1NWLiq9B3Al?usp=drive_link",
-      "collapsed": false,
       "isNote": false,
       "fontSize": 13,
       "fontFamily": "Nunito",
@@ -377,7 +393,8 @@
       "textAlign": "left",
       "shape": "rounded",
       "borderColor": "",
-      "borderWidth": 0
+      "borderWidth": 0,
+      "collapsedChildren": []
     },
     {
       "id": "n44",
@@ -388,7 +405,6 @@
       "text": "00_TOR",
       "ci": 0,
       "link": "https://drive.google.com/drive/folders/1D135id_ogBAdi3gIPCC-kGUPQ52VogXi?usp=drive_link",
-      "collapsed": false,
       "isNote": false,
       "fontSize": 13,
       "fontFamily": "Nunito",
@@ -398,7 +414,8 @@
       "textAlign": "left",
       "shape": "rounded",
       "borderColor": "",
-      "borderWidth": 0
+      "borderWidth": 0,
+      "collapsedChildren": []
     },
     {
       "id": "n45",
@@ -409,7 +426,6 @@
       "text": "01_Agreement_Contract",
       "ci": 0,
       "link": "https://drive.google.com/drive/folders/1Lk4DaoIZtVal0guVQbN8wux6H9JdJJfJ?usp=drive_link",
-      "collapsed": false,
       "isNote": false,
       "fontSize": 13,
       "fontFamily": "Nunito",
@@ -419,7 +435,8 @@
       "textAlign": "left",
       "shape": "rounded",
       "borderColor": "",
-      "borderWidth": 0
+      "borderWidth": 0,
+      "collapsedChildren": []
     },
     {
       "id": "n46",
@@ -430,7 +447,6 @@
       "text": "02_Project_Documents",
       "ci": 0,
       "link": "https://drive.google.com/drive/folders/1aucWvcgYM4N3BQvs2qCJySjtyMX78pVN?usp=drive_link",
-      "collapsed": false,
       "isNote": false,
       "fontSize": 13,
       "fontFamily": "Nunito",
@@ -440,7 +456,8 @@
       "textAlign": "left",
       "shape": "rounded",
       "borderColor": "",
-      "borderWidth": 0
+      "borderWidth": 0,
+      "collapsedChildren": []
     },
     {
       "id": "n47",
@@ -451,7 +468,6 @@
       "text": "03_Materials",
       "ci": 0,
       "link": "https://drive.google.com/drive/folders/1jy1YDbGCjHahhwXX1LpJJ026QsL3Vznb?usp=drive_link",
-      "collapsed": false,
       "isNote": false,
       "fontSize": 13,
       "fontFamily": "Nunito",
@@ -461,7 +477,8 @@
       "textAlign": "left",
       "shape": "rounded",
       "borderColor": "",
-      "borderWidth": 0
+      "borderWidth": 0,
+      "collapsedChildren": []
     }
   ],
   "edges": [
