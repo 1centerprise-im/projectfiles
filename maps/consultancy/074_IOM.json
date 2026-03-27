@@ -331,5 +331,6 @@
   ],
   "nid": 68,
   "edgeThickness": 2,
-  "edgeColor": "#b8b0a6"
+  "edgeColor": "#b8b0a6",
+  "annotations": []
 }
