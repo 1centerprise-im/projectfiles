@@ -411,8 +411,15 @@ button { font-family: 'Nunito Sans', sans-serif; cursor: pointer; border: none; 
 }
 #edge-svg .edge-hit { pointer-events: stroke; }
 #edge-svg .edge-path { stroke-linecap: round; stroke-linejoin: round; }
-#edge-svg .edge-path.selected { stroke: var(--red) !important; }
+#edge-svg .edge-path.selected { stroke-width: 3px !important; stroke-dasharray: 8,4; }
 #edge-svg .edge-label { font-family: 'Nunito Sans', sans-serif; font-size: 11px; fill: var(--text); pointer-events: none; }
+
+/* --- Edge style toolbar group --- */
+.edge-style-group { display: none; align-items: center; gap: 6px; }
+.edge-color-swatches { display: flex; gap: 3px; align-items: center; }
+.edge-color-sw { width: 14px; height: 14px; border-radius: 50%; cursor: pointer; border: 1.5px solid rgba(0,0,0,0.15); transition: transform 0.1s; }
+.edge-color-sw:hover { transform: scale(1.25); }
+.edge-arrow-btn { font-size: 16px; min-width: 28px; padding: 2px 4px; }
 
 /* --- Collapse badge (below collapsed nodes, in SVG = lower z than nodes) --- */
 #edge-svg .collapse-badge { pointer-events: all; }

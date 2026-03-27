@@ -5,6 +5,37 @@
    - Edge selection, labels, hit areas, temp connection line
    ============================================================ */
 
+/* --- Ensure SVG defs has arrow markers for a given color --- */
+function ensureArrowMarker(svg, color, position) {
+  /* position: 'end' or 'start' */
+  var markerId = 'arrow-' + position + '-' + color.replace('#', '');
+  if (svg.querySelector('#' + markerId)) return markerId;
+
+  var defs = svg.querySelector('defs');
+  if (!defs) { defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs'); svg.insertBefore(defs, svg.firstChild); }
+
+  var marker = document.createElementNS('http://www.w3.org/2000/svg', 'marker');
+  marker.setAttribute('id', markerId);
+  marker.setAttribute('viewBox', '0 0 10 10');
+  marker.setAttribute('markerWidth', '8');
+  marker.setAttribute('markerHeight', '8');
+  marker.setAttribute('orient', 'auto-start-reverse');
+  if (position === 'end') {
+    marker.setAttribute('refX', '9');
+    marker.setAttribute('refY', '5');
+  } else {
+    marker.setAttribute('refX', '1');
+    marker.setAttribute('refY', '5');
+  }
+
+  var poly = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+  poly.setAttribute('d', 'M 0 0 L 10 5 L 0 10 z');
+  poly.setAttribute('fill', color);
+  marker.appendChild(poly);
+  defs.appendChild(marker);
+  return markerId;
+}
+
 /* --- Redraw all edges into the SVG element --- */
 /* hiddenIds: object keyed by node IDs that should not be drawn */
 function renderAllEdges(svg, edges, nodes, nodeEls, defaultThick, defaultColor, hiddenIds) {
@@ -31,9 +62,22 @@ function renderAllEdges(svg, edges, nodes, nodeEls, defaultThick, defaultColor, 
     var to = getNodeCenter(toNode, toEl);
     var thick = edge.thickness || defaultThick || 1.5;
     var color = edge.color || defaultColor || '#c8c0b8';
+    var arrow = edge.arrow || 'none';
 
     /* Visible bezier curve */
-    svg.appendChild(makeBezierPath(from, to, thick, color, edge.id));
+    var path = makeBezierPath(from, to, thick, color, edge.id);
+
+    /* Apply arrow markers */
+    if (arrow === 'end' || arrow === 'both') {
+      var endId = ensureArrowMarker(svg, color, 'end');
+      path.setAttribute('marker-end', 'url(#' + endId + ')');
+    }
+    if (arrow === 'both') {
+      var startId = ensureArrowMarker(svg, color, 'start');
+      path.setAttribute('marker-start', 'url(#' + startId + ')');
+    }
+
+    svg.appendChild(path);
 
     /* Wider invisible hit area for click selection */
     svg.appendChild(makeHitArea(from, to, edge.id));

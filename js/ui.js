@@ -10,6 +10,8 @@ function showFormatPanel() {
 }
 function hideFormatPanel() {
   formatPanel.classList.remove('visible');
+  var esg = document.getElementById('edgeStyleGroup');
+  if (esg) esg.style.display = 'none';
 }
 
 /* --- Wire up all format panel controls (called once at init) --- */
@@ -82,8 +84,10 @@ function applyToEdge(fn) {
   var ed = mapData.edges.find(function(e) { return e.id === selectedEdge; });
   if (ed) {
     fn(ed);
+    var hiddenIds = getHiddenNodeIds(mapData.nodes, mapData.edges);
     renderAllEdges(edgeSvg, mapData.edges, mapData.nodes, nodeEls,
-      mapData.edgeThickness, mapData.edgeColor);
+      mapData.edgeThickness, mapData.edgeColor, hiddenIds);
+    selectEdge(edgeSvg, selectedEdge);
     pushUndo(); autoSave();
   }
 }
@@ -92,6 +96,7 @@ function applyToEdge(fn) {
 function updateFormatPanelValues() {
   var nfc = document.getElementById('nodeFormatControls');
   var efc = document.getElementById('edgeFormatControls');
+  var esg = document.getElementById('edgeStyleGroup');
   if (selectedNodes.size > 0) {
     var n = mapData.nodes.find(function(nd) { return selectedNodes.has(nd.id); });
     if (!n) return;
@@ -103,15 +108,27 @@ function updateFormatPanelValues() {
     formatPanel.querySelector('#fpBorderColor').value = n.borderColor || '#c8c0b8';
     formatPanel.querySelector('#fpBorderWidth').value = n.borderWidth || 0;
     nfc.style.display = 'flex'; efc.style.display = 'none';
+    if (esg) esg.style.display = 'none';
   } else if (selectedEdge) {
     var ed = mapData.edges.find(function(e) { return e.id === selectedEdge; });
     if (ed) {
       formatPanel.querySelector('#fpEdgeLabel').value = ed.label || '';
       formatPanel.querySelector('#fpEdgeThick').value = ed.thickness || mapData.edgeThickness || 2;
       formatPanel.querySelector('#fpEdgeColor').value = ed.color || mapData.edgeColor || '#b8b0a6';
+      updateArrowButton(ed.arrow || 'none');
     }
     nfc.style.display = 'none'; efc.style.display = 'flex';
+    if (esg) esg.style.display = 'flex';
   }
+}
+
+/* --- Update arrow toggle button label --- */
+function updateArrowButton(arrow) {
+  var btn = document.getElementById('btnEdgeArrow');
+  if (!btn) return;
+  if (arrow === 'end') { btn.innerHTML = '&#8594;'; btn.title = 'Arrow at end (click to cycle)'; }
+  else if (arrow === 'both') { btn.innerHTML = '&#8596;'; btn.title = 'Arrows both ends (click to cycle)'; }
+  else { btn.innerHTML = '&#8212;'; btn.title = 'No arrows (click to cycle)'; }
 }
 
 /* --- Selection visual update (add/remove CSS classes) --- */
@@ -142,6 +159,8 @@ function onEdgeClick(e) {
   selectedEdge = hit.dataset.edgeId;
   selectEdge(edgeSvg, selectedEdge);
   showFormatPanel();
+  var esg = document.getElementById('edgeStyleGroup');
+  if (esg) esg.style.display = 'flex';
 }
 
 /* --- Paste: Ctrl+V to attach URL to selected node --- */
@@ -255,4 +274,23 @@ function setupToolbar() {
   document.querySelectorAll('.color-swatch').forEach(function(sw) {
     sw.addEventListener('click', function() { recolorSelected(parseInt(sw.dataset.ci)); });
   });
+  /* Edge color swatches */
+  document.querySelectorAll('.edge-color-sw').forEach(function(sw) {
+    sw.addEventListener('click', function() {
+      applyToEdge(function(ed) { ed.color = sw.dataset.color; });
+    });
+  });
+  /* Arrow toggle: cycles none -> end -> both -> none */
+  var arrowBtn = document.getElementById('btnEdgeArrow');
+  if (arrowBtn) {
+    arrowBtn.addEventListener('click', function() {
+      if (!selectedEdge) return;
+      var ed = mapData.edges.find(function(e) { return e.id === selectedEdge; });
+      if (!ed) return;
+      var cur = ed.arrow || 'none';
+      var next = cur === 'none' ? 'end' : cur === 'end' ? 'both' : 'none';
+      applyToEdge(function(ed) { ed.arrow = next; });
+      updateArrowButton(next);
+    });
+  }
 }
