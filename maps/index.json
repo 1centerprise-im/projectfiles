@@ -5,13 +5,6 @@
       "label": "Consultancy",
       "maps": [
         {
-          "id": "071_CEP_CIIP",
-          "name": "CEP CIIP",
-          "number": "071",
-          "organization": "Carbon/Environment",
-          "status": "active"
-        },
-        {
           "id": "072_Community_Resilience",
           "name": "Community Resilience",
           "number": "072",
