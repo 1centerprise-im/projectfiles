@@ -3,7 +3,7 @@
 
 var mapData = null, folder = '', mapName = '';
 var zoom = 1, panX = 0, panY = 0;
-var selectedNodes = new Set();
+var selectedNodes = new Set(), selectedEdge = null;
 var nodeEls = {}, undoStack = [];
 var isPanning = false, isDragging = false, isResizing = false;
 var isConnecting = false, isRubberBand = false;
@@ -151,6 +151,8 @@ function attachNodeEvents(el, node) {
     if (e.target.closest('.node-collapse')) return toggleCollapse(node);
     if (e.target.closest('.node-link-icon')) return;
     e.stopPropagation();
+    /* Deselect edge when clicking a node */
+    if (selectedEdge) { selectedEdge = null; deselectAllEdges(edgeSvg); }
     /* Selection logic: Ctrl for multi, else single */
     if (e.ctrlKey || e.metaKey) {
       selectedNodes.has(node.id) ? selectedNodes.delete(node.id) : selectedNodes.add(node.id);
@@ -199,6 +201,7 @@ function setupEvents() {
   window.addEventListener('beforeunload', function(e) {
     if (hasUnsavedChanges) { e.preventDefault(); }
   });
+  edgeSvg.addEventListener('click', onEdgeClick);
   setupToolbar();
   setupFormatPanel();
 }
@@ -206,6 +209,8 @@ function setupEvents() {
 /* --- Canvas mousedown: pan or rubber band --- */
 function onCanvasDown(e) {
   if (e.target.closest('.mm-node')) return;
+  /* Deselect edge on canvas click */
+  if (selectedEdge) { selectedEdge = null; deselectAllEdges(edgeSvg); }
   if (e.button === 1 || spaceDown) {
     isPanning = true; dragStart = {x:e.clientX,y:e.clientY};
     panStart = {x:panX,y:panY}; container.classList.add('panning');
@@ -337,6 +342,16 @@ function endRubberBand() {
   updateSelectionVisuals(); showFormatPanel();
 }
 
+/* --- Edge click handler (delegated from SVG) --- */
+function onEdgeClick(e) {
+  var hit = e.target.closest('.edge-hit');
+  if (!hit) return;
+  e.stopPropagation();
+  selectedNodes.clear(); updateSelectionVisuals(); hideFormatPanel();
+  selectedEdge = hit.dataset.edgeId;
+  selectEdge(edgeSvg, selectedEdge);
+}
+
 /* --- Keyboard shortcuts --- */
 function onKeyDown(e) {
   if (e.target.tagName === 'TEXTAREA' || e.target.tagName === 'INPUT') return;
@@ -346,12 +361,20 @@ function onKeyDown(e) {
   if (e.ctrlKey && e.key === 'a') { selectAll(); e.preventDefault(); }
   if (e.key === 'Escape') {
     selectedNodes.clear();
+    if (selectedEdge) { selectedEdge = null; deselectAllEdges(edgeSvg); }
     updateSelectionVisuals(); hideFormatPanel();
   }
 }
 
 /* --- Node operations --- */
 function deleteSelection() {
+  if (selectedEdge) {
+    mapData.edges = deleteEdgeById(mapData.edges, selectedEdge);
+    selectedEdge = null;
+    fullRender(); pushUndo(); autoSave();
+    showToast('Connection removed');
+    return;
+  }
   if (selectedNodes.size) deleteNodes();
   fullRender(); pushUndo(); autoSave();
 }
@@ -466,5 +489,5 @@ function pushUndo() { undoStack.push(JSON.stringify(mapData)); if (undoStack.len
 function undo() {
   if (undoStack.length < 2) return;
   undoStack.pop(); mapData = JSON.parse(undoStack[undoStack.length - 1]);
-  selectedNodes.clear(); fullRender(); hideFormatPanel();
+  selectedNodes.clear(); selectedEdge = null; fullRender(); hideFormatPanel();
 }

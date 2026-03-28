@@ -410,6 +410,8 @@ button { font-family: 'Nunito Sans', sans-serif; cursor: pointer; border: none; 
   pointer-events: none;
 }
 #edge-svg .edge-path { stroke-linecap: round; stroke-linejoin: round; pointer-events: none; }
+#edge-svg .edge-path.selected { stroke: #8a8078; stroke-width: 3px; }
+#edge-svg .edge-hit { pointer-events: stroke; }
 
 /* --- Collapse badge (below collapsed nodes, in SVG = lower z than nodes) --- */
 #edge-svg .collapse-badge { pointer-events: all; }

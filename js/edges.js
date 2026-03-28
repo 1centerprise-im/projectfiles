@@ -31,6 +31,9 @@ function renderAllEdges(svg, edges, nodes, nodeEls, defaultThick, defaultColor, 
 
     /* Simple bezier curve - fixed gray color and 1.5px width */
     svg.appendChild(makeBezierPath(from, to, 1.5, '#b0a89e', edge.id));
+
+    /* Wider invisible hit area for click selection */
+    svg.appendChild(makeHitArea(from, to, edge.id));
   });
 }
 
@@ -123,6 +126,33 @@ function bezierD(from, to) {
     ' C ' + cp1x + ',' + cp1y +
     ' ' + cp2x + ',' + cp2y +
     ' ' + to.x + ',' + to.y;
+}
+
+/* --- Invisible wider hit area for click detection --- */
+function makeHitArea(from, to, edgeId) {
+  var hit = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+  hit.setAttribute('d', bezierD(from, to));
+  hit.setAttribute('stroke', 'transparent');
+  hit.setAttribute('stroke-width', '10');
+  hit.setAttribute('fill', 'none');
+  hit.setAttribute('class', 'edge-hit');
+  hit.style.cursor = 'pointer';
+  hit.style.pointerEvents = 'stroke';
+  hit.dataset.edgeId = edgeId;
+  return hit;
+}
+
+/* --- Highlight selected edge --- */
+function selectEdge(svg, edgeId) {
+  deselectAllEdges(svg);
+  svg.querySelectorAll('.edge-path[data-edge-id="' + edgeId + '"]')
+    .forEach(function(p) { p.classList.add('selected'); });
+}
+
+/* --- Remove selection from all edges --- */
+function deselectAllEdges(svg) {
+  svg.querySelectorAll('.edge-path.selected')
+    .forEach(function(p) { p.classList.remove('selected'); });
 }
 
 /* --- Create new edge data object --- */
