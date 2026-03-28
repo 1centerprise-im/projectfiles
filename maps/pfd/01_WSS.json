@@ -172,7 +172,7 @@
     {
       "id": "n19",
       "x": 1688.1759874425238,
-      "y": 375.00865636648695,
+      "y": 372.5742404285523,
       "w": 0,
       "h": 0,
       "text": "Trip_Czeck_to_Tajikistan",
@@ -210,6 +210,27 @@
       "shape": "rounded",
       "borderColor": "",
       "borderWidth": 0
+    },
+    {
+      "id": "n23",
+      "x": 1561.103757405163,
+      "y": 481.7748841877639,
+      "w": 0,
+      "h": 0,
+      "text": "New Node",
+      "ci": 0,
+      "link": "",
+      "collapsed": false,
+      "isNote": false,
+      "fontSize": 13,
+      "fontFamily": "Nunito",
+      "textColor": "",
+      "bold": false,
+      "italic": false,
+      "textAlign": "left",
+      "shape": "rounded",
+      "borderColor": "",
+      "borderWidth": 0
     }
   ],
   "edges": [
@@ -224,6 +245,6 @@
       "to": "n21"
     }
   ],
-  "nid": 23,
+  "nid": 24,
   "annotations": []
 }
