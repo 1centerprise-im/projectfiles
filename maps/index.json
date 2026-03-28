@@ -49,7 +49,14 @@
     {
       "name": "pfd",
       "label": "PFD",
-      "maps": []
+      "maps": [
+        {
+          "id": "01_WSS",
+          "name": "01_WSS",
+          "number": "",
+          "status": "active"
+        }
+      ]
     }
   ]
 }
