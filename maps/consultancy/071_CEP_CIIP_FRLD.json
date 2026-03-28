@@ -3,7 +3,7 @@
   "nodes": [
     {
       "id": "n1",
-      "x": 244,
+      "x": 215.46298549777794,
       "y": 255,
       "w": 0,
       "h": 0,
@@ -126,10 +126,37 @@
       "shape": "rounded",
       "borderColor": "",
       "borderWidth": 0
+    },
+    {
+      "id": "n7",
+      "x": 213.36935860654648,
+      "y": 448.9046520283914,
+      "w": 0,
+      "h": 0,
+      "text": "TJ_FRLD Proposal",
+      "ci": 0,
+      "link": "https://drive.google.com/drive/folders/1wYtRnFQhGQBlQAgpgt-G0EVzajtxs8iY?usp=drive_link",
+      "collapsed": false,
+      "isNote": false,
+      "fontSize": 13,
+      "fontFamily": "Nunito",
+      "textColor": "",
+      "bold": false,
+      "italic": false,
+      "textAlign": "left",
+      "shape": "rounded",
+      "borderColor": "",
+      "borderWidth": 0
     }
   ],
-  "edges": [],
-  "nid": 7,
+  "edges": [
+    {
+      "id": "e10",
+      "from": "n1",
+      "to": "n7"
+    }
+  ],
+  "nid": 11,
   "edgeThickness": 1.5,
   "edgeColor": "#c8c0b8"
 }
