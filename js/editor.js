@@ -372,6 +372,7 @@ function onEdgeClick(e) {
   if (!hit) return;
   e.stopPropagation();
   selectedNodes.clear(); updateSelectionVisuals(); hideFormatPanel();
+  if (selectedAnnotation) { selectedAnnotation = null; deselectAllAnnotations(); }
   selectedEdge = hit.dataset.edgeId;
   selectEdge(edgeSvg, selectedEdge);
 }
@@ -633,7 +634,8 @@ function finalizeDrawing(e) {
     x1: drawStart.x, y1: drawStart.y,
     x2: end.x, y2: end.y,
     color: drawColor,
-    hasArrow: drawArrow
+    hasArrow: drawArrow,
+    thickness: 2
   };
   mapData.annotations.push(ann);
   drawStart = null;
@@ -648,34 +650,37 @@ function renderAnnotations() {
   if (!mapData.annotations || !mapData.annotations.length) return;
 
   mapData.annotations.forEach(function(ann) {
+    var thick = ann.thickness || 2;
+    var color = ann.color || '#c0392b';
+
     /* Visible line */
     var line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
     line.setAttribute('x1', ann.x1);
     line.setAttribute('y1', ann.y1);
     line.setAttribute('x2', ann.x2);
     line.setAttribute('y2', ann.y2);
-    line.setAttribute('stroke', ann.color || '#c0392b');
-    line.setAttribute('stroke-width', '2');
+    line.setAttribute('stroke', color);
+    line.setAttribute('stroke-width', thick);
     line.setAttribute('stroke-linecap', 'round');
     line.setAttribute('class', 'ann-line');
     line.dataset.annId = ann.id;
 
     /* Arrow marker */
     if (ann.hasArrow) {
-      var markerId = ensureAnnArrowMarker(ann.color || '#c0392b');
+      var markerId = ensureAnnArrowMarker(color);
       line.setAttribute('marker-end', 'url(#' + markerId + ')');
     }
 
     annSvg.appendChild(line);
 
-    /* Wider invisible hit area */
+    /* Wide invisible hit area (20px for easy clicking) */
     var hit = document.createElementNS('http://www.w3.org/2000/svg', 'line');
     hit.setAttribute('x1', ann.x1);
     hit.setAttribute('y1', ann.y1);
     hit.setAttribute('x2', ann.x2);
     hit.setAttribute('y2', ann.y2);
     hit.setAttribute('stroke', 'transparent');
-    hit.setAttribute('stroke-width', '10');
+    hit.setAttribute('stroke-width', '20');
     hit.setAttribute('class', 'ann-hit');
     hit.style.pointerEvents = 'stroke';
     hit.style.cursor = 'pointer';
@@ -722,9 +727,148 @@ function onAnnotationClick(e) {
   deselectAllAnnotations();
   var line = annSvg.querySelector('.ann-line[data-ann-id="' + selectedAnnotation + '"]');
   if (line) line.classList.add('selected');
+  showAnnEditBar();
 }
 
 /* --- Deselect all annotations --- */
 function deselectAllAnnotations() {
   annSvg.querySelectorAll('.ann-line.selected').forEach(function(l) { l.classList.remove('selected'); });
+  hideAnnEditBar();
+}
+
+/* ============================================================
+   ANNOTATION EDIT BAR - floating controls for selected annotation
+   ============================================================ */
+
+var ANN_COLORS = ['#c0392b','#2980b9','#27ae60','#e07b3a','#2c2c2a','#9a9088'];
+var ANN_THICKNESSES = [{label:'S',val:1.5},{label:'M',val:3},{label:'L',val:5}];
+
+function showAnnEditBar() {
+  hideAnnEditBar();
+  if (!selectedAnnotation) return;
+  var ann = mapData.annotations.find(function(a) { return a.id === selectedAnnotation; });
+  if (!ann) return;
+
+  /* Position at midpoint of line, converted to screen coords */
+  var mx = (ann.x1 + ann.x2) / 2;
+  var my = Math.min(ann.y1, ann.y2) - 20; /* above the line */
+  var screenX = mx * zoom + panX;
+  var screenY = my * zoom + panY;
+  var containerRect = container.getBoundingClientRect();
+  screenX += containerRect.left;
+  screenY += containerRect.top;
+
+  var bar = document.createElement('div');
+  bar.id = 'annEditBar';
+  bar.className = 'ann-edit-bar';
+
+  /* Color circles */
+  ANN_COLORS.forEach(function(c) {
+    var sw = document.createElement('div');
+    sw.className = 'draw-color' + (c === (ann.color || '#c0392b') ? ' active' : '');
+    sw.style.background = c;
+    sw.dataset.color = c;
+    sw.addEventListener('click', function(e) {
+      e.stopPropagation();
+      ann.color = c;
+      bar.querySelectorAll('.draw-color').forEach(function(s) { s.classList.remove('active'); });
+      sw.classList.add('active');
+      renderAnnotations();
+      /* Re-highlight */
+      var line = annSvg.querySelector('.ann-line[data-ann-id="' + selectedAnnotation + '"]');
+      if (line) line.classList.add('selected');
+      pushUndo(); autoSave();
+    });
+    bar.appendChild(sw);
+  });
+
+  /* Separator */
+  var sep1 = document.createElement('div');
+  sep1.className = 'ann-sep';
+  bar.appendChild(sep1);
+
+  /* Arrow toggle */
+  var arrowBtn = document.createElement('button');
+  arrowBtn.className = 'draw-arrow-toggle' + (ann.hasArrow ? ' active' : '');
+  arrowBtn.innerHTML = '&#8594;';
+  arrowBtn.title = 'Toggle arrow';
+  arrowBtn.addEventListener('click', function(e) {
+    e.stopPropagation();
+    ann.hasArrow = !ann.hasArrow;
+    arrowBtn.classList.toggle('active', ann.hasArrow);
+    renderAnnotations();
+    var line = annSvg.querySelector('.ann-line[data-ann-id="' + selectedAnnotation + '"]');
+    if (line) line.classList.add('selected');
+    pushUndo(); autoSave();
+  });
+  bar.appendChild(arrowBtn);
+
+  /* Separator */
+  var sep2 = document.createElement('div');
+  sep2.className = 'ann-sep';
+  bar.appendChild(sep2);
+
+  /* Thickness buttons S M L */
+  var curThick = ann.thickness || 2;
+  ANN_THICKNESSES.forEach(function(t) {
+    var btn = document.createElement('button');
+    btn.className = 'ann-thickness' + (curThick === t.val ? ' active' : '');
+    btn.textContent = t.label;
+    btn.title = t.val + 'px';
+    btn.addEventListener('click', function(e) {
+      e.stopPropagation();
+      ann.thickness = t.val;
+      bar.querySelectorAll('.ann-thickness').forEach(function(b) { b.classList.remove('active'); });
+      btn.classList.add('active');
+      renderAnnotations();
+      var line = annSvg.querySelector('.ann-line[data-ann-id="' + selectedAnnotation + '"]');
+      if (line) line.classList.add('selected');
+      pushUndo(); autoSave();
+    });
+    bar.appendChild(btn);
+  });
+
+  /* Separator */
+  var sep3 = document.createElement('div');
+  sep3.className = 'ann-sep';
+  bar.appendChild(sep3);
+
+  /* Delete button */
+  var delBtn = document.createElement('button');
+  delBtn.className = 'ann-delete';
+  delBtn.innerHTML = '&times;';
+  delBtn.title = 'Delete';
+  delBtn.addEventListener('click', function(e) {
+    e.stopPropagation();
+    mapData.annotations = mapData.annotations.filter(function(a) { return a.id !== selectedAnnotation; });
+    selectedAnnotation = null;
+    hideAnnEditBar();
+    fullRender(); pushUndo(); autoSave();
+    showToast('Drawing removed');
+  });
+  bar.appendChild(delBtn);
+
+  /* Position */
+  bar.style.left = screenX + 'px';
+  bar.style.top = screenY + 'px';
+  bar.style.transform = 'translate(-50%, -100%)';
+  document.body.appendChild(bar);
+
+  /* Adjust if off-screen */
+  requestAnimationFrame(function() {
+    var rect = bar.getBoundingClientRect();
+    if (rect.left < 4) bar.style.left = (4 + rect.width / 2) + 'px';
+    if (rect.right > window.innerWidth - 4) bar.style.left = (window.innerWidth - 4 - rect.width / 2) + 'px';
+    if (rect.top < containerRect.top) {
+      /* Place below the line instead */
+      var belowY = Math.max(ann.y1, ann.y2) * zoom + panY + containerRect.top + 20;
+      bar.style.top = belowY + 'px';
+      bar.style.transform = 'translate(-50%, 0)';
+    }
+  });
+}
+
+function hideAnnEditBar() {
+  var old = document.getElementById('annEditBar');
+  if (old) old.remove();
 }

@@ -429,6 +429,22 @@ button { font-family: 'Nunito Sans', sans-serif; cursor: pointer; border: none; 
 .draw-arrow-toggle { font-size: 14px; min-width: 28px; padding: 2px 6px; border-radius: 4px; border: 1px solid var(--border); }
 .draw-arrow-toggle.active { background: var(--accent); color: #fff; border-color: var(--accent); }
 
+/* --- Annotation edit bar (floating near selected annotation) --- */
+.ann-edit-bar {
+  position: absolute; z-index: 50;
+  display: flex; align-items: center; gap: 5px;
+  background: var(--toolbar); border: 1px solid var(--border); border-radius: 8px;
+  padding: 4px 8px; box-shadow: 0 3px 12px rgba(0,0,0,0.12);
+  font-size: 0.8rem; white-space: nowrap;
+}
+.ann-edit-bar .draw-color { width: 8px; height: 8px; }
+.ann-edit-bar .ann-thickness { min-width: 22px; height: 22px; border: 1px solid var(--border); border-radius: 4px; font-size: 0.7rem; font-weight: 700; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: background 0.12s; color: var(--text); }
+.ann-edit-bar .ann-thickness:hover { background: rgba(42,37,32,0.06); }
+.ann-edit-bar .ann-thickness.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+.ann-edit-bar .ann-sep { width: 1px; height: 16px; background: var(--border); }
+.ann-edit-bar .ann-delete { min-width: 22px; height: 22px; border-radius: 4px; font-size: 12px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--red); transition: background 0.12s; }
+.ann-edit-bar .ann-delete:hover { background: rgba(192,57,43,0.1); }
+
 /* ===== NODE STYLES (Soft modern bubbles) ===== */
 .mm-node {
   position: absolute;
