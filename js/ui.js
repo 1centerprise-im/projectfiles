@@ -184,6 +184,7 @@ function showUnsavedModal() {
     var btn = document.getElementById('unsavedSave');
     btn.disabled = true;
     btn.textContent = 'Saving...';
+    cancelGhAutoSave();
     try {
       await saveMap(folder, mapName, mapData);
       hasUnsavedChanges = false;
@@ -200,7 +201,7 @@ function showUnsavedModal() {
 /* --- Wire toolbar buttons (called once at init) --- */
 function setupToolbar() {
   document.getElementById('mapTitle').addEventListener('input', function(e) {
-    mapData.title = e.target.value; hasUnsavedChanges = true; autoSave();
+    mapData.title = e.target.value; hasUnsavedChanges = true; updateSaveDot('unsaved'); scheduleGhAutoSave(); autoSave();
   });
   document.getElementById('btnMyMaps').addEventListener('click', function() {
     if (hasUnsavedChanges) {

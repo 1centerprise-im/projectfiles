@@ -9,6 +9,8 @@ var isPanning = false, isDragging = false, isResizing = false;
 var isConnecting = false, isRubberBand = false;
 var connectFrom = null, spaceDown = false;
 var hasUnsavedChanges = false;
+var _ghAutoSaveTimer = null;
+var AUTOSAVE_DELAY = 3 * 60 * 1000; /* 3 minutes */
 var isViewOnly = false;
 var dragStart = {x:0,y:0}, panStart = {x:0,y:0};
 var canvas, edgeSvg, container, formatPanel, zoomBadge, ctxMenu;
@@ -446,15 +448,20 @@ function pushNeighborsAway(expandedNode) {
   });
 }
 function doAutoLayout() { pushUndo(); autoLayout(mapData.nodes, mapData.edges); fullRender(); fitView(); autoSave(); }
-async function doSave() {
-  if (!folder || !mapName) { showToast('No map loaded', true); return; }
+async function doSave(isAuto) {
+  if (!folder || !mapName) { if (!isAuto) showToast('No map loaded', true); return; }
+  cancelGhAutoSave();
   try {
-    showToast('Saving...', false);
+    updateSaveDot('saving');
+    if (!isAuto) showToast('Saving...', false);
     await saveMap(folder, mapName, mapData);
     hasUnsavedChanges = false;
-    showToast('Saved to GitHub');
+    updateSaveDot('saved');
+    showToast(isAuto ? 'Auto-saved' : 'Saved to GitHub');
+    setTimeout(function() { if (!hasUnsavedChanges) updateSaveDot(''); }, 2000);
   } catch (err) {
-    showToast('Save failed: ' + err.message, true);
+    updateSaveDot('unsaved');
+    showToast(isAuto ? 'Auto-save failed - save manually' : 'Save failed: ' + err.message, true);
   }
 }
 
@@ -471,6 +478,30 @@ function showToast(msg, isError) {
 }
 
 function autoSave() { if (folder && mapName) saveToLocal(folder, mapName, mapData); }
+
+/* --- GitHub autosave: 3 minutes after last change --- */
+function scheduleGhAutoSave() {
+  cancelGhAutoSave();
+  if (!folder || !mapName) return;
+  _ghAutoSaveTimer = setTimeout(function() {
+    if (hasUnsavedChanges && localStorage.getItem('gh_token')) {
+      doSave(true);
+    }
+  }, AUTOSAVE_DELAY);
+}
+function cancelGhAutoSave() {
+  if (_ghAutoSaveTimer) { clearTimeout(_ghAutoSaveTimer); _ghAutoSaveTimer = null; }
+}
+
+/* --- Save dot indicator next to Save button --- */
+function updateSaveDot(state) {
+  var dot = document.getElementById('saveDot');
+  if (!dot) return;
+  dot.className = 'save-dot';
+  if (state === 'unsaved') dot.classList.add('unsaved');
+  else if (state === 'saving') dot.classList.add('saving');
+  else if (state === 'saved') dot.classList.add('saved');
+}
 
 /* --- Fit view: zoom and pan to show all nodes centered --- */
 function fitView() {
@@ -494,7 +525,13 @@ function fitView() {
 }
 
 /* --- Undo (snapshot-based) --- */
-function pushUndo() { undoStack.push(JSON.stringify(mapData)); if (undoStack.length > 30) undoStack.shift(); hasUnsavedChanges = true; }
+function pushUndo() {
+  undoStack.push(JSON.stringify(mapData));
+  if (undoStack.length > 30) undoStack.shift();
+  hasUnsavedChanges = true;
+  updateSaveDot('unsaved');
+  scheduleGhAutoSave();
+}
 function undo() {
   if (undoStack.length < 2) return;
   undoStack.pop(); mapData = JSON.parse(undoStack[undoStack.length - 1]);
