@@ -31,6 +31,12 @@
           "number": "075",
           "organization": "UNICEF",
           "status": "active"
+        },
+        {
+          "id": "071_CEP_CIIP",
+          "name": "071 CEP CIIP",
+          "number": "",
+          "status": "active"
         }
       ]
     },
