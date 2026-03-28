@@ -3,13 +3,13 @@
   "nodes": [
     {
       "id": "n1",
-      "x": 400,
-      "y": 300,
+      "x": 376,
+      "y": 250,
       "w": 0,
       "h": 0,
       "text": "01_WSS",
       "ci": 0,
-      "link": "",
+      "link": "https://drive.google.com/drive/folders/1L9TAJ3jKmHwdHZP670homqrlOs2dblfV?usp=drive_link",
       "collapsed": false,
       "isNote": false,
       "fontSize": 16,
