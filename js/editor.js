@@ -129,9 +129,12 @@ function fullRender() {
     if (n.collapsed) {
       btn.textContent = '+';
       btn.title = 'Expand all children';
-      drawCollapseBadge(edgeSvg, n, el, mapData.edges, function() {
-        toggleCollapse(n);
-      });
+      drawCollapseBadge(edgeSvg, n, el, mapData.edges, (function(nodeId) {
+        return function() {
+          var fresh = mapData.nodes.find(function(nd) { return nd.id === nodeId; });
+          if (fresh) toggleCollapse(fresh);
+        };
+      })(n.id));
     } else {
       btn.textContent = '\u2212';
       btn.title = 'Collapse all children';
@@ -146,9 +149,15 @@ function attachNodeEvents(el, node) {
   el.addEventListener('mousedown', function(e) {
     if (e.target.closest('.node-connect')) return beginConnect(e, node);
     if (e.target.closest('.node-resize'))  return beginResize(e, node);
-    if (e.target.closest('.node-delete'))  return deleteNodes(node.id);
-    if (e.target.closest('.node-add-child')) return addChild(node);
-    if (e.target.closest('.node-collapse')) return toggleCollapse(node);
+    if (e.target.closest('.node-delete'))  { e.stopPropagation(); return deleteNodes(node.id); }
+    if (e.target.closest('.node-add-child')) { e.stopPropagation(); return addChild(node); }
+    if (e.target.closest('.node-collapse')) {
+      e.stopPropagation(); e.preventDefault();
+      /* Look up fresh node from mapData to avoid stale closure reference */
+      var freshNode = mapData.nodes.find(function(n) { return n.id === node.id; });
+      if (freshNode) toggleCollapse(freshNode);
+      return;
+    }
     if (e.target.closest('.node-link-icon')) return;
     e.stopPropagation();
     /* Deselect edge when clicking a node */
