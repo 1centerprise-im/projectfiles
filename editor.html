@@ -32,6 +32,8 @@
       </div>
       <div class="sep"></div>
       <button class="tb-btn primary" id="btnSave">Save</button><span class="save-dot" id="saveDot"></span>
+      <div class="sep"></div>
+      <button class="tb-btn" id="btnDraw"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px;margin-right:3px"><line x1="4" y1="20" x2="20" y2="4"/><polygon points="20,4 15,4 20,9"/></svg>Draw</button>
       <span class="toolbar-credits">
         designed and developed by <a href="https://ilkhom-makhkambaev.mystrikingly.com/" target="_blank">Ilkhom Makhkambaev</a>
       </span>
@@ -78,14 +80,23 @@
       </div>
     </div>
 
+    <!-- DRAW BAR (shown when draw mode is on) -->
+    <div class="draw-bar" id="drawBar">
+      <div class="draw-color active" data-color="#c0392b" style="background:#c0392b" title="Red"></div>
+      <div class="draw-color" data-color="#2980b9" style="background:#2980b9" title="Blue"></div>
+      <div class="draw-color" data-color="#27ae60" style="background:#27ae60" title="Green"></div>
+      <div class="draw-color" data-color="#e07b3a" style="background:#e07b3a" title="Orange"></div>
+      <div class="draw-color" data-color="#2c2c2a" style="background:#2c2c2a" title="Black"></div>
+      <div class="draw-color" data-color="#9a9088" style="background:#9a9088" title="Gray"></div>
+      <div class="sep" style="height:16px"></div>
+      <button class="tb-btn draw-arrow-toggle active" id="btnDrawArrow" title="Toggle arrow">&#8594;</button>
+    </div>
+
     <!-- CANVAS AREA -->
-    <!-- canvasContainer clips and handles pan/zoom -->
     <div id="canvasContainer">
-      <!-- #canvas holds BOTH the SVG edge layer AND the node divs.
-           They share the same coordinate space. The single CSS transform
-           on #canvas moves everything together. -->
       <div id="canvas">
         <svg id="edge-svg" xmlns="http://www.w3.org/2000/svg"></svg>
+        <svg id="ann-svg" xmlns="http://www.w3.org/2000/svg"></svg>
         <!-- Node divs are appended here by editor.js -->
       </div>
     </div>

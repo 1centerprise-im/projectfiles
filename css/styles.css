@@ -409,6 +409,26 @@ button { font-family: 'Nunito Sans', sans-serif; cursor: pointer; border: none; 
 #edge-svg .collapse-badge:hover rect { fill: #444441; }
 #edge-svg .collapse-badge:hover { cursor: pointer; }
 
+/* --- Annotation SVG layer (between edges z:1 and nodes z:2) --- */
+#ann-svg { position: absolute; top: 0; left: 0; width: 5000px; height: 4000px; z-index: 1; pointer-events: none; }
+#ann-svg .ann-line { pointer-events: none; }
+#ann-svg .ann-line.selected { stroke-dasharray: 6,3; }
+#ann-svg .ann-hit { pointer-events: stroke; cursor: pointer; }
+
+/* --- Draw mode --- */
+#canvasContainer.draw-mode { cursor: crosshair; }
+#canvasContainer.draw-mode .mm-node { pointer-events: none; }
+.tb-btn.draw-active { background: var(--accent); color: #fff; }
+
+/* --- Draw bar (secondary toolbar) --- */
+.draw-bar { display: none; align-items: center; gap: 6px; background: var(--toolbar); border-bottom: 1px solid var(--border); padding: 4px 14px; z-index: 99; flex-shrink: 0; }
+.draw-bar.visible { display: flex; }
+.draw-color { width: 8px; height: 8px; border-radius: 50%; cursor: pointer; border: 2px solid transparent; transition: transform 0.15s; }
+.draw-color:hover { transform: scale(1.3); }
+.draw-color.active { border-color: var(--text); }
+.draw-arrow-toggle { font-size: 14px; min-width: 28px; padding: 2px 6px; border-radius: 4px; border: 1px solid var(--border); }
+.draw-arrow-toggle.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+
 /* ===== NODE STYLES (Soft modern bubbles) ===== */
 .mm-node {
   position: absolute;

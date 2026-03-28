@@ -12,8 +12,11 @@ var hasUnsavedChanges = false;
 var _ghAutoSaveTimer = null;
 var AUTOSAVE_DELAY = 3 * 60 * 1000; /* 3 minutes */
 var isViewOnly = false;
+var drawMode = false, isDrawing = false, drawStart = null;
+var selectedAnnotation = null;
+var drawColor = '#c0392b', drawArrow = true;
 var dragStart = {x:0,y:0}, panStart = {x:0,y:0};
-var canvas, edgeSvg, container, formatPanel, zoomBadge, ctxMenu;
+var canvas, edgeSvg, annSvg, container, formatPanel, zoomBadge, ctxMenu;
 
 /* Convert mouse event to canvas coordinates */
 function toCanvas(e) {
@@ -29,6 +32,7 @@ async function initEditor() {
   isViewOnly = params.get('mode') === 'view';
   canvas = document.getElementById('canvas');
   edgeSvg = document.getElementById('edge-svg');
+  annSvg = document.getElementById('ann-svg');
   container = document.getElementById('canvasContainer');
   formatPanel = document.getElementById('formatPanel');
   zoomBadge = document.getElementById('zoomBadge');
@@ -36,6 +40,7 @@ async function initEditor() {
   /* Load map JSON from server, or create empty for new maps */
   if (params.get('new') !== '1' && folder && mapName) mapData = await loadMap(folder, mapName);
   if (!mapData) mapData = createEmptyMap(mapName ? mapName.replace(/_/g,' ') : 'New Map');
+  if (!mapData.annotations) mapData.annotations = [];
   document.getElementById('mapTitle').value = mapData.title || '';
 
   if (isViewOnly) {
@@ -119,6 +124,9 @@ function fullRender() {
   /* Draw ALL edges (skip hidden nodes) */
   renderAllEdges(edgeSvg, mapData.edges, mapData.nodes, nodeEls, hiddenIds);
 
+  /* Draw annotations */
+  renderAnnotations();
+
   /* Update collapse button on each node + draw badges for collapsed ones */
   mapData.nodes.forEach(function(n) {
     var el = nodeEls[n.id]; if (!el) return;
@@ -158,8 +166,9 @@ function attachNodeEvents(el, node) {
     }
     if (e.target.closest('.node-link-icon')) return;
     e.stopPropagation();
-    /* Deselect edge when clicking a node */
+    /* Deselect edge/annotation when clicking a node */
     if (selectedEdge) { selectedEdge = null; deselectAllEdges(edgeSvg); }
+    if (selectedAnnotation) { selectedAnnotation = null; deselectAllAnnotations(); }
     /* Selection logic: Ctrl for multi, else single */
     if (e.ctrlKey || e.metaKey) {
       selectedNodes.has(node.id) ? selectedNodes.delete(node.id) : selectedNodes.add(node.id);
@@ -209,18 +218,26 @@ function setupEvents() {
     if (hasUnsavedChanges) { e.preventDefault(); }
   });
   edgeSvg.addEventListener('click', onEdgeClick);
+  annSvg.addEventListener('click', onAnnotationClick);
   setupToolbar();
   setupFormatPanel();
+  setupDrawBar();
 }
 
-/* --- Canvas mousedown: pan or rubber band --- */
+/* --- Canvas mousedown: pan, rubber band, or draw --- */
 function onCanvasDown(e) {
   if (e.target.closest('.mm-node')) return;
-  /* Deselect edge on canvas click */
+  /* Deselect edge and annotation on canvas click */
   if (selectedEdge) { selectedEdge = null; deselectAllEdges(edgeSvg); }
+  if (selectedAnnotation) { selectedAnnotation = null; deselectAllAnnotations(); }
   if (e.button === 1 || spaceDown) {
     isPanning = true; dragStart = {x:e.clientX,y:e.clientY};
     panStart = {x:panX,y:panY}; container.classList.add('panning');
+  } else if (drawMode && e.button === 0) {
+    /* Start drawing a line */
+    isDrawing = true;
+    drawStart = toCanvas(e);
+    showDrawPreview(drawStart, drawStart);
   } else if (e.button === 0) {
     selectedNodes.clear();
     updateSelectionVisuals(); hideFormatPanel();
@@ -230,6 +247,7 @@ function onCanvasDown(e) {
 }
 function onMove(e) {
   if (isPanning) { panX = panStart.x+(e.clientX-dragStart.x); panY = panStart.y+(e.clientY-dragStart.y); applyTransform(); }
+  else if (isDrawing) showDrawPreview(drawStart, toCanvas(e));
   else if (isDragging) doDrag(e);
   else if (isResizing) doResize(e);
   else if (isConnecting) doConnect(e);
@@ -237,6 +255,7 @@ function onMove(e) {
 }
 function onUp(e) {
   if (isPanning) { isPanning = false; container.classList.remove('panning'); }
+  if (isDrawing) { finalizeDrawing(e); isDrawing = false; }
   if (isDragging) { isDragging = false; pushUndo(); autoSave(); }
   if (isResizing) { isResizing = false; pushUndo(); autoSave(); }
   if (isConnecting) { endConnect(e); isConnecting = false; }
@@ -367,12 +386,21 @@ function onKeyDown(e) {
   if (e.key === 'Escape') {
     selectedNodes.clear();
     if (selectedEdge) { selectedEdge = null; deselectAllEdges(edgeSvg); }
+    if (selectedAnnotation) { selectedAnnotation = null; deselectAllAnnotations(); }
+    if (drawMode) toggleDrawMode();
     updateSelectionVisuals(); hideFormatPanel();
   }
 }
 
 /* --- Node operations --- */
 function deleteSelection() {
+  if (selectedAnnotation) {
+    mapData.annotations = mapData.annotations.filter(function(a) { return a.id !== selectedAnnotation; });
+    selectedAnnotation = null;
+    fullRender(); pushUndo(); autoSave();
+    showToast('Drawing removed');
+    return;
+  }
   if (selectedEdge) {
     mapData.edges = deleteEdgeById(mapData.edges, selectedEdge);
     selectedEdge = null;
@@ -528,5 +556,175 @@ function pushUndo() {
 function undo() {
   if (undoStack.length < 2) return;
   undoStack.pop(); mapData = JSON.parse(undoStack[undoStack.length - 1]);
-  selectedNodes.clear(); selectedEdge = null; fullRender(); hideFormatPanel();
+  if (!mapData.annotations) mapData.annotations = [];
+  selectedNodes.clear(); selectedEdge = null; selectedAnnotation = null; fullRender(); hideFormatPanel();
+}
+
+/* ============================================================
+   DRAW TOOL - straight lines and arrows on annotation layer
+   ============================================================ */
+
+/* --- Toggle draw mode on/off --- */
+function toggleDrawMode() {
+  drawMode = !drawMode;
+  var btn = document.getElementById('btnDraw');
+  var bar = document.getElementById('drawBar');
+  if (drawMode) {
+    btn.classList.add('draw-active');
+    bar.classList.add('visible');
+    container.classList.add('draw-mode');
+    /* Deselect everything */
+    selectedNodes.clear(); updateSelectionVisuals(); hideFormatPanel();
+    if (selectedEdge) { selectedEdge = null; deselectAllEdges(edgeSvg); }
+  } else {
+    btn.classList.remove('draw-active');
+    bar.classList.remove('visible');
+    container.classList.remove('draw-mode');
+  }
+}
+
+/* --- Wire draw bar controls --- */
+function setupDrawBar() {
+  document.getElementById('btnDraw').addEventListener('click', toggleDrawMode);
+  document.querySelectorAll('.draw-color').forEach(function(sw) {
+    sw.addEventListener('click', function() {
+      document.querySelectorAll('.draw-color').forEach(function(s) { s.classList.remove('active'); });
+      sw.classList.add('active');
+      drawColor = sw.dataset.color;
+    });
+  });
+  document.getElementById('btnDrawArrow').addEventListener('click', function() {
+    drawArrow = !drawArrow;
+    this.classList.toggle('active', drawArrow);
+  });
+}
+
+/* --- Preview line while dragging --- */
+function showDrawPreview(from, to) {
+  var prev = annSvg.querySelector('.draw-preview');
+  if (!prev) {
+    prev = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+    prev.setAttribute('class', 'draw-preview');
+    prev.setAttribute('stroke-width', '2');
+    prev.setAttribute('stroke-linecap', 'round');
+    prev.setAttribute('stroke-dasharray', '6,4');
+    prev.style.pointerEvents = 'none';
+    annSvg.appendChild(prev);
+  }
+  prev.setAttribute('x1', from.x);
+  prev.setAttribute('y1', from.y);
+  prev.setAttribute('x2', to.x);
+  prev.setAttribute('y2', to.y);
+  prev.setAttribute('stroke', drawColor);
+}
+
+/* --- Finalize drawing on mouse up --- */
+function finalizeDrawing(e) {
+  var prev = annSvg.querySelector('.draw-preview');
+  if (prev) prev.remove();
+  if (!drawStart) return;
+  var end = toCanvas(e);
+  /* Only create if line is longer than 5px */
+  var dx = end.x - drawStart.x, dy = end.y - drawStart.y;
+  if (Math.sqrt(dx * dx + dy * dy) < 5) { drawStart = null; return; }
+  if (!mapData.annotations) mapData.annotations = [];
+  var ann = {
+    id: 'a' + (mapData.nid++),
+    x1: drawStart.x, y1: drawStart.y,
+    x2: end.x, y2: end.y,
+    color: drawColor,
+    hasArrow: drawArrow
+  };
+  mapData.annotations.push(ann);
+  drawStart = null;
+  renderAnnotations();
+  pushUndo(); autoSave();
+}
+
+/* --- Render all annotations into #ann-svg --- */
+function renderAnnotations() {
+  if (!annSvg) return;
+  annSvg.innerHTML = '';
+  if (!mapData.annotations || !mapData.annotations.length) return;
+
+  mapData.annotations.forEach(function(ann) {
+    /* Visible line */
+    var line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+    line.setAttribute('x1', ann.x1);
+    line.setAttribute('y1', ann.y1);
+    line.setAttribute('x2', ann.x2);
+    line.setAttribute('y2', ann.y2);
+    line.setAttribute('stroke', ann.color || '#c0392b');
+    line.setAttribute('stroke-width', '2');
+    line.setAttribute('stroke-linecap', 'round');
+    line.setAttribute('class', 'ann-line');
+    line.dataset.annId = ann.id;
+
+    /* Arrow marker */
+    if (ann.hasArrow) {
+      var markerId = ensureAnnArrowMarker(ann.color || '#c0392b');
+      line.setAttribute('marker-end', 'url(#' + markerId + ')');
+    }
+
+    annSvg.appendChild(line);
+
+    /* Wider invisible hit area */
+    var hit = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+    hit.setAttribute('x1', ann.x1);
+    hit.setAttribute('y1', ann.y1);
+    hit.setAttribute('x2', ann.x2);
+    hit.setAttribute('y2', ann.y2);
+    hit.setAttribute('stroke', 'transparent');
+    hit.setAttribute('stroke-width', '10');
+    hit.setAttribute('class', 'ann-hit');
+    hit.style.pointerEvents = 'stroke';
+    hit.style.cursor = 'pointer';
+    hit.dataset.annId = ann.id;
+    annSvg.appendChild(hit);
+  });
+}
+
+/* --- SVG arrow marker for annotations (per color) --- */
+function ensureAnnArrowMarker(color) {
+  var id = 'ann-arrow-' + color.replace(/[^a-zA-Z0-9]/g, '');
+  if (annSvg.querySelector('#' + id)) return id;
+  var defs = annSvg.querySelector('defs');
+  if (!defs) {
+    defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
+    annSvg.insertBefore(defs, annSvg.firstChild);
+  }
+  var marker = document.createElementNS('http://www.w3.org/2000/svg', 'marker');
+  marker.setAttribute('id', id);
+  marker.setAttribute('viewBox', '0 0 8 6');
+  marker.setAttribute('markerWidth', '8');
+  marker.setAttribute('markerHeight', '6');
+  marker.setAttribute('refX', '8');
+  marker.setAttribute('refY', '3');
+  marker.setAttribute('orient', 'auto');
+  var path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+  path.setAttribute('d', 'M 0 0 L 8 3 L 0 6 Z');
+  path.setAttribute('fill', color);
+  marker.appendChild(path);
+  defs.appendChild(marker);
+  return id;
+}
+
+/* --- Annotation click handler (delegated from #ann-svg) --- */
+function onAnnotationClick(e) {
+  var hit = e.target.closest('.ann-hit');
+  if (!hit) return;
+  if (drawMode) return; /* Don't select while drawing */
+  e.stopPropagation();
+  selectedNodes.clear(); updateSelectionVisuals(); hideFormatPanel();
+  if (selectedEdge) { selectedEdge = null; deselectAllEdges(edgeSvg); }
+  selectedAnnotation = hit.dataset.annId;
+  /* Highlight selected annotation */
+  deselectAllAnnotations();
+  var line = annSvg.querySelector('.ann-line[data-ann-id="' + selectedAnnotation + '"]');
+  if (line) line.classList.add('selected');
+}
+
+/* --- Deselect all annotations --- */
+function deselectAllAnnotations() {
+  annSvg.querySelectorAll('.ann-line.selected').forEach(function(l) { l.classList.remove('selected'); });
 }
