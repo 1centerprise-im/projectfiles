@@ -37,7 +37,6 @@ async function initEditor() {
   if (params.get('new') !== '1' && folder && mapName) mapData = await loadMap(folder, mapName);
   if (!mapData) mapData = createEmptyMap(mapName ? mapName.replace(/_/g,' ') : 'New Map');
   document.getElementById('mapTitle').value = mapData.title || '';
-  console.log('[editor] Loaded:', mapData.title, mapData.nodes.length, 'nodes');
 
   if (isViewOnly) {
     setupViewOnlyMode();
@@ -118,8 +117,7 @@ function fullRender() {
   });
 
   /* Draw ALL edges (skip hidden nodes) */
-  renderAllEdges(edgeSvg, mapData.edges, mapData.nodes, nodeEls,
-    mapData.edgeThickness, mapData.edgeColor, hiddenIds);
+  renderAllEdges(edgeSvg, mapData.edges, mapData.nodes, nodeEls, hiddenIds);
 
   /* Update collapse button on each node + draw badges for collapsed ones */
   mapData.nodes.forEach(function(n) {
@@ -143,8 +141,6 @@ function fullRender() {
     }
   });
 
-  console.log('[editor] Rendered', Object.keys(nodeEls).length, 'nodes,',
-    Object.keys(hiddenIds).length, 'hidden');
 }
 
 function attachNodeEvents(el, node) {
@@ -291,8 +287,7 @@ function doDrag(e) {
     if (hn && ho) { hn.x = ho.x + dx; hn.y = ho.y + dy; }
   }
   var hiddenIds = getHiddenNodeIds(mapData.nodes, mapData.edges);
-  renderAllEdges(edgeSvg, mapData.edges, mapData.nodes, nodeEls,
-    mapData.edgeThickness, mapData.edgeColor, hiddenIds);
+  renderAllEdges(edgeSvg, mapData.edges, mapData.nodes, nodeEls, hiddenIds);
 }
 
 /* --- Node resizing --- */
@@ -307,8 +302,7 @@ function doResize(e) {
   n.h = Math.max(30, s.h+(e.clientY-s.y)/zoom);
   updateNodeElement(nodeEls[n.id], n);
   var hiddenIds = getHiddenNodeIds(mapData.nodes, mapData.edges);
-  renderAllEdges(edgeSvg, mapData.edges, mapData.nodes, nodeEls,
-    mapData.edgeThickness, mapData.edgeColor, hiddenIds);
+  renderAllEdges(edgeSvg, mapData.edges, mapData.nodes, nodeEls, hiddenIds);
 }
 
 /* --- Connection dragging --- */
@@ -447,7 +441,6 @@ function pushNeighborsAway(expandedNode) {
     }
   });
 }
-function doAutoLayout() { pushUndo(); autoLayout(mapData.nodes, mapData.edges); fullRender(); fitView(); autoSave(); }
 async function doSave(isAuto) {
   if (!folder || !mapName) { if (!isAuto) showToast('No map loaded', true); return; }
   cancelGhAutoSave();

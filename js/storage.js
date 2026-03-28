@@ -125,9 +125,7 @@ async function loadMap(folder, mapName) {
   try {
     const result = await ghGet(`maps/${folder}/${mapName}.json`);
     if (result) {
-      const data = JSON.parse(result.content);
-      console.log(`[storage] Loaded ${folder}/${mapName} from API: ${data.nodes?.length || 0} nodes`);
-      return data;
+      return JSON.parse(result.content);
     }
   } catch(e) {
     console.warn('[storage] API load failed, falling back to static:', e);
@@ -135,9 +133,7 @@ async function loadMap(folder, mapName) {
   // Fallback to static fetch (for when no token is set)
   const res = await fetch(`maps/${folder}/${mapName}.json?t=${Date.now()}`, { cache: 'no-store' });
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
-  const data = await res.json();
-  console.log(`[storage] Loaded ${folder}/${mapName} from static: ${data.nodes?.length || 0} nodes`);
-  return data;
+  return await res.json();
 }
 
 // Save map to GitHub
@@ -173,7 +169,7 @@ async function createMap(folder, mapId, displayName, folderLabel) {
       collapsed: false, isNote: false, fontSize: 16, fontFamily: 'Nunito',
       textColor: '#2a2520', bold: true, italic: false, textAlign: 'center',
       shape: 'rounded', borderColor: '', borderWidth: 0 }],
-    edges: [], nid: 2, edgeThickness: 1.5, edgeColor: '#c8c0b8'
+    edges: [], nid: 2
   };
 
   // 1. Create the map JSON file
@@ -307,7 +303,7 @@ function createEmptyMap(title) {
       ci: 0, link: '', collapsed: false, isNote: false, fontSize: 16,
       fontFamily: 'Nunito', textColor: '#2a2520', bold: true, italic: false,
       textAlign: 'center', shape: 'rounded', borderColor: '', borderWidth: 0 }],
-    edges: [], nid: 2, edgeThickness: 2, edgeColor: '#c8c0b8'
+    edges: [], nid: 2
   };
 }
 

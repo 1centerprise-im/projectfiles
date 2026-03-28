@@ -277,17 +277,6 @@ button { font-family: 'Nunito Sans', sans-serif; cursor: pointer; border: none; 
   color: var(--dk-text);
 }
 
-.project-row .col-org {
-  color: var(--dk-muted);
-  font-size: 0.9rem;
-}
-
-.muted-text {
-  color: var(--dk-muted);
-  font-style: italic;
-  font-size: 0.85rem;
-}
-
 /* Status badges */
 .status-badge {
   display: inline-block;
@@ -325,11 +314,6 @@ button { font-family: 'Nunito Sans', sans-serif; cursor: pointer; border: none; 
 .open-link:hover {
   opacity: 0.7;
   text-decoration: none;
-}
-
-/* Empty row */
-.empty-row td {
-  opacity: 0.5;
 }
 
 /* Footer */
@@ -858,6 +842,5 @@ button { font-family: 'Nunito Sans', sans-serif; cursor: pointer; border: none; 
   .landing-title { font-size: 1.8rem; }
   .projects-header { flex-direction: column; gap: 12px; }
   .projects-filters { flex-direction: column; }
-  .projects-table .col-org { display: none; }
   .folders-grid { grid-template-columns: 1fr; }
 }

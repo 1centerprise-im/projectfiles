@@ -6,7 +6,7 @@
 
 /* --- Redraw all edges into the SVG element --- */
 /* hiddenIds: object keyed by node IDs that should not be drawn */
-function renderAllEdges(svg, edges, nodes, nodeEls, defaultThick, defaultColor, hiddenIds) {
+function renderAllEdges(svg, edges, nodes, nodeEls, hiddenIds) {
   svg.innerHTML = '';
   hiddenIds = hiddenIds || {};
 
