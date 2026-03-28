@@ -281,7 +281,10 @@ function renderMapsTable(folderName, search, statusVal) {
 /* ============================================================
    ROOT DROP ZONE (when inside a folder)
    ============================================================ */
+var _rootDropZoneWired = false;
 function setupRootDropZone() {
+  if (_rootDropZoneWired) return;
+  _rootDropZoneWired = true;
   var zone = document.getElementById('rootDropZone');
   zone.addEventListener('dragover', function(e) {
     e.preventDefault();

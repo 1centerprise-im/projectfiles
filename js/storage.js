@@ -33,25 +33,64 @@ async function ghGet(path) {
   return { sha: data.sha, content: decoded };
 }
 
-// PUT a file to GitHub - always gets fresh SHA first
+// Save queue - prevents concurrent writes that cause SHA conflicts
+let _saveQueue = [];
+let _saveRunning = false;
+
+// PUT a file to GitHub - queued to prevent concurrent writes
 async function ghPut(path, content, message) {
+  return new Promise((resolve, reject) => {
+    _saveQueue.push({ path, content, message, resolve, reject });
+    _drainSaveQueue();
+  });
+}
+
+async function _drainSaveQueue() {
+  if (_saveRunning || !_saveQueue.length) return;
+  _saveRunning = true;
+  const job = _saveQueue.shift();
+  try {
+    const result = await _ghPutOnce(job.path, job.content, job.message);
+    job.resolve(result);
+  } catch (err) {
+    job.reject(err);
+  } finally {
+    _saveRunning = false;
+    if (_saveQueue.length) _drainSaveQueue();
+  }
+}
+
+// Single PUT attempt with one retry on 409 conflict
+async function _ghPutOnce(path, content, message) {
   const token = getToken();
   if (!token) throw new Error('No token');
 
-  // Get fresh SHA (null if new file)
-  let sha = null;
-  const existing = await ghGet(path);
-  if (existing) sha = existing.sha;
+  async function attempt() {
+    // Get fresh SHA (null if new file)
+    let sha = null;
+    const existing = await ghGet(path);
+    if (existing) sha = existing.sha;
 
-  const b64 = btoa(unescape(encodeURIComponent(content)));
-  const body = { message, content: b64 };
-  if (sha) body.sha = sha;
+    const b64 = btoa(unescape(encodeURIComponent(content)));
+    const body = { message, content: b64 };
+    if (sha) body.sha = sha;
 
-  const res = await fetch(`${API}/repos/${REPO}/contents/${path}`, {
-    method: 'PUT',
-    headers: { Authorization: `token ${token}`, Accept: 'application/vnd.github.v3+json', 'Content-Type': 'application/json' },
-    body: JSON.stringify(body)
-  });
+    const res = await fetch(`${API}/repos/${REPO}/contents/${path}`, {
+      method: 'PUT',
+      headers: { Authorization: `token ${token}`, Accept: 'application/vnd.github.v3+json', 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+    return res;
+  }
+
+  let res = await attempt();
+
+  // Retry once on 409 Conflict (stale SHA)
+  if (res.status === 409) {
+    console.warn(`[storage] 409 conflict on ${path}, retrying with fresh SHA...`);
+    res = await attempt();
+  }
+
   if (res.status === 401 || res.status === 403) {
     localStorage.removeItem('gh_token');
     throw new Error('Invalid token - please reload page');
@@ -195,11 +234,25 @@ async function deleteMap(folder, mapId) {
   return true;
 }
 
-// Delete a folder from index.json
+// Delete a folder: deletes all map files in it, then removes from index.json
 async function deleteFolder(folderName) {
   const result = await ghGet('maps/index.json');
   if (result) {
     const index = JSON.parse(result.content);
+    const folder = index.folders.find(f => f.name === folderName);
+
+    // Delete each map file in the folder
+    if (folder && folder.maps) {
+      for (const map of folder.maps) {
+        try {
+          await ghDelete(`maps/${folderName}/${map.id}.json`, `Delete ${map.id} (folder deletion)`);
+        } catch (e) {
+          console.warn(`[storage] Failed to delete map file ${map.id}:`, e);
+        }
+      }
+    }
+
+    // Remove folder entry from index
     index.folders = index.folders.filter(f => f.name !== folderName);
     await saveIndex(index);
   }
