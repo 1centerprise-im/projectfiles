@@ -255,8 +255,8 @@
     },
     {
       "id": "n41",
-      "x": 1780.6165795805468,
-      "y": 305.0655975278305,
+      "x": 1744.9137735005395,
+      "y": 284.063946892532,
       "w": 0,
       "h": 0,
       "text": "1. Inception & Desk Review",
@@ -465,5 +465,6 @@
   ],
   "nid": 61,
   "edgeThickness": 3,
-  "edgeColor": "#c8cad0"
+  "edgeColor": "#c8cad0",
+  "annotations": []
 }
