@@ -339,8 +339,8 @@
     },
     {
       "id": "n24",
-      "x": 1837.8630291124048,
-      "y": 33.49182287675506,
+      "x": 1822.8766462379658,
+      "y": -11.46732574656194,
       "w": 0,
       "h": 0,
       "text": "Report",
@@ -399,6 +399,27 @@
       "shape": "rounded",
       "borderColor": "",
       "borderWidth": 0
+    },
+    {
+      "id": "n30",
+      "x": 1778.053668870259,
+      "y": -133.4993005812795,
+      "w": 0,
+      "h": 0,
+      "text": "01_Documents reviewed for the national strategy and sector analysis",
+      "ci": 0,
+      "link": "https://drive.google.com/drive/folders/1IdHZtooAMd5rAVa-joJywfIeLkvUglES?usp=drive_link",
+      "collapsed": false,
+      "isNote": false,
+      "fontSize": 13,
+      "fontFamily": "Nunito",
+      "textColor": "",
+      "bold": false,
+      "italic": false,
+      "textAlign": "left",
+      "shape": "rounded",
+      "borderColor": "",
+      "borderWidth": 0
     }
   ],
   "edges": [
@@ -441,9 +462,14 @@
       "id": "e29",
       "from": "n26",
       "to": "n28"
+    },
+    {
+      "id": "e31",
+      "from": "n24",
+      "to": "n30"
     }
   ],
-  "nid": 30,
+  "nid": 32,
   "edgeThickness": 1.5,
   "edgeColor": "#c8c0b8",
   "annotations": []
