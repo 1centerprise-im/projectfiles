@@ -226,6 +226,15 @@ function setupEvents() {
 
 /* --- Canvas mousedown: pan, rubber band, or draw --- */
 function onCanvasDown(e) {
+  /* In draw mode, ALWAYS start drawing on left-click (bypass node check)
+     so clicks over node areas still work even if pointer-events CSS misbehaves */
+  if (drawMode && e.button === 0 && !spaceDown) {
+    e.preventDefault();
+    isDrawing = true;
+    drawStart = toCanvas(e);
+    showDrawPreview(drawStart, drawStart);
+    return;
+  }
   if (e.target.closest('.mm-node')) return;
   /* Deselect edge and annotation on canvas click */
   if (selectedEdge) { selectedEdge = null; deselectAllEdges(edgeSvg); }
@@ -233,11 +242,6 @@ function onCanvasDown(e) {
   if (e.button === 1 || spaceDown) {
     isPanning = true; dragStart = {x:e.clientX,y:e.clientY};
     panStart = {x:panX,y:panY}; container.classList.add('panning');
-  } else if (drawMode && e.button === 0) {
-    /* Start drawing a line */
-    isDrawing = true;
-    drawStart = toCanvas(e);
-    showDrawPreview(drawStart, drawStart);
   } else if (e.button === 0) {
     selectedNodes.clear();
     updateSelectionVisuals(); hideFormatPanel();
