@@ -402,34 +402,13 @@
     },
     {
       "id": "n30",
-      "x": 2019.2512737632374,
-      "y": -120.19379890291101,
+      "x": 2032.6998037150302,
+      "y": -12.60555928856867,
       "w": 0,
       "h": 0,
       "text": "01_Documents reviewed for the national strategy and sector analysis",
       "ci": 0,
       "link": "https://drive.google.com/drive/folders/1IdHZtooAMd5rAVa-joJywfIeLkvUglES?usp=drive_link",
-      "collapsed": false,
-      "isNote": false,
-      "fontSize": 13,
-      "fontFamily": "Nunito",
-      "textColor": "",
-      "bold": false,
-      "italic": false,
-      "textAlign": "left",
-      "shape": "rounded",
-      "borderColor": "",
-      "borderWidth": 0
-    },
-    {
-      "id": "n33",
-      "x": 1534.8550758472184,
-      "y": -59.34874637589067,
-      "w": 0,
-      "h": 0,
-      "text": "New Node",
-      "ci": 3,
-      "link": "",
       "collapsed": false,
       "isNote": false,
       "fontSize": 13,
@@ -493,11 +472,6 @@
       "id": "e32",
       "from": "n14",
       "to": "n18"
-    },
-    {
-      "id": "e34",
-      "from": "n24",
-      "to": "n33"
     }
   ],
   "nid": 35,
