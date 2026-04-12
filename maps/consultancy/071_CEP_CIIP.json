@@ -441,6 +441,69 @@
       "shape": "rounded",
       "borderColor": "",
       "borderWidth": 0
+    },
+    {
+      "id": "n36",
+      "x": 23.14171088746528,
+      "y": 222.1564878448401,
+      "w": 0,
+      "h": 0,
+      "text": "New Node",
+      "ci": 0,
+      "link": "",
+      "collapsed": false,
+      "isNote": false,
+      "fontSize": 13,
+      "fontFamily": "Nunito",
+      "textColor": "",
+      "bold": false,
+      "italic": false,
+      "textAlign": "left",
+      "shape": "rounded",
+      "borderColor": "",
+      "borderWidth": 0
+    },
+    {
+      "id": "n38",
+      "x": 23.14171088746528,
+      "y": 222.1564878448401,
+      "w": 0,
+      "h": 0,
+      "text": "New Node",
+      "ci": 0,
+      "link": "",
+      "collapsed": false,
+      "isNote": false,
+      "fontSize": 13,
+      "fontFamily": "Nunito",
+      "textColor": "",
+      "bold": false,
+      "italic": false,
+      "textAlign": "left",
+      "shape": "rounded",
+      "borderColor": "",
+      "borderWidth": 0
+    },
+    {
+      "id": "n40",
+      "x": -341.81863655286185,
+      "y": 266.25909176410687,
+      "w": 0,
+      "h": 0,
+      "text": "Docs_materials",
+      "ci": 0,
+      "link": "https://drive.google.com/drive/folders/1onWSsr1CxN62ib0neZ8BIYSXQmbVHwFu?usp=drive_link",
+      "collapsed": false,
+      "isNote": false,
+      "fontSize": 13,
+      "fontFamily": "Nunito",
+      "textColor": "",
+      "bold": false,
+      "italic": false,
+      "textAlign": "left",
+      "shape": "rounded",
+      "borderColor": "",
+      "borderWidth": 0
     }
   ],
   "edges": [
@@ -493,9 +556,24 @@
       "id": "e32",
       "from": "n14",
       "to": "n18"
+    },
+    {
+      "id": "e37",
+      "from": "n35",
+      "to": "n36"
+    },
+    {
+      "id": "e39",
+      "from": "n35",
+      "to": "n38"
+    },
+    {
+      "id": "e41",
+      "from": "n35",
+      "to": "n40"
     }
   ],
-  "nid": 36,
+  "nid": 42,
   "edgeThickness": 1.5,
   "edgeColor": "#c8c0b8",
   "annotations": []
