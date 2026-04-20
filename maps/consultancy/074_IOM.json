@@ -87,8 +87,8 @@
     },
     {
       "id": "n71",
-      "x": 616.0082563100941,
-      "y": 434.4430962095635,
+      "x": 618.0082563100941,
+      "y": 427.4430962095635,
       "w": 0,
       "h": 0,
       "text": "01_PROJECT_FOUNDATION",
@@ -147,6 +147,27 @@
       "shape": "rounded",
       "borderColor": "",
       "borderWidth": 0
+    },
+    {
+      "id": "n77",
+      "x": 672.3394552200645,
+      "y": 348.8334090377833,
+      "w": 0,
+      "h": 0,
+      "text": "Contract",
+      "ci": 0,
+      "link": "https://docs.google.com/document/d/1i_KKoudbjTlj3DmBPsW6rHBkhnx8vm8YhshDn4J5T5U/edit?usp=drive_link",
+      "collapsed": false,
+      "isNote": false,
+      "fontSize": 13,
+      "fontFamily": "Nunito",
+      "textColor": "",
+      "bold": false,
+      "italic": false,
+      "textAlign": "left",
+      "shape": "rounded",
+      "borderColor": "",
+      "borderWidth": 0
     }
   ],
   "edges": [
@@ -168,7 +189,7 @@
       "to": "n30"
     }
   ],
-  "nid": 77,
+  "nid": 78,
   "edgeThickness": 2,
   "edgeColor": "#b8b0a6",
   "annotations": [
