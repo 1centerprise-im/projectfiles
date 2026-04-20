@@ -222,6 +222,19 @@ function setupEvents() {
   setupToolbar();
   setupFormatPanel();
   setupDrawBar();
+  /* Toolbar wraps on narrow viewports (real height varies 46-130px). The floating
+     panels need to sit just below it, so measure live instead of hardcoding top. */
+  syncFloatingPanelsTop();
+  window.addEventListener('resize', syncFloatingPanelsTop);
+}
+
+function syncFloatingPanelsTop() {
+  var toolbar = document.querySelector('.toolbar');
+  if (!toolbar) return;
+  var top = toolbar.offsetHeight + 'px';
+  if (formatPanel) formatPanel.style.top = top;
+  var db = document.getElementById('drawBar');
+  if (db) db.style.top = top;
 }
 
 /* --- Canvas mousedown: pan, rubber band, or draw --- */
@@ -246,7 +259,12 @@ function onCanvasDown(e) {
     selectedNodes.clear();
     updateSelectionVisuals(); hideFormatPanel();
     isRubberBand = true; dragStart = toCanvas(e);
-    setRubberBand(e.clientX, e.clientY, 0, 0);
+    /* Reset stale rect from previous gesture; doRubberBand only fires on mousemove,
+       so a click-without-drag would otherwise inherit the prior marquee. */
+    window._rbR = null;
+    /* setRubberBand expects container-relative coords (the rb div is appended to container) */
+    var r = container.getBoundingClientRect();
+    setRubberBand(e.clientX - r.left, e.clientY - r.top, 0, 0);
   }
 }
 function onMove(e) {
@@ -353,16 +371,21 @@ function setRubberBand(x,y,w,h) {
   rb.style.cssText = 'display:block;left:'+x+'px;top:'+y+'px;width:'+w+'px;height:'+h+'px;';
 }
 function doRubberBand(e) {
-  var c = toCanvas(e), r = container.getBoundingClientRect();
+  var c = toCanvas(e);
   var x = Math.min(dragStart.x,c.x), y = Math.min(dragStart.y,c.y);
   var w = Math.abs(c.x-dragStart.x), h = Math.abs(c.y-dragStart.y);
   var rb = document.getElementById('rubberBand');
-  if (rb) rb.style.cssText = 'display:block;left:'+(x*zoom+panX)+'px;top:'+(y*zoom+panY+r.top)+'px;width:'+(w*zoom)+'px;height:'+(h*zoom)+'px;';
+  /* rb is a child of container (position:relative); top/left are container-relative.
+     Previous code added container.getBoundingClientRect().top here, which double-offset
+     the band by the toolbar+panel height. */
+  if (rb) rb.style.cssText = 'display:block;left:'+(x*zoom+panX)+'px;top:'+(y*zoom+panY)+'px;width:'+(w*zoom)+'px;height:'+(h*zoom)+'px;';
   window._rbR = {x:x,y:y,w:w,h:h};
 }
 function endRubberBand() {
   var rb = document.getElementById('rubberBand'); if (rb) rb.style.display = 'none';
-  var r = window._rbR; if (!r || (r.w < 5 && r.h < 5)) return;
+  var r = window._rbR;
+  window._rbR = null;
+  if (!r || (r.w < 5 && r.h < 5)) return;
   mapData.nodes.forEach(function(n) {
     var el = nodeEls[n.id]; if (!el || el.style.display === 'none') return;
     if (n.x+el.offsetWidth>r.x && n.x<r.x+r.w && n.y+el.offsetHeight>r.y && n.y<r.y+r.h) selectedNodes.add(n.id);
