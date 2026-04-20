@@ -192,12 +192,12 @@
     },
     {
       "id": "n81",
-      "x": 1106.3394552200643,
-      "y": 554.8334090377833,
+      "x": 1148.3394552200643,
+      "y": 551.8334090377833,
       "w": 0,
       "h": 0,
       "text": "D1",
-      "ci": 0,
+      "ci": 4,
       "link": "https://drive.google.com/drive/folders/11chjgWOg8Oji2UN0e29Kbv1kwQpanaT_?usp=drive_link",
       "collapsed": false,
       "isNote": false,
@@ -213,12 +213,12 @@
     },
     {
       "id": "n83",
-      "x": 1238.3394552200643,
-      "y": 553.8334090377833,
+      "x": 1326.3394552200643,
+      "y": 549.8334090377833,
       "w": 0,
       "h": 0,
       "text": "D2",
-      "ci": 0,
+      "ci": 4,
       "link": "https://drive.google.com/drive/folders/1P67PasWEwKcABCWBRoZOu3kpXXpQjF8-?usp=drive_link",
       "collapsed": false,
       "isNote": false,
@@ -233,14 +233,14 @@
       "borderWidth": 0
     },
     {
-      "id": "n84",
-      "x": 1359.3394552200643,
-      "y": 551.8334090377833,
+      "id": "n87",
+      "x": 1120.3394552200643,
+      "y": 468.1333968307521,
       "w": 0,
       "h": 0,
-      "text": "D3",
+      "text": "TOR for Diloval",
       "ci": 0,
-      "link": "https://drive.google.com/drive/folders/1fbBo-ZIJ0SN3rfWKymNa1MrESbqu358p?usp=drive_link",
+      "link": "https://docs.google.com/document/d/1r2B_WBTCMCiu14zC5jcTohhkYfSCzMgeJjWNUsH-XmY/edit?usp=drive_link",
       "collapsed": false,
       "isNote": false,
       "fontSize": 13,
@@ -293,12 +293,12 @@
       "to": "n83"
     },
     {
-      "id": "e86",
-      "from": "n83",
-      "to": "n84"
+      "id": "e88",
+      "from": "n81",
+      "to": "n87"
     }
   ],
-  "nid": 87,
+  "nid": 89,
   "edgeThickness": 2,
   "edgeColor": "#b8b0a6",
   "annotations": [
