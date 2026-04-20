@@ -3,8 +3,8 @@
   "nodes": [
     {
       "id": "n4",
-      "x": 143.6816362255805,
-      "y": 596.3588391305346,
+      "x": 147.65320514795062,
+      "y": 600.3304080529048,
       "w": 130,
       "h": 47,
       "text": "074_IOM",
@@ -45,8 +45,8 @@
     },
     {
       "id": "n29",
-      "x": 567.2054042525432,
-      "y": 599.1141403370065,
+      "x": 696.9441337957157,
+      "y": 552.5930337584539,
       "w": 0,
       "h": 0,
       "text": "01_ATS_Update",
@@ -66,8 +66,8 @@
     },
     {
       "id": "n30",
-      "x": 575.6659544493469,
-      "y": 718.3467188870089,
+      "x": 709.68380585044,
+      "y": 687.8236974519407,
       "w": 0,
       "h": 0,
       "text": "02_Website",
@@ -87,13 +87,55 @@
     },
     {
       "id": "n71",
-      "x": 598.6041203335466,
-      "y": 506.96846416142773,
+      "x": 616.0082563100941,
+      "y": 434.4430962095635,
       "w": 0,
       "h": 0,
-      "text": "Contract ",
+      "text": "01_PROJECT_FOUNDATION",
       "ci": 0,
-      "link": "https://documentcloud.adobe.com/gsuiteintegration/index.html?state={%22ids%22%3A[%221mAw1p84Xu0NaQqQzVXt1Qsit1C0mu9Ub%22]%2C%22action%22%3A%22open%22%2C%22userId%22%3A%22110555857765033582483%22%2C%22resourceKeys%22%3A{}}",
+      "link": "https://drive.google.com/drive/folders/1mvDmH_U0eBqOyiRBr1t93H4tAMoKuPJ1?usp=drive_link",
+      "collapsed": false,
+      "isNote": false,
+      "fontSize": 13,
+      "fontFamily": "Nunito",
+      "textColor": "",
+      "bold": false,
+      "italic": false,
+      "textAlign": "left",
+      "shape": "rounded",
+      "borderColor": "",
+      "borderWidth": 0
+    },
+    {
+      "id": "n72",
+      "x": 916.0257052921783,
+      "y": 554.7484548920183,
+      "w": 0,
+      "h": 0,
+      "text": "03_DELIVERABLES",
+      "ci": 0,
+      "link": "https://drive.google.com/drive/folders/1_LU1ib3U_DEcrn-X4G5-lKoyYbyXda0a?usp=drive_link",
+      "collapsed": false,
+      "isNote": false,
+      "fontSize": 13,
+      "fontFamily": "Nunito",
+      "textColor": "",
+      "bold": false,
+      "italic": false,
+      "textAlign": "left",
+      "shape": "rounded",
+      "borderColor": "",
+      "borderWidth": 0
+    },
+    {
+      "id": "n73",
+      "x": 864.4856400472958,
+      "y": 435.3925143249218,
+      "w": 0,
+      "h": 0,
+      "text": "02_ADMINISTRATION_MGT",
+      "ci": 0,
+      "link": "https://drive.google.com/drive/folders/1Z1QbjqrCnxzvsgnjNXZwfHnDo0z7nS0s?usp=drive_link",
       "collapsed": false,
       "isNote": false,
       "fontSize": 13,
@@ -124,15 +166,41 @@
       "id": "e60",
       "from": "n7",
       "to": "n30"
-    },
-    {
-      "id": "e74",
-      "from": "n29",
-      "to": "n71"
     }
   ],
-  "nid": 75,
+  "nid": 77,
   "edgeThickness": 2,
   "edgeColor": "#b8b0a6",
-  "annotations": []
+  "annotations": [
+    {
+      "id": "a74",
+      "x1": 755.7089594738546,
+      "y1": 550.543862343736,
+      "x2": 720.4447043063034,
+      "y2": 467.80849445063507,
+      "color": "#c0392b",
+      "hasArrow": true,
+      "thickness": 2
+    },
+    {
+      "id": "a75",
+      "x1": 784.1916271091844,
+      "y1": 549.1875448372917,
+      "x2": 922.5360127665007,
+      "y2": 473.23376447641215,
+      "color": "#c0392b",
+      "hasArrow": true,
+      "thickness": 2
+    },
+    {
+      "id": "a76",
+      "x1": 824.8811523025128,
+      "y1": 572.2449424468444,
+      "x2": 903.5475676762808,
+      "y2": 570.8886249404002,
+      "color": "#c0392b",
+      "hasArrow": true,
+      "thickness": 2
+    }
+  ]
 }
