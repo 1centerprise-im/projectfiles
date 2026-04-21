@@ -13,6 +13,7 @@ var _ghAutoSaveTimer = null;
 var AUTOSAVE_DELAY = 3 * 60 * 1000; /* 3 minutes */
 var isViewOnly = false;
 var drawMode = false, isDrawing = false, drawStart = null;
+var isDraggingAnn = false;
 var selectedAnnotation = null;
 var drawColor = '#c0392b', drawArrow = true;
 var dragStart = {x:0,y:0}, panStart = {x:0,y:0};
@@ -239,6 +240,19 @@ function syncFloatingPanelsTop() {
 
 /* --- Canvas mousedown: pan, rubber band, or draw --- */
 function onCanvasDown(e) {
+  /* Annotation hit: select + begin drag. Checked BEFORE drawMode so clicks
+     on existing arrows select them instead of creating a new one (Figma/Miro
+     convention). Works in any mode — including outside draw mode where drag
+     previously had no handler at all. */
+  if (e.button === 0 && !spaceDown) {
+    var annHit = e.target.closest && e.target.closest('.ann-hit');
+    if (annHit) {
+      e.preventDefault();
+      selectAnnotationById(annHit.dataset.annId);
+      beginAnnotationDrag(e, annHit.dataset.annId);
+      return;
+    }
+  }
   /* In draw mode, ALWAYS start drawing on left-click (bypass node check)
      so clicks over node areas still work even if pointer-events CSS misbehaves */
   if (drawMode && e.button === 0 && !spaceDown) {
@@ -271,6 +285,7 @@ function onMove(e) {
   if (isPanning) { panX = panStart.x+(e.clientX-dragStart.x); panY = panStart.y+(e.clientY-dragStart.y); applyTransform(); }
   else if (isDrawing) showDrawPreview(drawStart, toCanvas(e));
   else if (isDragging) doDrag(e);
+  else if (isDraggingAnn) doAnnotationDrag(e);
   else if (isResizing) doResize(e);
   else if (isConnecting) doConnect(e);
   else if (isRubberBand) doRubberBand(e);
@@ -279,6 +294,7 @@ function onUp(e) {
   if (isPanning) { isPanning = false; container.classList.remove('panning'); }
   if (isDrawing) { finalizeDrawing(e); isDrawing = false; }
   if (isDragging) { isDragging = false; pushUndo(); autoSave(); }
+  if (isDraggingAnn) { endAnnotationDrag(); isDraggingAnn = false; }
   if (isResizing) { isResizing = false; pushUndo(); autoSave(); }
   if (isConnecting) { endConnect(e); isConnecting = false; }
   if (isRubberBand) { endRubberBand(); isRubberBand = false; }
@@ -741,20 +757,68 @@ function ensureAnnArrowMarker(color) {
   return id;
 }
 
-/* --- Annotation click handler (delegated from #ann-svg) --- */
+/* --- Annotation click handler (delegated from #ann-svg) ---
+   Mousedown on .ann-hit already selects+drags via onCanvasDown, so this is
+   just a safety net for cases where mousedown didn't fire (e.g., synthetic
+   click events). Idempotent. */
 function onAnnotationClick(e) {
   var hit = e.target.closest('.ann-hit');
   if (!hit) return;
-  if (drawMode) return; /* Don't select while drawing */
   e.stopPropagation();
+  selectAnnotationById(hit.dataset.annId);
+}
+
+/* --- Select an annotation by id (shared by mousedown and click paths) --- */
+function selectAnnotationById(annId) {
   selectedNodes.clear(); updateSelectionVisuals(); hideFormatPanel();
   if (selectedEdge) { selectedEdge = null; deselectAllEdges(edgeSvg); }
-  selectedAnnotation = hit.dataset.annId;
-  /* Highlight selected annotation */
+  selectedAnnotation = annId;
   deselectAllAnnotations();
-  var line = annSvg.querySelector('.ann-line[data-ann-id="' + selectedAnnotation + '"]');
+  var line = annSvg.querySelector('.ann-line[data-ann-id="' + annId + '"]');
   if (line) line.classList.add('selected');
   showAnnEditBar();
+}
+
+/* --- Annotation drag: begin/do/end ---
+   Updates x1/y1/x2/y2 attributes in-place instead of calling renderAnnotations(),
+   because a full re-render would destroy the mousedown target mid-drag and break
+   the gesture. Same approach as doDrag() for nodes. */
+function beginAnnotationDrag(e, annId) {
+  var ann = mapData.annotations.find(function(a) { return a.id === annId; });
+  if (!ann) return;
+  isDraggingAnn = true;
+  window._annDrag = {
+    id: annId,
+    start: toCanvas(e),
+    orig: { x1: ann.x1, y1: ann.y1, x2: ann.x2, y2: ann.y2 },
+    moved: false
+  };
+  /* Hide bar during drag — its position is pinned to the old midpoint */
+  hideAnnEditBar();
+}
+function doAnnotationDrag(e) {
+  var d = window._annDrag; if (!d) return;
+  var c = toCanvas(e);
+  var dx = c.x - d.start.x, dy = c.y - d.start.y;
+  if (!d.moved && (Math.abs(dx) > 1 || Math.abs(dy) > 1)) d.moved = true;
+  var ann = mapData.annotations.find(function(a) { return a.id === d.id; });
+  if (!ann) return;
+  ann.x1 = d.orig.x1 + dx; ann.y1 = d.orig.y1 + dy;
+  ann.x2 = d.orig.x2 + dx; ann.y2 = d.orig.y2 + dy;
+  annSvg.querySelectorAll('[data-ann-id="' + d.id + '"]').forEach(function(el) {
+    el.setAttribute('x1', ann.x1);
+    el.setAttribute('y1', ann.y1);
+    el.setAttribute('x2', ann.x2);
+    el.setAttribute('y2', ann.y2);
+  });
+}
+function endAnnotationDrag() {
+  var d = window._annDrag;
+  window._annDrag = null;
+  if (!d) return;
+  if (d.moved) { pushUndo(); autoSave(); }
+  /* Re-show edit bar at new midpoint (or same position if no movement) */
+  if (selectedAnnotation) showAnnEditBar();
 }
 
 /* --- Deselect all annotations --- */
