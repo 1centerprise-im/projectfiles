@@ -399,6 +399,7 @@ button { font-family: 'Nunito Sans', sans-serif; cursor: pointer; border: none; 
   width: 5000px; height: 4000px;
   z-index: 1;
   pointer-events: none;
+  overflow: visible;
 }
 #edge-svg .edge-path { stroke-linecap: round; stroke-linejoin: round; pointer-events: none; }
 #edge-svg .edge-path.selected { stroke: #8a8078; stroke-width: 3px; }
@@ -410,7 +411,7 @@ button { font-family: 'Nunito Sans', sans-serif; cursor: pointer; border: none; 
 #edge-svg .collapse-badge:hover { cursor: pointer; }
 
 /* --- Annotation SVG layer (above nodes so drawn lines aren't covered) --- */
-#ann-svg { position: absolute; top: 0; left: 0; width: 5000px; height: 4000px; z-index: 3; pointer-events: none; }
+#ann-svg { position: absolute; top: 0; left: 0; width: 5000px; height: 4000px; z-index: 3; pointer-events: none; overflow: visible; }
 #ann-svg .ann-line { pointer-events: none; }
 #ann-svg .ann-line.selected { stroke-dasharray: 6,3; }
 #ann-svg .ann-hit { pointer-events: stroke; cursor: pointer; }
