@@ -1,0 +1,28 @@
+{
+  "title": "WSS",
+  "nodes": [
+    {
+      "id": "n1",
+      "x": 400,
+      "y": 300,
+      "w": 0,
+      "h": 0,
+      "text": "WSS",
+      "ci": 0,
+      "link": "",
+      "collapsed": false,
+      "isNote": false,
+      "fontSize": 16,
+      "fontFamily": "Nunito",
+      "textColor": "#2a2520",
+      "bold": true,
+      "italic": false,
+      "textAlign": "center",
+      "shape": "rounded",
+      "borderColor": "",
+      "borderWidth": 0
+    }
+  ],
+  "edges": [],
+  "nid": 2
+}
