@@ -67,7 +67,14 @@
     {
       "name": "zarzamin",
       "label": "Zarzamin",
-      "maps": []
+      "maps": [
+        {
+          "id": "WSS",
+          "name": "WSS",
+          "number": "",
+          "status": "active"
+        }
+      ]
     }
   ]
 }
