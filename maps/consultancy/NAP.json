@@ -192,13 +192,34 @@
     },
     {
       "id": "n23",
-      "x": 488.20140497624357,
-      "y": 124.160895590763,
+      "x": 267.0199595718269,
+      "y": -16.728655249036684,
       "w": 0,
       "h": 0,
       "text": "GCF_Concept note_V.3.0_Syr Darya IWRM_BD_JR Track changes_23FEB26",
       "ci": 4,
-      "link": "https://docs.google.com/document/d/1M-j4Jocu4rFS2kxfzYkV3HAmjvmhOgRj/edit?usp=drive_link&ouid=110555857765033582483&rtpof=true&sd=true",
+      "link": "https://docs.google.com/document/d/11p9not-LRKwX4mB2JF2lBtGBqZc_mtpB/edit",
+      "collapsed": false,
+      "isNote": false,
+      "fontSize": 13,
+      "fontFamily": "Nunito",
+      "textColor": "",
+      "bold": false,
+      "italic": false,
+      "textAlign": "left",
+      "shape": "rounded",
+      "borderColor": "",
+      "borderWidth": 0
+    },
+    {
+      "id": "n31",
+      "x": 942.3980579554861,
+      "y": -18.540684086045225,
+      "w": 0,
+      "h": 0,
+      "text": "LOGIC OF THE PROJECT",
+      "ci": 4,
+      "link": "https://docs.google.com/document/d/1mZeaU4zfcaEWjmmBJp47B5UfC3R7kQj_WlopjC6Gl4E/edit?tab=t.0#heading=h.ubh28p6fhtgq",
       "collapsed": false,
       "isNote": false,
       "fontSize": 13,
@@ -242,9 +263,14 @@
       "id": "e24",
       "from": "n2",
       "to": "n23"
+    },
+    {
+      "id": "e32",
+      "from": "n2",
+      "to": "n31"
     }
   ],
-  "nid": 31,
+  "nid": 33,
   "annotations": [
     {
       "id": "a22",
