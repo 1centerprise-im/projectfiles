@@ -3,13 +3,13 @@
   "nodes": [
     {
       "id": "n1",
-      "x": 400,
-      "y": 300,
+      "x": 246,
+      "y": 294,
       "w": 0,
       "h": 0,
       "text": "CIIP_SYSTEM",
-      "ci": 0,
-      "link": "",
+      "ci": 4,
+      "link": "https://drive.google.com/drive/folders/1XvOGmDLtZPXidlCRrHnCz6k-KZI4sXWj?usp=drive_link",
       "collapsed": false,
       "isNote": false,
       "fontSize": 16,
@@ -19,10 +19,38 @@
       "italic": false,
       "textAlign": "center",
       "shape": "rounded",
+      "borderColor": "#00ff40",
+      "borderWidth": 2
+    },
+    {
+      "id": "n2",
+      "x": 257.5999755859375,
+      "y": 168.59999084472656,
+      "w": 0,
+      "h": 0,
+      "text": "Presentation",
+      "ci": 3,
+      "link": "https://docs.google.com/presentation/d/1Vt4J6lTy0zTYdjGbkgyNALdeDpLzjDcP5NPsfm7FKjo/edit?usp=drive_link",
+      "collapsed": false,
+      "isNote": false,
+      "fontSize": 13,
+      "fontFamily": "Nunito",
+      "textColor": "",
+      "bold": false,
+      "italic": false,
+      "textAlign": "left",
+      "shape": "rounded",
       "borderColor": "",
       "borderWidth": 0
     }
   ],
-  "edges": [],
-  "nid": 2
+  "edges": [
+    {
+      "id": "e3",
+      "from": "n1",
+      "to": "n2"
+    }
+  ],
+  "nid": 4,
+  "annotations": []
 }
