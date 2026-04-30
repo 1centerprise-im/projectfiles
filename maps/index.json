@@ -49,6 +49,12 @@
           "name": "NAP",
           "number": "",
           "status": "active"
+        },
+        {
+          "id": "CIIP_SYSTEM",
+          "name": "CIIP_SYSTEM",
+          "number": "",
+          "status": "active"
         }
       ]
     },
