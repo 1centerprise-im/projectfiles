@@ -147,6 +147,27 @@
       "shape": "rounded",
       "borderColor": "",
       "borderWidth": 0
+    },
+    {
+      "id": "n12",
+      "x": 269.75430784099933,
+      "y": 84.15665005360792,
+      "w": 0,
+      "h": 0,
+      "text": "__FRLD Proposal",
+      "ci": 0,
+      "link": "https://drive.google.com/drive/folders/1iacuUDhwj7d_OC8oA36fNJ76eaLLOizH?usp=drive_link",
+      "collapsed": false,
+      "isNote": false,
+      "fontSize": 13,
+      "fontFamily": "Nunito",
+      "textColor": "",
+      "bold": false,
+      "italic": false,
+      "textAlign": "left",
+      "shape": "rounded",
+      "borderColor": "",
+      "borderWidth": 0
     }
   ],
   "edges": [
@@ -154,9 +175,14 @@
       "id": "e10",
       "from": "n1",
       "to": "n7"
+    },
+    {
+      "id": "e13",
+      "from": "n1",
+      "to": "n12"
     }
   ],
-  "nid": 11,
+  "nid": 14,
   "edgeThickness": 1.5,
   "edgeColor": "#c8c0b8",
   "annotations": []
