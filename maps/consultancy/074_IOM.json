@@ -128,27 +128,6 @@
       "borderWidth": 0
     },
     {
-      "id": "n73",
-      "x": 954.9537509682158,
-      "y": 378.8096027193136,
-      "w": 0,
-      "h": 0,
-      "text": "02_ADMINISTRATION_MGT",
-      "ci": 0,
-      "link": "https://drive.google.com/drive/folders/1Z1QbjqrCnxzvsgnjNXZwfHnDo0z7nS0s?usp=drive_link",
-      "collapsed": false,
-      "isNote": false,
-      "fontSize": 13,
-      "fontFamily": "Nunito",
-      "textColor": "",
-      "bold": false,
-      "italic": false,
-      "textAlign": "left",
-      "shape": "rounded",
-      "borderColor": "",
-      "borderWidth": 0
-    },
-    {
       "id": "n77",
       "x": 686.8095832766477,
       "y": 265.894163710405,
@@ -306,11 +285,6 @@
       "id": "e96",
       "from": "n29",
       "to": "n71"
-    },
-    {
-      "id": "e97",
-      "from": "n29",
-      "to": "n73"
     }
   ],
   "nid": 98,
