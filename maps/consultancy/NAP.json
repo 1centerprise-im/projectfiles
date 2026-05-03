@@ -191,27 +191,6 @@
       "borderWidth": 2
     },
     {
-      "id": "n23",
-      "x": 209.01995957182692,
-      "y": -14.728655249036684,
-      "w": 0,
-      "h": 0,
-      "text": "GCF_Concept note_V.3.0_Syr Darya IWRM_BD_JR Track changes_23FEB26",
-      "ci": 4,
-      "link": "https://docs.google.com/document/d/11p9not-LRKwX4mB2JF2lBtGBqZc_mtpB/edit",
-      "collapsed": false,
-      "isNote": false,
-      "fontSize": 13,
-      "fontFamily": "Nunito",
-      "textColor": "",
-      "bold": false,
-      "italic": false,
-      "textAlign": "left",
-      "shape": "rounded",
-      "borderColor": "",
-      "borderWidth": 0
-    },
-    {
       "id": "n31",
       "x": 888.3980579554861,
       "y": -12.540684086045225,
@@ -252,6 +231,27 @@
       "shape": "rounded",
       "borderColor": "",
       "borderWidth": 0
+    },
+    {
+      "id": "n35",
+      "x": 321.6819532741127,
+      "y": -0.7308567736545513,
+      "w": 0,
+      "h": 0,
+      "text": "_NAP_GCF_Concept note_V.3.0_Syr Darya IWRM_LERNING",
+      "ci": 1,
+      "link": "https://docs.google.com/document/d/1d78IwWLV9gaMmWcN6_ncni-cce_n5PfMKhToLIos6jQ/edit?usp=drive_link",
+      "collapsed": false,
+      "isNote": false,
+      "fontSize": 13,
+      "fontFamily": "Nunito",
+      "textColor": "",
+      "bold": false,
+      "italic": false,
+      "textAlign": "left",
+      "shape": "rounded",
+      "borderColor": "#008000",
+      "borderWidth": 2
     }
   ],
   "edges": [
@@ -281,11 +281,6 @@
       "to": "n16"
     },
     {
-      "id": "e24",
-      "from": "n2",
-      "to": "n23"
-    },
-    {
       "id": "e32",
       "from": "n2",
       "to": "n31"
@@ -294,9 +289,14 @@
       "id": "e34",
       "from": "n10",
       "to": "n33"
+    },
+    {
+      "id": "e38",
+      "from": "n2",
+      "to": "n35"
     }
   ],
-  "nid": 35,
+  "nid": 39,
   "annotations": [
     {
       "id": "a22",
