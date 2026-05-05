@@ -87,8 +87,8 @@
     },
     {
       "id": "n11",
-      "x": 1812.7649886673078,
-      "y": 243.43345339279108,
+      "x": 1648.5151103258627,
+      "y": 243.43345339279114,
       "w": 0,
       "h": 0,
       "text": "D2",
@@ -108,8 +108,8 @@
     },
     {
       "id": "n12",
-      "x": 2179.0359807297705,
-      "y": 243.52094533656864,
+      "x": 1808.8954098194715,
+      "y": 246.99101318885272,
       "w": 0,
       "h": 0,
       "text": "D3",
@@ -254,69 +254,6 @@
       "borderWidth": 0
     },
     {
-      "id": "n41",
-      "x": 1538.9166932264447,
-      "y": 243.62415321355195,
-      "w": 0,
-      "h": 0,
-      "text": "New Node",
-      "ci": 4,
-      "link": "",
-      "collapsed": false,
-      "isNote": false,
-      "fontSize": 13,
-      "fontFamily": "Nunito",
-      "textColor": "",
-      "bold": false,
-      "italic": false,
-      "textAlign": "left",
-      "shape": "rounded",
-      "borderColor": "",
-      "borderWidth": 0
-    },
-    {
-      "id": "n43",
-      "x": 1538.9166932264447,
-      "y": 243.62415321355195,
-      "w": 0,
-      "h": 0,
-      "text": "New Node",
-      "ci": 4,
-      "link": "",
-      "collapsed": false,
-      "isNote": false,
-      "fontSize": 13,
-      "fontFamily": "Nunito",
-      "textColor": "",
-      "bold": false,
-      "italic": false,
-      "textAlign": "left",
-      "shape": "rounded",
-      "borderColor": "",
-      "borderWidth": 0
-    },
-    {
-      "id": "n45",
-      "x": 1538.9166932264447,
-      "y": 243.62415321355195,
-      "w": 0,
-      "h": 0,
-      "text": "New Node",
-      "ci": 4,
-      "link": "",
-      "collapsed": false,
-      "isNote": false,
-      "fontSize": 13,
-      "fontFamily": "Nunito",
-      "textColor": "",
-      "bold": false,
-      "italic": false,
-      "textAlign": "left",
-      "shape": "rounded",
-      "borderColor": "",
-      "borderWidth": 0
-    },
-    {
       "id": "n48",
       "x": 413.5973372898265,
       "y": 447.0674613118749,
@@ -378,21 +315,6 @@
       "id": "e39",
       "from": "n10",
       "to": "n35"
-    },
-    {
-      "id": "e42",
-      "from": "n10",
-      "to": "n41"
-    },
-    {
-      "id": "e44",
-      "from": "n10",
-      "to": "n43"
-    },
-    {
-      "id": "e46",
-      "from": "n10",
-      "to": "n45"
     },
     {
       "id": "e47",
