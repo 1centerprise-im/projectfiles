@@ -273,6 +273,27 @@
       "shape": "rounded",
       "borderColor": "",
       "borderWidth": 0
+    },
+    {
+      "id": "n51",
+      "x": 1004.3463491405864,
+      "y": 91.65143026652291,
+      "w": 0,
+      "h": 0,
+      "text": "03_HR_Personnel",
+      "ci": 1,
+      "link": "https://drive.google.com/drive/folders/1CNUEy3Gb8fpqPPg-Kd6Z29MwI5MKwe3X?usp=drive_link",
+      "collapsed": false,
+      "isNote": false,
+      "fontSize": 13,
+      "fontFamily": "Nunito",
+      "textColor": "",
+      "bold": false,
+      "italic": false,
+      "textAlign": "left",
+      "shape": "rounded",
+      "borderColor": "",
+      "borderWidth": 0
     }
   ],
   "edges": [
@@ -325,9 +346,14 @@
       "id": "e50",
       "from": "n1",
       "to": "n48"
+    },
+    {
+      "id": "e52",
+      "from": "n3",
+      "to": "n51"
     }
   ],
-  "nid": 51,
+  "nid": 53,
   "annotations": [
     {
       "id": "a22",
