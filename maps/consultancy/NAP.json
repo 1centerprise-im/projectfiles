@@ -294,6 +294,27 @@
       "shape": "rounded",
       "borderColor": "",
       "borderWidth": 0
+    },
+    {
+      "id": "n53",
+      "x": 1160.3463491405864,
+      "y": -122.34856973347709,
+      "w": 0,
+      "h": 0,
+      "text": "2026-05-06_nap_pre_feasibility_kickoff",
+      "ci": 0,
+      "link": "https://drive.google.com/drive/folders/1LeLRiqpTAIAK8FIwG8SKhFcAiEi3guG3?usp=drive_link",
+      "collapsed": false,
+      "isNote": false,
+      "fontSize": 13,
+      "fontFamily": "Nunito",
+      "textColor": "",
+      "bold": false,
+      "italic": false,
+      "textAlign": "left",
+      "shape": "rounded",
+      "borderColor": "#008000",
+      "borderWidth": 3
     }
   ],
   "edges": [
@@ -351,9 +372,14 @@
       "id": "e52",
       "from": "n3",
       "to": "n51"
+    },
+    {
+      "id": "e54",
+      "from": "n33",
+      "to": "n53"
     }
   ],
-  "nid": 53,
+  "nid": 55,
   "annotations": [
     {
       "id": "a22",
