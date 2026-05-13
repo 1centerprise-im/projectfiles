@@ -3,13 +3,13 @@
   "nodes": [
     {
       "id": "n1",
-      "x": 400,
-      "y": 300,
+      "x": 233,
+      "y": 296,
       "w": 0,
       "h": 0,
-      "text": "NSIFT",
+      "text": "03_NSIFT_ROSHTKALA",
       "ci": 0,
-      "link": "",
+      "link": "https://drive.google.com/drive/folders/1YTl1fl3QBg68dadb6UquQvK6Cr1rmnNS?usp=drive_link",
       "collapsed": false,
       "isNote": false,
       "fontSize": 16,
