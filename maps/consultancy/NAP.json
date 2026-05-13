@@ -213,8 +213,8 @@
     },
     {
       "id": "n35",
-      "x": 1228.1574202111137,
-      "y": 446.46370691526596,
+      "x": 1136.7993955197558,
+      "y": 500.784694569587,
       "w": 0,
       "h": 0,
       "text": "_NAP_GCF_Concept note_V.3.0_Syr Darya IWRM_LERNING",
@@ -234,8 +234,8 @@
     },
     {
       "id": "n40",
-      "x": 1711.0062721166828,
-      "y": 0.41524006687995296,
+      "x": 1612.2408400179172,
+      "y": 121.4028943878676,
       "w": 0,
       "h": 0,
       "text": "Reports",
@@ -297,8 +297,8 @@
     },
     {
       "id": "n53",
-      "x": 1259.9158769481653,
-      "y": -149.50989961197416,
+      "x": 1106.829457195079,
+      "y": -140.8679243033322,
       "w": 0,
       "h": 0,
       "text": "2026-05-06_nap_pre_feasibility_kickoff",
@@ -315,6 +315,27 @@
       "shape": "rounded",
       "borderColor": "#008000",
       "borderWidth": 3
+    },
+    {
+      "id": "n55",
+      "x": 1500.8937565388394,
+      "y": -158.77406568509247,
+      "w": 0,
+      "h": 0,
+      "text": "18_May_26_Mission_Rob",
+      "ci": 3,
+      "link": "https://drive.google.com/drive/folders/1ObWC7nNDOfaO6KPYDC6iyx-zAS9i9Pm9?usp=drive_link",
+      "collapsed": false,
+      "isNote": false,
+      "fontSize": 13,
+      "fontFamily": "Nunito",
+      "textColor": "",
+      "bold": false,
+      "italic": false,
+      "textAlign": "left",
+      "shape": "rounded",
+      "borderColor": "",
+      "borderWidth": 0
     }
   ],
   "edges": [
@@ -377,9 +398,14 @@
       "id": "e54",
       "from": "n33",
       "to": "n53"
+    },
+    {
+      "id": "e56",
+      "from": "n33",
+      "to": "n55"
     }
   ],
-  "nid": 55,
+  "nid": 57,
   "annotations": [
     {
       "id": "a22",
