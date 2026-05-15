@@ -59,7 +59,7 @@
       "textColor": "",
       "bold": false,
       "italic": false,
-      "textAlign": "right",
+      "textAlign": "center",
       "shape": "rounded",
       "borderColor": "",
       "borderWidth": 0
@@ -357,6 +357,27 @@
       "shape": "rounded",
       "borderColor": "",
       "borderWidth": 0
+    },
+    {
+      "id": "n59",
+      "x": 956.7110199160527,
+      "y": -14.762360540606243,
+      "w": 0,
+      "h": 0,
+      "text": "КА",
+      "ci": 4,
+      "link": "https://drive.google.com/drive/folders/1t7t3clGqyTJoyVdHYsK6LfNudOQMYNJg?usp=drive_link",
+      "collapsed": false,
+      "isNote": false,
+      "fontSize": 13,
+      "fontFamily": "Nunito",
+      "textColor": "",
+      "bold": false,
+      "italic": false,
+      "textAlign": "left",
+      "shape": "rounded",
+      "borderColor": "",
+      "borderWidth": 0
     }
   ],
   "edges": [
@@ -429,9 +450,14 @@
       "id": "e58",
       "from": "n1",
       "to": "n57"
+    },
+    {
+      "id": "e60",
+      "from": "n51",
+      "to": "n59"
     }
   ],
-  "nid": 59,
+  "nid": 61,
   "annotations": [
     {
       "id": "a22",
