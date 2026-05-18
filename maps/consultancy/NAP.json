@@ -297,8 +297,8 @@
     },
     {
       "id": "n53",
-      "x": 1133.1178959703998,
-      "y": -136.48651784077867,
+      "x": 1097.8327146840377,
+      "y": -155.7329803606125,
       "w": 0,
       "h": 0,
       "text": "2026-05-06_nap_pre_feasibility_kickoff",
@@ -318,8 +318,8 @@
     },
     {
       "id": "n55",
-      "x": 1523.8961404672452,
-      "y": -134.6763301410482,
+      "x": 1466.1567529077438,
+      "y": -149.11117703092356,
       "w": 0,
       "h": 0,
       "text": "18_May_26_Mission_Rob",
@@ -388,6 +388,27 @@
       "text": "What_Each_Consultant_Will_Do",
       "ci": 4,
       "link": "https://drive.google.com/drive/folders/1Y7VZyoQpZ7R41zta7jWJpeEk_HYq70Zs?usp=drive_link",
+      "collapsed": false,
+      "isNote": false,
+      "fontSize": 13,
+      "fontFamily": "Nunito",
+      "textColor": "",
+      "bold": false,
+      "italic": false,
+      "textAlign": "left",
+      "shape": "rounded",
+      "borderColor": "",
+      "borderWidth": 0
+    },
+    {
+      "id": "n63",
+      "x": 1719.862427519393,
+      "y": -231.9813321929909,
+      "w": 0,
+      "h": 0,
+      "text": "01_Workshop_21_May_2026",
+      "ci": 1,
+      "link": "https://drive.google.com/drive/folders/12cp8qIVVPIZd1Nxm1nwxMXPT8NK4wrzm?usp=drive_link",
       "collapsed": false,
       "isNote": false,
       "fontSize": 13,
@@ -481,9 +502,14 @@
       "id": "e62",
       "from": "n57",
       "to": "n61"
+    },
+    {
+      "id": "e68",
+      "from": "n55",
+      "to": "n63"
     }
   ],
-  "nid": 63,
+  "nid": 69,
   "annotations": [
     {
       "id": "a22",
